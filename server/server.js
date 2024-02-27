@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes");
-const port = process.env.PORT || 8888;
 const dbconnect = require("./config/dbconnect");
 const app = express();
 require("dotenv").config();
+const port = process.env.PORT || 8888;
 
 app.use(express.json()); // server sẽ đọc được data json mà client gửi lên
 app.use(express.urlencoded({ extended: true })); // server sẽ đọc được data dạng mảng và object và convert về json mà client gửi lên
