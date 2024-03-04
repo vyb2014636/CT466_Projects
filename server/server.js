@@ -3,10 +3,12 @@ const cors = require("cors");
 const routes = require("./routes");
 const dbconnect = require("./config/dbconnect");
 const app = express();
+const cookieParser = require("cookie-parser");
 require("dotenv").config();
 const port = process.env.PORT || 8888;
 
 app.use(express.json()); // server sẽ đọc được data json mà client gửi lên
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true })); // server sẽ đọc được data dạng mảng và object và convert về json mà client gửi lên
 app.use(
   cors({
@@ -14,7 +16,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 ); // cho phép client chỉ có thể truy cập đến server qua 4 PT get,post,put,delete <=> CURD
-
 dbconnect();
 routes(app); //dùng để middleware các routes
 
