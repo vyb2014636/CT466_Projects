@@ -5,6 +5,8 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require("../middlewares/jwt");
+const { Error } = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const register = asyncHandler(async (req, res) => {
   const { email, password, firstname, lastname } = req.body;
@@ -76,8 +78,64 @@ const getUser = asyncHandler(async (req, res) => {
   });
 });
 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  //Lấy refreshtoken từ cookie
+  const cookie = req.cookies;
+  //check xem có token hay không
+  if (!cookie && !cookie.RefreshToken)
+    throw new Error("Không tồn tại refreshToken");
+  //check token có hợp lệ hay không
+  result = await jwt.verify(cookie.RefreshToken, process.env.JWT_SECRET);
+  const checkToken = await User.findOne({
+    _id: result._id,
+    refreshToken: cookie.RefreshToken,
+  });
+  return res.status(200).json({
+    success: checkToken ? true : false,
+    newAccessToken: checkToken
+      ? generateAccessToken(result._id, result.role)
+      : "RefreshToken không khớp",
+  });
+  // jwt.verify(
+  //   cookie.RefreshToken,
+  //   process.env.JWT_SECRET,
+  //   async (err, decode) => {
+  //     if (err) throw new Error("Token đã hết hạn");
+  //     const checkToken = await User.findOne({
+  //       _id: decode._id,
+  //       refreshToken: cookie.RefreshToken,
+  //     });
+  //     return res.status(200).json({
+  //       success: checkToken ? true : false,
+  //       newAccessToken: checkToken
+  //         ? generateAccessToken(decode._id, decode.role)
+  //         : "RefreshToken không khớp",
+  //     });
+  //   }
+  // );
+});
+
+const logout = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie && !cookie.RefreshToken) throw new Error("Hiện chưa đăng nhập");
+  await User.findOneAndUpdate(
+    { refreshToken: cookie.RefreshToken },
+    { refreshToken: "" },
+    { new: true }
+  );
+  res.clearCookie("RefreshToken", {
+    httpOnly: true,
+    secure: true,
+  });
+  return res.status(200).json({
+    success: true,
+    mes: "logout thành công",
+  });
+});
 module.exports = {
   register,
   login,
   getUser,
+  refreshAccessToken,
+  logout,
 };
