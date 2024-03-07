@@ -7,7 +7,9 @@ const {
 } = require("../middlewares/jwt");
 const { Error } = require("mongoose");
 const jwt = require("jsonwebtoken");
-
+const user = require("../models/user");
+const sendMail = require("../untils/sendMails");
+const crypto = require("crypto");
 const register = asyncHandler(async (req, res) => {
   const { email, password, firstname, lastname } = req.body;
   if (!email || !password || !firstname || !lastname) {
@@ -132,10 +134,64 @@ const logout = asyncHandler(async (req, res) => {
     mes: "logout thành công",
   });
 });
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) throw new Error("Quên nhập email!");
+  findUser = await User.findOne({ email });
+
+  if (!user) throw new Error("Email không hợp lệ!");
+  const ResetToken = findUser.createPasswordChangedToken();
+
+  await findUser.save();
+
+  const html = `Xin vui lòng click vào link dưới đây để thay đổi mật khẩu. Link này sẽ hết hạn sau 15p kể từ bây giờ. <a href = ${process.env.URI_SERVER}/api/user/reset-password/${ResetToken} >click here </a>`;
+
+  data = {
+    email,
+    html,
+  };
+  const rs = await sendMail(data);
+
+  return res.status(200).json({
+    success: true,
+    rs,
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token, passwordNew } = req.body;
+  if (!token || !passwordNew)
+    throw new Error("Chưa nhập mật khẩu mới hoặc mã xác minh");
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+  const findUser = await User.findOne({
+    passwordResetToken: resetPasswordToken,
+    passwordResetExpireToken: { $gt: Date.now() },
+  });
+  if (!findUser) throw new Error("Đã hết hạn token hoặc chưa đăng nhập");
+
+  findUser.password = passwordNew;
+  findUser.passwordResetToken = undefined;
+  findUser.passwordChangedAt = Date.now();
+  findUser.passwordResetExpireToken = undefined;
+  await findUser.save();
+
+  return res.status(200).json({
+    success: findUser ? true : false,
+    mes: findUser ? "Mật khẩu đã được cập nhật" : "Failed",
+  });
+});
+
 module.exports = {
   register,
   login,
   getUser,
   refreshAccessToken,
   logout,
+  forgotPassword,
+  resetPassword,
 };

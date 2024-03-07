@@ -3,7 +3,6 @@ const { notFound, errHandler } = require("../middlewares/errorHandler");
 //....
 const routes = (app) => {
   app.use("/api/user", userRoute);
-
   app.use(notFound);
   app.use(errHandler);
 };
