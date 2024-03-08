@@ -8,7 +8,7 @@ const verifyToken = asyncHandler(async (req, res, next) => {
       if (err) {
         return res.status(401).json({
           success: false,
-          mes: "Token không hợp lệ",
+          mes: "Token không hợp lệ/ không đúng",
         });
       }
       req.user = decode;
@@ -22,6 +22,17 @@ const verifyToken = asyncHandler(async (req, res, next) => {
   }
 });
 
+const isAdmin = asyncHandler(async (req, res, next) => {
+  const { role } = req.user;
+  if (role !== "admin")
+    return res.status(401).json({
+      success: false,
+      mes: "Bạn không có quyền truy cập",
+    });
+  next();
+});
+
 module.exports = {
   verifyToken,
+  isAdmin,
 };

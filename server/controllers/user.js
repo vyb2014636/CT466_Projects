@@ -43,7 +43,7 @@ const login = asyncHandler(async (req, res) => {
   }
   const findUser = await User.findOne({ email: email });
   if (findUser && (await findUser.isCheckPassword(password))) {
-    const { password, role, ...userData } = findUser.toObject(); //Do mongo là kiểu plain object nên ta phải dùng hàm toObject để show cho người dùng userData trừ password với role
+    const { password, role, refreshToken, ...userData } = findUser.toObject(); //Do mongo là kiểu plain object nên ta phải dùng hàm toObject để show cho người dùng userData trừ password với role
     //tạo accesstoken
     const AccessToken = generateAccessToken(findUser._id, role);
     //tạo refreshtoken
@@ -75,7 +75,7 @@ const getUser = asyncHandler(async (req, res) => {
     "-refreshToken -role -password"
   );
   return res.status(200).json({
-    success: true,
+    success: findUser ? true : false,
     rs: findUser ? findUser : "Không tìm thấy người dùng",
   });
 });
@@ -186,6 +186,52 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+const getAllUser = asyncHandler(async (req, res) => {
+  const response = await User.find().select("-refreshToken -role -password");
+  return res.status(200).json({
+    success: response ? true : false,
+    user: response,
+  });
+});
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const { _id } = req.query;
+  if (!_id) throw new Error("Chưa chọn id muốn xóa");
+  const findUser = await User.findByIdAndDelete(_id);
+  return res.status(200).json({
+    success: findUser ? true : false,
+    deleteUser: findUser
+      ? `Người dùng ${findUser.email} đã được xóa`
+      : "xóa thất bại",
+  });
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  if (!_id || Object.keys(req.body).length === 0)
+    throw new Error("Chưa có dữ liệu cần update");
+  const findUpdate = await User.findByIdAndUpdate(_id, req.body, {
+    new: true,
+  }).select("-role -password");
+  return res.status(200).json({
+    success: findUpdate ? true : false,
+    mes: findUpdate ? "cập nhật thành công" : "Cập nhật thất bại",
+  });
+});
+
+const updateUserByAdmin = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  if (!userId || Object.keys(req.body).length === 0)
+    throw new Error("Chưa có dữ liệu cần update");
+  const findUpdate = await User.findByIdAndUpdate(userId, req.body, {
+    new: true,
+  }).select("-role -password");
+  return res.status(200).json({
+    success: findUpdate ? true : false,
+    mes: findUpdate ? "cập nhật thành công" : "Cập nhật thất bại",
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -194,4 +240,8 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
+  getAllUser,
+  deleteUser,
+  updateUser,
+  updateUserByAdmin,
 };
