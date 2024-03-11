@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const user = require("../models/user");
 const sendMail = require("../untils/sendMails");
 const crypto = require("crypto");
+
 const register = asyncHandler(async (req, res) => {
   const { email, password, firstname, lastname } = req.body;
   if (!email || !password || !firstname || !lastname) {
