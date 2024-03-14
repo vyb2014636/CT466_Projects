@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
+const { Error } = require("mongoose");
 const slugify = require("slugify");
 
 const createProduct = asyncHandler(async (req, res) => {
@@ -35,6 +36,19 @@ const getProduct = asyncHandler(async (req, res) => {
     const sortBy = req.query.sort.split(",").join(" ");
     queryCommand = queryCommand.sort(sortBy); //sắp xếp default là tăng dần
   }
+  //
+  //fields chọn theo trường
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    queryCommand = queryCommand.select(fields);
+  }
+  //
+  //pagination
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
+
   queryCommand
     .exec()
     .then(async (respone) => {
@@ -46,8 +60,8 @@ const getProduct = asyncHandler(async (req, res) => {
         });
       return res.status(200).json({
         success: respone ? true : false,
-        products: respone ? respone : "không tìm thấy cái cần tìm",
         counts,
+        products: respone ? respone : "không tìm thấy cái cần tìm",
       });
     })
     .catch((err) => {
@@ -93,10 +107,62 @@ const deleteProduct = asyncHandler(async (req, res) => {
       : "Sản phẩm cần xóa không tìm thấy",
   });
 });
+
+const ratings = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { star, comment, pid } = req.body;
+  if (!star || !pid)
+    throw new Error("Bạn chưa đánh giá sao hoặc chưa chọn sản phẩm");
+  const findProductRating = await Product.findById(pid);
+  const alreadyIdRating = findProductRating?.rating?.find(
+    (el) => el.postedBy.toString() === _id
+  );
+  if (alreadyIdRating) {
+    // const updateRatingBy = await Product.findByIdAndUpdate(pid, {
+    //   ratings: { star, comment, postedBy: _id },
+    // });
+    await Product.updateOne(
+      {
+        rating: { $elemMatch: alreadyIdRating }, //nó sẽ tìm trong ratings những phần tử tương ứng với alreadyRating
+      },
+      {
+        $set: { "rating.$.star": star, "rating.$.comment": comment }, // .$ tương ứng với elementMatch tìm được trong csdl
+      },
+      { new: true }
+    );
+  } else {
+    await Product.findByIdAndUpdate(
+      pid,
+      {
+        $push: { rating: { star, comment, postedBy: _id } },
+      },
+      { new: true }
+    );
+  }
+
+  const updatedProduct = await Product.findById(pid);
+  const ratingCount = updatedProduct.rating.length;
+  const sumRatings = updatedProduct.rating.reduce(
+    (sum, el) => +sum + +el.star,
+    0
+  ); // tính tổng số sao của sản phẩm
+  updatedProduct.totalsRatings =
+    Math.round((sumRatings * 10) / ratingCount) / 10;
+
+  console.log(Math.round((sumRatings * 10) / ratingCount) / 10);
+  await updatedProduct.save();
+
+  return res.status(200).json({
+    success: true,
+    mes: "Đánh giá thành công",
+    updatedProduct,
+  });
+});
 module.exports = {
   createProduct,
   getProduct,
   getAllProducts,
   updateProduct,
   deleteProduct,
+  ratings,
 };
