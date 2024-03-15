@@ -4,8 +4,7 @@ const { Error } = require("mongoose");
 const slugify = require("slugify");
 
 const createProduct = asyncHandler(async (req, res) => {
-  if (Object.keys(req.body).length === 0)
-    throw new Error("Vui lòng nhập thông tin sản phẩm");
+  if (Object.keys(req.body).length === 0) throw new Error("Vui lòng nhập thông tin sản phẩm");
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const newProduct = await Product.create(req.body);
   return res.status(200).json({
@@ -21,13 +20,9 @@ const getProduct = asyncHandler(async (req, res) => {
 
   //Lọc theo filter
   let queryString = JSON.stringify(queries);
-  queryString = queryString.replace(
-    /\b(gte|gt|lte|lt)\b/g,
-    (match) => `$${match}`
-  ); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
+  queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
   const formatQueries = JSON.parse(queryString);
-  if (queries?.title)
-    formatQueries.title = { $regex: queries.title, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
+  if (queries?.title) formatQueries.title = { $regex: queries.title, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
   let queryCommand = Product.find(formatQueries); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
   //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
 
@@ -83,16 +78,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.query;
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
-  const updateProduct = await Product.findByIdAndUpdate(
-    { _id: pid },
-    req.body,
-    { new: true }
-  );
+  const updateProduct = await Product.findByIdAndUpdate({ _id: pid }, req.body, { new: true });
   return res.status(200).json({
     success: updateProduct ? true : false,
-    detailProduct: updateProduct
-      ? updateProduct
-      : "Khong tim thay san pham can update",
+    detailProduct: updateProduct ? updateProduct : "Khong tim thay san pham can update",
   });
 });
 
@@ -111,12 +100,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
 const ratings = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { star, comment, pid } = req.body;
-  if (!star || !pid)
-    throw new Error("Bạn chưa đánh giá sao hoặc chưa chọn sản phẩm");
+  if (!star || !pid) throw new Error("Bạn chưa đánh giá sao hoặc chưa chọn sản phẩm");
   const findProductRating = await Product.findById(pid);
-  const alreadyIdRating = findProductRating?.rating?.find(
-    (el) => el.postedBy.toString() === _id
-  );
+  const alreadyIdRating = findProductRating?.rating?.find((el) => el.postedBy.toString() === _id);
   if (alreadyIdRating) {
     // const updateRatingBy = await Product.findByIdAndUpdate(pid, {
     //   ratings: { star, comment, postedBy: _id },
@@ -142,12 +128,8 @@ const ratings = asyncHandler(async (req, res) => {
 
   const updatedProduct = await Product.findById(pid);
   const ratingCount = updatedProduct.rating.length;
-  const sumRatings = updatedProduct.rating.reduce(
-    (sum, el) => +sum + +el.star,
-    0
-  ); // tính tổng số sao của sản phẩm
-  updatedProduct.totalsRatings =
-    Math.round((sumRatings * 10) / ratingCount) / 10;
+  const sumRatings = updatedProduct.rating.reduce((sum, el) => +sum + +el.star, 0); // tính tổng số sao của sản phẩm
+  updatedProduct.totalsRatings = Math.round((sumRatings * 10) / ratingCount) / 10;
 
   console.log(Math.round((sumRatings * 10) / ratingCount) / 10);
   await updatedProduct.save();

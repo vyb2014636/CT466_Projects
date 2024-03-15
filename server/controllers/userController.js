@@ -1,10 +1,7 @@
 const { response } = require("express");
 const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../middlewares/jwt");
+const { generateAccessToken, generateRefreshToken } = require("../middlewares/jwt");
 const { Error } = require("mongoose");
 const jwt = require("jsonwebtoken");
 const user = require("../models/user");
@@ -50,11 +47,7 @@ const login = asyncHandler(async (req, res) => {
     //tạo refreshtoken
     const RefreshToken = generateRefreshToken(findUser._id);
     //Lưu refreshToken vào database
-    await User.findByIdAndUpdate(
-      findUser._id,
-      { refreshToken: RefreshToken },
-      { new: true }
-    );
+    await User.findByIdAndUpdate(findUser._id, { refreshToken: RefreshToken }, { new: true });
     //Lưu refreshToken vào cookie
     res.cookie("RefreshToken", RefreshToken, {
       httpOnly: true,
@@ -72,9 +65,7 @@ const login = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const findUser = await User.findById({ _id: _id }).select(
-    "-refreshToken -role -password"
-  );
+  const findUser = await User.findById({ _id: _id }).select("-refreshToken -role -password");
   return res.status(200).json({
     success: findUser ? true : false,
     rs: findUser ? findUser : "Không tìm thấy người dùng",
@@ -85,8 +76,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   //Lấy refreshtoken từ cookie
   const cookie = req.cookies;
   //check xem có token hay không
-  if (!cookie && !cookie.RefreshToken)
-    throw new Error("Không tồn tại refreshToken");
+  if (!cookie && !cookie.RefreshToken) throw new Error("Không tồn tại refreshToken");
   //check token có hợp lệ hay không
   result = await jwt.verify(cookie.RefreshToken, process.env.JWT_SECRET);
   const checkToken = await User.findOne({
@@ -163,12 +153,8 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, passwordNew } = req.body;
-  if (!token || !passwordNew)
-    throw new Error("Chưa nhập mật khẩu mới hoặc mã xác minh");
-  const resetPasswordToken = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  if (!token || !passwordNew) throw new Error("Chưa nhập mật khẩu mới hoặc mã xác minh");
+  const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
   const findUser = await User.findOne({
     passwordResetToken: resetPasswordToken,
     passwordResetExpireToken: { $gt: Date.now() },
@@ -201,16 +187,13 @@ const deleteUser = asyncHandler(async (req, res) => {
   const findUser = await User.findByIdAndDelete(_id);
   return res.status(200).json({
     success: findUser ? true : false,
-    deleteUser: findUser
-      ? `Người dùng ${findUser.email} đã được xóa`
-      : "xóa thất bại",
+    deleteUser: findUser ? `Người dùng ${findUser.email} đã được xóa` : "xóa thất bại",
   });
 });
 
 const updateUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  if (!_id || Object.keys(req.body).length === 0)
-    throw new Error("Chưa có dữ liệu cần update");
+  if (!_id || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
   const findUpdate = await User.findByIdAndUpdate(_id, req.body, {
     new: true,
   }).select("-role -password");
@@ -222,8 +205,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 const updateUserByAdmin = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  if (!userId || Object.keys(req.body).length === 0)
-    throw new Error("Chưa có dữ liệu cần update");
+  if (!userId || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
   const findUpdate = await User.findByIdAndUpdate(userId, req.body, {
     new: true,
   }).select("-role -password");
