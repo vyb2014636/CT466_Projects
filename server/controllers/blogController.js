@@ -101,6 +101,15 @@ const getOneBlog = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteBlog = asyncHandler(async (req, res) => {
+  const { bid } = req.params;
+  const blog = await Blog.findByIdAndDelete(bid);
+  return res.json({
+    success: blog ? true : false,
+    deleteblog: blog || "Xóa thất bại",
+  });
+});
+
 module.exports = {
   createNewBlog,
   updateBlog,
@@ -108,4 +117,5 @@ module.exports = {
   likeBlog,
   dislikeBlog,
   getOneBlog,
+  deleteBlog,
 };
