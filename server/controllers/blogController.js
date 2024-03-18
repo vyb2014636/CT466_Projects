@@ -110,6 +110,22 @@ const deleteBlog = asyncHandler(async (req, res) => {
   });
 });
 
+const uploadImageBlog = asyncHandler(async (req, res) => {
+  const { bid } = req.params;
+  if (!req.file) throw new Error("Chưa có files");
+  const respone = await Blog.findByIdAndUpdate(
+    bid,
+    {
+      images: req.file.path,
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: respone ? true : false,
+    updatedImageBlog: respone ? respone : "Không thể upload ảnh blog",
+  });
+});
+
 module.exports = {
   createNewBlog,
   updateBlog,
@@ -118,4 +134,5 @@ module.exports = {
   dislikeBlog,
   getOneBlog,
   deleteBlog,
+  uploadImageBlog,
 };

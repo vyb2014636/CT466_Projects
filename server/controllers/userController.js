@@ -10,15 +10,19 @@ const crypto = require("crypto");
 
 const register = asyncHandler(async (req, res) => {
   const { email, password, firstname, lastname } = req.body;
+
   if (!email || !password || !firstname || !lastname) {
     return res.status(400).json({
       success: false,
       mes: "Chưa nhập đủ thông tin",
     });
   }
+
   const findUser = await User.findOne({ email: email });
+
   if (!findUser) {
     const newUser = await User.create(req.body);
+
     return res.status(200).json({
       success: newUser ? true : false,
       mes: newUser
@@ -33,6 +37,7 @@ const register = asyncHandler(async (req, res) => {
 //AccessToken => Xác thực người dùng , phân quyền người dùng
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res.status(400).json({
       success: false,
@@ -53,6 +58,7 @@ const login = asyncHandler(async (req, res) => {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
     return res.status(200).json({
       success: true,
       AccessToken,
@@ -65,7 +71,9 @@ const login = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+
   const findUser = await User.findById({ _id: _id }).select("-refreshToken -role -password");
+
   return res.status(200).json({
     success: findUser ? true : false,
     rs: findUser ? findUser : "Không tìm thấy người dùng",
@@ -79,47 +87,36 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   if (!cookie && !cookie.RefreshToken) throw new Error("Không tồn tại refreshToken");
   //check token có hợp lệ hay không
   result = await jwt.verify(cookie.RefreshToken, process.env.JWT_SECRET);
+
   const checkToken = await User.findOne({
     _id: result._id,
     refreshToken: cookie.RefreshToken,
   });
+
   return res.status(200).json({
     success: checkToken ? true : false,
     newAccessToken: checkToken
       ? generateAccessToken(result._id, result.role)
       : "RefreshToken không khớp",
   });
-  // jwt.verify(
-  //   cookie.RefreshToken,
-  //   process.env.JWT_SECRET,
-  //   async (err, decode) => {
-  //     if (err) throw new Error("Token đã hết hạn");
-  //     const checkToken = await User.findOne({
-  //       _id: decode._id,
-  //       refreshToken: cookie.RefreshToken,
-  //     });
-  //     return res.status(200).json({
-  //       success: checkToken ? true : false,
-  //       newAccessToken: checkToken
-  //         ? generateAccessToken(decode._id, decode.role)
-  //         : "RefreshToken không khớp",
-  //     });
-  //   }
-  // );
 });
 
 const logout = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
+
   if (!cookie && !cookie.RefreshToken) throw new Error("Hiện chưa đăng nhập");
+
   await User.findOneAndUpdate(
     { refreshToken: cookie.RefreshToken },
     { refreshToken: "" },
     { new: true }
   );
+
   res.clearCookie("RefreshToken", {
     httpOnly: true,
     secure: true,
   });
+
   return res.status(200).json({
     success: true,
     mes: "logout thành công",
@@ -153,18 +150,22 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { token, passwordNew } = req.body;
+
   if (!token || !passwordNew) throw new Error("Chưa nhập mật khẩu mới hoặc mã xác minh");
+
   const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
   const findUser = await User.findOne({
     passwordResetToken: resetPasswordToken,
     passwordResetExpireToken: { $gt: Date.now() },
   });
+
   if (!findUser) throw new Error("Đã hết hạn token hoặc chưa đăng nhập");
 
   findUser.password = passwordNew;
   findUser.passwordResetToken = undefined;
   findUser.passwordChangedAt = Date.now();
   findUser.passwordResetExpireToken = undefined;
+
   await findUser.save();
 
   return res.status(200).json({
@@ -175,6 +176,7 @@ const resetPassword = asyncHandler(async (req, res) => {
 
 const getAllUser = asyncHandler(async (req, res) => {
   const response = await User.find().select("-refreshToken -role -password");
+
   return res.status(200).json({
     success: response ? true : false,
     user: response,
@@ -183,8 +185,11 @@ const getAllUser = asyncHandler(async (req, res) => {
 
 const deleteUser = asyncHandler(async (req, res) => {
   const { _id } = req.query;
+
   if (!_id) throw new Error("Chưa chọn id muốn xóa");
+
   const findUser = await User.findByIdAndDelete(_id);
+
   return res.status(200).json({
     success: findUser ? true : false,
     deleteUser: findUser ? `Người dùng ${findUser.email} đã được xóa` : "xóa thất bại",
@@ -193,10 +198,13 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 const updateUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+
   if (!_id || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
+
   const findUpdate = await User.findByIdAndUpdate(_id, req.body, {
     new: true,
   }).select("-role -password");
+
   return res.status(200).json({
     success: findUpdate ? true : false,
     mes: findUpdate ? "cập nhật thành công" : "Cập nhật thất bại",
@@ -206,15 +214,106 @@ const updateUser = asyncHandler(async (req, res) => {
 const updateUserByAdmin = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   if (!userId || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
+
   const findUpdate = await User.findByIdAndUpdate(userId, req.body, {
     new: true,
   }).select("-role -password");
+
   return res.status(200).json({
     success: findUpdate ? true : false,
     mes: findUpdate ? "cập nhật thành công" : "Cập nhật thất bại",
   });
 });
 
+const updateAddressUser = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+
+  if (!req.body.address) throw new Error("Bạn chưa nhập địa chỉ");
+
+  const userId = await User.findById(_id);
+  const alreadyAddress = userId.address.includes(req.body.address);
+
+  if (alreadyAddress) {
+    return res.status(200).json({
+      success: false,
+      addressIs: "Địa chỉ đã tồn tại",
+    });
+  } else {
+    const respone = await User.findByIdAndUpdate(
+      _id,
+      { $push: { address: req.body.address } },
+      // { $addToSet: { address: req.body.address } }, //Nếu địa chỉ đã tồn tại thì không thêm
+      { new: true }
+    ).select("-password -role -refreshToken");
+
+    return res.status(200).json({
+      success: respone ? true : false,
+      addressIs: respone ? respone : "Địa chỉ không được thêm",
+    });
+  }
+});
+
+const addToCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { pid, quantity, color } = req.body;
+
+  if (!pid || !quantity || !color) throw new Error("Missing input");
+
+  const cartUser = await User.findById(_id);
+  const alreadyProductCart = cartUser?.cart?.find(
+    (el) => el.product.toString() === pid && el.color.toString() === color
+  );
+  if (alreadyProductCart) {
+    if (alreadyProductCart.color === color) {
+      const respone = await User.updateOne(
+        { cart: { $elemMatch: alreadyProductCart } },
+        { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity } },
+        { new: true }
+      );
+
+      return res.status(200).json({
+        success: respone ? true : false,
+        addressIs: respone ? respone : "failed",
+      });
+    } else {
+      const respone = await User.findByIdAndUpdate(
+        _id,
+        {
+          $push: {
+            cart: {
+              product: pid,
+              quantity: quantity,
+              color: color,
+            },
+          },
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        success: respone ? true : false,
+        addressIs: respone ? respone : "failed",
+      });
+    }
+  } else {
+    const respone = await User.findByIdAndUpdate(
+      _id,
+      {
+        $push: {
+          cart: {
+            product: pid,
+            quantity: quantity,
+            color: color,
+          },
+        },
+      },
+      { new: true }
+    );
+    return res.status(200).json({
+      success: respone ? true : false,
+      addressIs: respone ? respone : "failed",
+    });
+  }
+});
 module.exports = {
   register,
   login,
@@ -227,4 +326,6 @@ module.exports = {
   deleteUser,
   updateUser,
   updateUserByAdmin,
+  updateAddressUser,
+  addToCart,
 };

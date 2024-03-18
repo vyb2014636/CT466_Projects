@@ -14,19 +14,10 @@ var orderSchema = new mongoose.Schema({
     default: "Processing",
     enum: ["Cancelled", "Processing", "Successed"],
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  mobile: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
+  paymentIntent: {},
+  orderBy: {
+    type: mongoose.Types.ObjectId,
+    ref: "User",
   },
 });
 

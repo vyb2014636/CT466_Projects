@@ -1,3 +1,4 @@
+const { response } = require("express");
 const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const { Error } = require("mongoose");
@@ -76,7 +77,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
-  const { pid } = req.query;
+  const { pid } = req.params;
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updateProduct = await Product.findByIdAndUpdate({ _id: pid }, req.body, { new: true });
   return res.status(200).json({
@@ -86,7 +87,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-  const { pid } = req.query;
+  const { pid } = req.params;
   const findProduct = await Product.findById({ _id: pid });
   const findDeleteProduct = await Product.findByIdAndDelete({ _id: pid });
   return res.status(200).json({
@@ -140,6 +141,22 @@ const ratings = asyncHandler(async (req, res) => {
     updatedProduct,
   });
 });
+
+const uploadImageProduct = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  if (!req.files) throw new Error("Chưa có files");
+  const respone = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: { images: { $each: req.files.map((el) => el.path) } },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: respone ? true : false,
+    updatedImageProduct: respone ? respone : "Không thể upload ảnh sản phẩm",
+  });
+});
 module.exports = {
   createProduct,
   getProduct,
@@ -147,4 +164,5 @@ module.exports = {
   updateProduct,
   deleteProduct,
   ratings,
+  uploadImageProduct,
 };

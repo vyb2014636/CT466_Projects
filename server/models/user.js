@@ -30,11 +30,17 @@ var userSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
-    cart: {
+    cart: [
+      {
+        product: { type: mongoose.Types.ObjectId, ref: "Product" },
+        quantity: Number,
+        color: String,
+      },
+    ],
+    address: {
       type: Array,
       default: [],
     },
-    address: [{ type: mongoose.Types.ObjectId, ref: "Address" }],
     wishlist: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     isBlocked: {
       type: Boolean,
@@ -74,10 +80,7 @@ userSchema.methods = {
   },
   createPasswordChangedToken: function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
-    this.passwordResetToken = crypto
-      .createHash("sha256")
-      .update(resetToken)
-      .digest("hex");
+    this.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
     this.passwordResetExpireToken = Date.now() + 15 * 60 * 1000;
     return resetToken;
   },
