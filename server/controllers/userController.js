@@ -264,36 +264,36 @@ const addToCart = asyncHandler(async (req, res) => {
     (el) => el.product.toString() === pid && el.color.toString() === color
   );
   if (alreadyProductCart) {
-    if (alreadyProductCart.color === color) {
-      const respone = await User.updateOne(
-        { cart: { $elemMatch: alreadyProductCart } },
-        { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity } },
-        { new: true }
-      );
+    // if (alreadyProductCart.color === color) {
+    const respone = await User.updateOne(
+      { cart: { $elemMatch: alreadyProductCart } },
+      { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity } },
+      { new: true }
+    );
 
-      return res.status(200).json({
-        success: respone ? true : false,
-        addressIs: respone ? respone : "failed",
-      });
-    } else {
-      const respone = await User.findByIdAndUpdate(
-        _id,
-        {
-          $push: {
-            cart: {
-              product: pid,
-              quantity: quantity,
-              color: color,
-            },
-          },
-        },
-        { new: true }
-      );
-      return res.status(200).json({
-        success: respone ? true : false,
-        addressIs: respone ? respone : "failed",
-      });
-    }
+    return res.status(200).json({
+      success: respone ? true : false,
+      addressIs: respone ? respone : "failed",
+    });
+    // } else {
+    //   const respone = await User.findByIdAndUpdate(
+    //     _id,
+    //     {
+    //       $push: {
+    //         cart: {
+    //           product: pid,
+    //           quantity: quantity,
+    //           color: color,
+    //         },
+    //       },
+    //     },
+    //     { new: true }
+    //   );
+    //   return res.status(200).json({
+    //     success: respone ? true : false,
+    //     addressIs: respone ? respone : "failed",
+    //   });
+    // }
   } else {
     const respone = await User.findByIdAndUpdate(
       _id,
