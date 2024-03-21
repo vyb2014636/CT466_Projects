@@ -1,13 +1,13 @@
 import React from "react";
-import { Header, Navigation, Sidebar, Banner, Head, Slide } from "../../components";
+import { Slide, BestSeller } from "../../components";
 const Home = () => {
   return (
-    <div className="flex w-main flex-col">
-      <div className="w-main pb-5 text-center">
+    <div className="flex w-full flex-col items-center">
+      <div className="w-full pb-5 text-center ">
         <Slide />
       </div>
       <div className="w-main pb-5 text-center">
-        <span>Best Seller</span>
+        <BestSeller />
       </div>
       <div className="w-main pb-5 text-center">
         <span>Blog</span>

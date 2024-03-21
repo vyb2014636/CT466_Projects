@@ -2,5 +2,5 @@ export { default as Header } from "./Header";
 export { default as Sidebar } from "./Sidebar";
 export { default as Navigation } from "./Navigation";
 export { default as Banner } from "./Banner";
-export { default as Head } from "./Head";
 export { default as Slide } from "./Slide";
+export { default as BestSeller } from "./BestSeller";

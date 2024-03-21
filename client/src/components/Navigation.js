@@ -1,7 +1,31 @@
 import React from "react";
+import { navigation } from "../ultils/contants";
+import { NavLink } from "react-router-dom";
 
 const Navigation = () => {
-  return <div>Navigation</div>;
+  return (
+    <div className="w-full md:w-1/2 lg:w-1/2 px-4 flex flex-col items-center justify-center">
+      <nav className="header__menu mobile-menu flex justify-center">
+        <ul className="flex gap-6 ">
+          {navigation.map((el) => (
+            <li className="active relative">
+              <NavLink
+                to={el.path}
+                key={el.id}
+                className={({ isActive }) =>
+                  isActive
+                    ? "border-b-2 text-[18px] border-red-500"
+                    : "hover:after:content-[''] hover:border-b-2 hover:border-red-500 transition-all transform text-[18px]"
+                }
+              >
+                {el.value}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  );
 };
 
 export default Navigation;
