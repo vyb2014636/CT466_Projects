@@ -1,5 +1,5 @@
 import React from "react";
-import { Slide, BestSeller } from "../../components";
+import { Slide, BestSeller, Sidebar } from "../../components";
 const Home = () => {
   return (
     <div className="flex w-full flex-col items-center">
@@ -10,7 +10,7 @@ const Home = () => {
         <BestSeller />
       </div>
       <div className="w-main pb-5 text-center">
-        <span>Blog</span>
+        <Sidebar />
       </div>
     </div>
   );
