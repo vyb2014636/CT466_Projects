@@ -14,8 +14,8 @@ const Navigation = () => {
                 key={el.id}
                 className={({ isActive }) =>
                   isActive
-                    ? "border-b-2 text-[18px] border-red-500"
-                    : "hover:after:content-[''] hover:border-b-2 hover:border-red-500 transition-all transform text-[18px]"
+                    ? "border-b-2 text-[18px] border-red-500 font-semibold"
+                    : "hover:after:content-[''] hover:border-b-2 hover:border-red-500 transition-all transform text-[18px] font-semibold"
                 }
               >
                 {el.value}

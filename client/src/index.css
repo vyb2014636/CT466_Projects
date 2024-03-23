@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap");
+
+button.slick-next::before {
+  color: black;
+  content: "\2192";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+button.slick-prev::before {
+  color: black;
+  content: "\2190";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+div.slick-track,
+div.slick-list,
+.slick-slide div {
+  height: 100%;
+}

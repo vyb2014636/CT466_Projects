@@ -4,7 +4,6 @@ import { Login, Home, Public } from "./pages/public";
 import path from "./ultils/path";
 import { getCategories } from "./store/asyncAction";
 import { useDispatch } from "react-redux";
-// import "./css/headerMenu.css";
 
 function App() {
   const dispath = useDispatch();
