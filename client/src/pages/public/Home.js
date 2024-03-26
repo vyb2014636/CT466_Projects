@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { apiGetProducts } from "../../apis/";
-import { NavLink } from "react-router-dom";
+import React from "react";
 import { Slide, BestSeller, Sidebar } from "../../components";
 
 const Home = () => {
   return (
     <div className="flex w-full flex-col items-center">
-      <Slide />
+      <div className="w-full pb-5 text-center  h-[800px]">
+        <Slide />
+      </div>
       <div className="w-main pb-5 text-center">
         <BestSeller />
       </div>
