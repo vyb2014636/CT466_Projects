@@ -47,7 +47,7 @@ div.slick-list,
   transform: translateX(-100%);
 }
 
-.product__item:hover .product__hover {
+/* .product__item:hover .product__hover {
   right: 20px;
   opacity: 1;
-}
+} */

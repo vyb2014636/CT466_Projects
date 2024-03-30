@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { apiGetProducts } from "../apis/";
 import Product from "./Product";
 import "../css/filter.css";
+import { motion } from "framer-motion";
 
 const tabs = [
   { id: 1, name: "best seller" },
