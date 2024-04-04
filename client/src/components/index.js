@@ -6,3 +6,6 @@ export { default as Slide } from "./Slide";
 export { default as BestSeller } from "./BestSeller";
 export { default as Product } from "./Product";
 export { default as SelectOption } from "./SelectOption";
+export { default as FlashSales } from "./FlashSales";
+export { default as CountDown } from "./CountDown";
+export { default as ProductFS } from "./ProductFS";

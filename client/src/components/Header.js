@@ -9,9 +9,9 @@ const Header = () => {
   const { GoSearch, BsCart2, MdFavoriteBorder, FaRegUser } = icons;
   return (
     // <div className="w-main border flex justify-around">
-    <div className="container flex justify-center">
-      <div className="border w-main flex  h-[110px] py-[35px]">
-        <div className="w-full md:w-1/4 lg:w-1/4 px-4 flex flex-col items-center justify-center">
+    <div className="w-main flex justify-center pb-5 text-center">
+      <div className="flex w-full h-[110px] py-[35px]">
+        <div className="w-full md:w-1/4 lg:w-1/4 pr-4 flex flex-col items-start justify-center">
           <div className="header__logo ">
             <Link to={`/${path.HOME}`}>
               <img src={logo} alt="" />
@@ -21,7 +21,7 @@ const Header = () => {
 
         <Navigation />
 
-        <div className="w-full md:w-1/4 lg:w-1/4 px-4 flex flex-col items-center justify-center">
+        <div className="w-full md:w-1/4 lg:w-1/4 pl-4 flex flex-col items-end justify-center">
           <div className="header__nav__option flex gap-4 ">
             <a href="#" className="border-r px-4 search-switch">
               <GoSearch />

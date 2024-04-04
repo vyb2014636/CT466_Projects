@@ -8,12 +8,12 @@ export const createSlug = (string) =>
     .split(" ")
     .join("-");
 
-export const formatMoney = (number) => Number(number.toFixed(1)).toLocaleString();
+export const formatMoney = (number) => Number(number?.toFixed(1)).toLocaleString();
 export const renderStarFromNumber = (number) => {
   if (!Number(number)) return;
   const stars = [];
   if (number === 0) {
-    for (let i = 0; i < +4; i++) stars.push(<FaRegStar />);
+    for (let i = 0; i <= 4; i++) stars.push(<FaRegStar />);
   }
   if (number % 1 !== 0) {
     const originalNum = Math.floor(number);
@@ -27,3 +27,10 @@ export const renderStarFromNumber = (number) => {
   }
   return stars;
 };
+export function secondsToHms(d) {
+  d = Number(d) / 1000;
+  const h = Math.floor(d / 3600);
+  const m = Math.floor((d % 3600) / 60);
+  const s = Math.floor((d % 3600) % 60);
+  return { h, m, s };
+}

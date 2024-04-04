@@ -34,8 +34,8 @@ const BestSeller = () => {
     if (activedTab === 2) setProductsActive(newProduct);
   }, [activedTab]);
   return (
-    <>
-      <div className="w-full md:w-full lg:w-full px-4 flex justify-center">
+    <div>
+      <div className="w-full md:w-full lg:w-full flex justify-center">
         <ul className="filter__controls flex  border-black">
           {tabs.map((el) => (
             <li
@@ -50,12 +50,17 @@ const BestSeller = () => {
           ))}
         </ul>
       </div>
-      <div className="flex product__filter  flex-wrap ">
-        {productsActive.map((el) => (
-          <Product key={el.id} productData={el} isNew={activedTab === 1 ? false : true} />
+      <div className="flex flex-wrap  mx-[-1.25rem] ">
+        {productsActive.map((el, i) => (
+          <Product
+            key={el.id}
+            productData={el}
+            isNew={activedTab === 1 ? false : true}
+            transI={i}
+          />
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
