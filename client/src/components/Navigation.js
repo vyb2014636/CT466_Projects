@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { navigation } from "../ultils/contants";
 import { NavLink } from "react-router-dom";
 
@@ -10,8 +10,8 @@ const Navigation = () => {
           {navigation.map((el) => (
             <li className="active relative">
               <NavLink
-                to={el.path}
                 key={el.id}
+                to={el.path}
                 className={({ isActive }) =>
                   isActive
                     ? "border-b-2 text-[18px] border-red-500 font-semibold"
@@ -28,4 +28,4 @@ const Navigation = () => {
   );
 };
 
-export default Navigation;
+export default memo(Navigation);

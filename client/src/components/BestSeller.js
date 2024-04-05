@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { apiGetProducts } from "../apis/";
 import Product from "./Product";
 import "../css/filter.css";
-import { motion } from "framer-motion";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getNewProducts } from "../store/products/asyncAction";
 const tabs = [
   { id: 1, name: "best seller" },
   { id: 2, name: "new arrivals" },
@@ -11,30 +11,29 @@ const tabs = [
 
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState([]);
-  const [newProduct, setNewProduct] = useState([]);
   const [activedTab, setActivedTab] = useState(1);
   const [productsActive, setProductsActive] = useState([]);
+  const dispatch = useDispatch();
+  const { newProducts } = useSelector((state) => state.products);
+  console.log(newProducts);
   const fetchProducts = async () => {
-    const response = await Promise.all([
-      apiGetProducts({ sort: "-sold" }),
-      apiGetProducts({ sort: "-createdAt" }),
-    ]);
-    if (response[0]?.success) {
-      setBestSeller(response[0].products);
-      setProductsActive(response[0].products);
+    const response = await apiGetProducts({ sort: "-sold" });
+    if (response.success) {
+      setBestSeller(response.products);
+      setProductsActive(response.products);
     }
-    if (response[1]?.success) setNewProduct(response[1].products);
   };
   useEffect(() => {
     fetchProducts();
+    dispatch(getNewProducts());
   }, []);
 
   useEffect(() => {
     if (activedTab === 1) setProductsActive(bestSeller);
-    if (activedTab === 2) setProductsActive(newProduct);
+    if (activedTab === 2) setProductsActive(newProducts);
   }, [activedTab]);
   return (
-    <div>
+    <div className="w-full">
       <div className="w-full md:w-full lg:w-full flex justify-center">
         <ul className="filter__controls flex  border-black">
           {tabs.map((el) => (
@@ -50,10 +49,10 @@ const BestSeller = () => {
           ))}
         </ul>
       </div>
-      <div className="flex flex-wrap  mx-[-1.25rem] ">
+      <div className="flex flex-wrap mx-[-1rem]">
         {productsActive.map((el, i) => (
           <Product
-            key={el.id}
+            key={el._id}
             productData={el}
             isNew={activedTab === 1 ? false : true}
             transI={i}

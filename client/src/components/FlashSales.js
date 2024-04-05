@@ -1,16 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { apiGetProducts } from "../apis/";
-import { CountDown, ProductFS } from "./";
+import { CountDown, CustomSlider } from "./";
 import moment from "moment";
 import { secondsToHms } from "../ultils/helpers";
-import Slider from "react-slick";
-const settings = {
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 5,
-  slidesToScroll: 1,
-};
+
 let idInterval;
 
 const FlashSales = () => {
@@ -21,7 +14,7 @@ const FlashSales = () => {
   const [ExpireDeal, setExpireDeal] = useState(false);
 
   const fetchProducts = async () => {
-    const response = await apiGetProducts({ limit: 5 });
+    const response = await apiGetProducts({ limit: 12 });
     if (response.success) {
       setProductsFS(response.products);
       const today = `${moment().format("MM/DD/YYYY")} 5:00:00`;
@@ -64,14 +57,15 @@ const FlashSales = () => {
   }, [Second, Minute, Hour, ExpireDeal]);
 
   return (
-    <>
-      <div className="w-full md:w-full lg:w-full px-4 flex justify-start items-center ">
-        <div className="w-[10%]">
-          <img
+    <div className="w-full">
+      <div className="w-full md:w-full lg:w-full flex justify-start items-center border-b-4 border-red-800 py-[15px]">
+        <div className="w-[20%]">
+          {/* <img
             className="h-[4rem] object-contain"
             src="https://png.pngtree.com/png-clipart/20200812/ourlarge/pngtree-flash-sale-promotion-big-sale-elements-png-image_2324245.jpg"
             alt="flashSales"
-          />
+          /> */}
+          <h2 className="font-semibold text-left text-orange-500 text-[1.5rem]">Flash Sales</h2>
         </div>
         <div className="flex gap-2 w-[20%]  items-center">
           <CountDown number={Hour} unit={"Hour"} />:
@@ -80,12 +74,32 @@ const FlashSales = () => {
         </div>
         <div></div>
       </div>
-      <Slider {...settings}>
-        {ProductsFS.map((el) => (
-          <ProductFS productData={el}></ProductFS>
-        ))}
-      </Slider>
-    </>
+      <div className="my-4 py-1">
+        <CustomSlider products={ProductsFS}></CustomSlider>
+      </div>
+      <div className="flex justify-between mt-10">
+        <img
+          src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-bottom-home2_b96bc752-67d4-45a5-ac32-49dc691b1958_600x.jpg?v=1613166661"
+          alt=""
+          className="w-[49%] "
+        ></img>
+        <div className="flex flex-col justify-between w-[24%] ">
+          <img
+            src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-bottom-home2_400x.jpg?v=1613166661"
+            alt=""
+          ></img>
+          <img
+            src="https://digital-world-2.myshopify.com/cdn/shop/files/banner3-bottom-home2_400x.jpg?v=1613166661"
+            alt=""
+          ></img>
+        </div>
+        <img
+          className="w-[24%] "
+          src="https://digital-world-2.myshopify.com/cdn/shop/files/banner4-bottom-home2_92e12df0-500c-4897-882a-7d061bb417fd_400x.jpg?v=1613166661"
+          alt=""
+        ></img>
+      </div>
+    </div>
   );
 };
 

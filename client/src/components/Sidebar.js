@@ -24,7 +24,7 @@ const Sidebar = () => {
         }`}
         aria-expanded={isOpen ? "true" : "false"}
       >
-        <NavLink>Categories</NavLink>
+        <NavLink key={"category"}>Categories</NavLink>
         <FaChevronDown />
       </div>
       <Collapse isOpened={isOpen}>

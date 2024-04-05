@@ -35,20 +35,3 @@ div.slick-list,
 .slick-slide div {
   height: 100%;
 }
-
-.iso-product {
-  transition: transform 0.3s ease-in-out;
-}
-
-.iso-product.visible {
-  transform: translateX(0);
-}
-
-.iso-product.hidden {
-  transform: translateX(-100%);
-}
-
-/* .product__item:hover .product__hover {
-  right: 20px;
-  opacity: 1;
-} */

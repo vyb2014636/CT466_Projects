@@ -9,3 +9,4 @@ export { default as SelectOption } from "./SelectOption";
 export { default as FlashSales } from "./FlashSales";
 export { default as CountDown } from "./CountDown";
 export { default as ProductFS } from "./ProductFS";
+export { default as CustomSlider } from "./CustomSlider";

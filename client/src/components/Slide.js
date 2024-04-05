@@ -1,6 +1,7 @@
 import React from "react";
 import slide1 from "../assets/hero-1.jpg";
 import slide2 from "../assets/hero-2.jpg";
+import banner_acc from "../assets/banner_acc.jpg";
 
 import "../css/slideStyle.css";
 import Slider from "react-slick";
@@ -20,13 +21,13 @@ const Slide = () => {
         <div
           className="hero__items set-bg "
           style={{
-            backgroundImage: `url(${slide1})`,
+            backgroundImage: `url(${banner_acc})`,
             backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
+            backgroundSize: "contain",
             backgroundPosition: "top center",
           }}
         >
-          <div className="sm:px-6 lg:pl-[60px] max-w-screen-xl">
+          {/* <div className="sm:px-6 lg:pl-[60px] max-w-screen-xl">
             <div className="xl:w-5/12 lg:w-7/12 md:w-8/12">
               <div className="hero__text text-start">
                 <h6 className="opacity-100 top-0">Summer Collection</h6>
@@ -54,14 +55,14 @@ const Slide = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="h-full">
         <div
           className="hero__items set-bg "
           style={{
-            backgroundImage: `url(${slide2})`,
+            backgroundImage: `url(${slide1})`,
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "top center",

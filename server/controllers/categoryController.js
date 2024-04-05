@@ -11,7 +11,7 @@ const createCategory = asyncHandler(async (req, res) => {
 });
 
 const getCategories = asyncHandler(async (req, res) => {
-  const respone = await Category.find().select("title _id");
+  const respone = await Category.find();
   const count = respone.length;
   return res.status(200).json({
     success: respone ? true : false,
