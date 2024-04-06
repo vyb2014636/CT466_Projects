@@ -1,6 +1,6 @@
 import React from "react";
 import slide1 from "../assets/hero-1.jpg";
-import slide2 from "../assets/hero-2.jpg";
+// import slide2 from "../assets/hero-2.jpg";
 import banner_acc from "../assets/banner_acc.jpg";
 
 import "../css/slideStyle.css";
@@ -12,18 +12,22 @@ const settings = {
   speed: 500,
   slidesToShow: 1,
   slidesToScroll: 1,
+  autoplay: true,
+  speed: 1500,
+  autoplaySpeed: 2000,
+  cssEase: "ease",
 };
 
 const Slide = () => {
   return (
-    <Slider {...settings} className="h-full">
-      <div className="h-full">
+    <Slider {...settings} className="h-full w-full">
+      <div>
         <div
           className="hero__items set-bg "
           style={{
             backgroundImage: `url(${banner_acc})`,
             backgroundRepeat: "no-repeat",
-            backgroundSize: "contain",
+            backgroundSize: "cover",
             backgroundPosition: "top center",
           }}
         >
@@ -58,9 +62,9 @@ const Slide = () => {
           </div> */}
         </div>
       </div>
-      <div className="h-full">
+      <div>
         <div
-          className="hero__items set-bg "
+          className="hero__items set-bg"
           style={{
             backgroundImage: `url(${slide1})`,
             backgroundRepeat: "no-repeat",
@@ -74,8 +78,8 @@ const Slide = () => {
                 <h6 className="opacity-100 top-0">Summer Collection</h6>
                 <h2 className="opacity-100 top-0">Fall - Winter Collections 2030</h2>
                 <p className="opacity-100 top-0">
-                  A specialist label creating luxury essentials. Ethically crafted with an
-                  unwavering commitment to exceptional quality.
+                  A specialist label creating luxury essentials. Ethically crafted with an unwavering commitment to
+                  exceptional quality.
                 </p>
                 <button className="primary-btn bg-black hover:bg-blue-700 text-white font-bold py-2 px-4  opacity-100 top-0">
                   Shop now <span className="arrow_right"></span>

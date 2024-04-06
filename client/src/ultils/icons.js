@@ -6,7 +6,7 @@ import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa"
 import { AiOutlineMenu } from "react-icons/ai";
 import { IoCart } from "react-icons/io5";
 import { FaEye } from "react-icons/fa";
-import { IoIosArrowForward, IoIosHeartEmpty } from "react-icons/io";
+import { IoIosArrowForward, IoIosHeartEmpty, IoIosMail } from "react-icons/io";
 
 const icons = {
   GoSearch,
@@ -22,6 +22,7 @@ const icons = {
   FaEye,
   IoIosArrowForward,
   IoIosHeartEmpty,
+  IoIosMail,
 };
 
 export default icons;

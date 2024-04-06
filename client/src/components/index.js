@@ -11,3 +11,4 @@ export { default as CountDown } from "./CountDown";
 export { default as ProductFS } from "./ProductFS";
 export { default as CustomSlider } from "./CustomSlider";
 export { default as Footer } from "./Footer";
+export { default as Collection } from "./Collection";

@@ -58,7 +58,7 @@ const FlashSales = () => {
 
   return (
     <div className="w-full">
-      <div className="w-full md:w-full lg:w-full flex justify-start items-center border-b-4 border-red-800 py-[15px]">
+      <div className="w-full md:w-full lg:w-full flex justify-start items-center border-b-4 border-orange-500 py-[15px]">
         <div className="w-[20%]">
           {/* <img
             className="h-[4rem] object-contain"
