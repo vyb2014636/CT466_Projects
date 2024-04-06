@@ -19,20 +19,14 @@ const Home = () => {
         <FlashSales />
       </div>
       <div className="w-main mb-8 text-center">
-        <h3 className="text-[1.3rem] font-semibold py-[1rem] border-b-2 border-b-orange-500">
-          Hot Collection
-        </h3>
+        <h3 className="text-[1.3rem] font-semibold py-[1rem] border-b-2 border-b-orange-500">Hot Collection</h3>
         <div className="flex flex-wrap mx-[-8px] mt-4">
           {categories
             ?.filter((el) => el.brand.length > 0)
             ?.map((el) => (
               <div key={el._id} className="w-1/3 p-2">
                 <div className="border flex p-4 gap-4">
-                  <img
-                    src={el?.image}
-                    alt=""
-                    className="flex-1 object-cover w-[144px] h-[150px]"
-                  ></img>
+                  <img src={el?.image} alt="" className="flex-1 object-cover w-[144px] h-[150px]"></img>
                   <div className="flex-1 text-gray-700">
                     <h4 className="font-bold uppercase">{el.title}</h4>
                     <ul className="text-md">
@@ -50,14 +44,11 @@ const Home = () => {
         </div>
       </div>
       <div className="w-main mb-8 text-center ">
-        <h3 className="text-[1.3rem] font-semibold py-[1rem] border-b-2 border-b-orange-500">
-          Blogs
-        </h3>
+        <h3 className="text-[1.3rem] font-semibold py-[1rem] border-b-2 border-b-orange-500">Blogs</h3>
       </div>
       <div className="w-main mb-8 text-center">
         <Sidebar />
       </div>
-      <div className="w-full h-[500px] bg-black"></div>
     </div>
   );
 };

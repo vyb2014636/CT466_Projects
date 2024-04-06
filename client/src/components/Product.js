@@ -1,8 +1,10 @@
 import React, { memo, useState } from "react";
+import { Link } from "react-router-dom";
 import { formatMoney, renderStarFromNumber } from "../ultils/helpers";
 import { SelectOption } from "./";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
 import icons from "../ultils/icons";
+import path from "../ultils/path";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
 const Product = ({ productData, isNew }) => {
@@ -16,8 +18,9 @@ const Product = ({ productData, isNew }) => {
       exit={{ opacity: 0 }}
       whileHover={{ scale: 1.1 }} // Thêm hiệu ứng scale khi rê chuột vào
     >
-      <div
+      <Link
         className="flex flex-col"
+        to={`/${path.DETAIL_PRODUCT}/${productData?._id}/${productData?.title}`}
         style={{
           boxShadow: "0 2px 4px 0 rgba(0,0,0,.12), 0 -2px 2px 0 rgba(0,0,0,.04)",
           height: "100%",
@@ -31,8 +34,7 @@ const Product = ({ productData, isNew }) => {
         <div className="outline-8 relative overflow-hidden flex-none h-[65%]">
           <img
             src={
-              productData?.thumb ||
-              "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "
+              productData?.thumb || "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "
             }
             className="object-contain h-full w-full"
             alt=""
@@ -67,9 +69,7 @@ const Product = ({ productData, isNew }) => {
               + Add To Cart
             </motion.div>
           ) : (
-            <h6 className="line-clamp-1  font-semibold text-left text-[15px] ">
-              {productData?.title}
-            </h6>
+            <h6 className="line-clamp-1  font-semibold text-left text-[15px] ">{productData?.title}</h6>
           )}
           <h5 className="font-bold">{`${formatMoney(productData?.price)} VNĐ`}</h5>
           <span className="flex h-4">
@@ -79,7 +79,7 @@ const Product = ({ productData, isNew }) => {
           </span>
           <div className="product__color__select"></div>
         </div>
-      </div>
+      </Link>
     </motion.div>
   );
 };

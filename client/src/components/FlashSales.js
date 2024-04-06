@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { apiGetProducts } from "../apis/";
 import { CountDown, CustomSlider } from "./";
 import moment from "moment";
@@ -103,4 +103,4 @@ const FlashSales = () => {
   );
 };
 
-export default FlashSales;
+export default memo(FlashSales);
