@@ -8,9 +8,8 @@ const Navigation = () => {
       <nav className="header__menu mobile-menu flex justify-center">
         <ul className="flex gap-6 ">
           {navigation.map((el) => (
-            <li className="active relative">
+            <li className="active relative" key={el.id}>
               <NavLink
-                key={el.id}
                 to={el.path}
                 className={({ isActive }) =>
                   isActive

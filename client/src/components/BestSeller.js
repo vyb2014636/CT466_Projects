@@ -15,7 +15,6 @@ const BestSeller = () => {
   const [productsActive, setProductsActive] = useState([]);
   const dispatch = useDispatch();
   const { newProducts } = useSelector((state) => state.products);
-  console.log(newProducts);
   const fetchProducts = async () => {
     const response = await apiGetProducts({ sort: "-sold" });
     if (response.success) {
@@ -51,12 +50,7 @@ const BestSeller = () => {
       </div>
       <div className="flex flex-wrap mx-[-1rem]">
         {productsActive.map((el, i) => (
-          <Product
-            key={el._id}
-            productData={el}
-            isNew={activedTab === 1 ? false : true}
-            transI={i}
-          />
+          <Product key={el._id} productData={el} isNew={activedTab === 1 ? false : true} transI={i} />
         ))}
       </div>
     </div>

@@ -19,9 +19,7 @@ const Sidebar = () => {
     <div className="card">
       <div
         onClick={handleToggle}
-        className={`card_heading  flex justify-between collapsed text-black ${
-          isOpen ? "active" : ""
-        }`}
+        className={`card_heading  flex justify-between collapsed text-black ${isOpen ? "active" : ""}`}
         aria-expanded={isOpen ? "true" : "false"}
       >
         <NavLink key={"category"}>Categories</NavLink>
@@ -32,13 +30,11 @@ const Sidebar = () => {
           <div className="shop__sidebar__categories text-left">
             <ul className="overflow-y-hidden outline-none tabindex-1">
               {categories.map((el) => (
-                <li>
+                <li key={createSlug(el.title)}>
                   <NavLink
                     key={createSlug(el.title)}
                     to={createSlug(el.title)}
-                    className={({ isActive }) =>
-                      isActive ? "" : " text-gray-400 hover:text-black"
-                    }
+                    className={({ isActive }) => (isActive ? "" : " text-gray-400 hover:text-black")}
                   >
                     {el.title}
                   </NavLink>

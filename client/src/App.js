@@ -22,7 +22,7 @@ function App() {
           <Route path={path.OUR_SERVICE} element={<Services />} />
           <Route path={path.CONTACTS} element={<Contacts />} />
         </Route>
-        <Route path={path.LOGIN} element={<Login />} />
+        <Route path={path.LOGIN} element={<Login />}></Route>
       </Routes>
     </div>
   );

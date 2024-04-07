@@ -4,22 +4,22 @@ import logo from "../assets/logo.png";
 const { IoIosHeartEmpty, IoIosMail } = icons;
 const Footer = () => {
   return (
-    <div className="w-full  mt-auto h-[384px] ">
-      <div className="w-full text-yellow-50 bg-orange-500 h-[30%] flex justify-center items-center">
+    <div className="w-full mt-auto h-[384px] bg-[#474747]">
+      <div className="w-full h-[30%] flex justify-center items-center">
         <div className="w-main flex justify-center items-center h-full ">
           <div className="flex flex-col md:flex-2 h-[40%]  sm:w-full">
-            <span className="text-[20px] text-[#474747]">SIGN UP TO NEWSLETTER</span>
-            <small className="text-[13px] text-[#353535] h-full">Subscribe now and receive weekly newletter </small>
+            <span className="text-[20px] text-white">SIGN UP TO NEWSLETTER</span>
+            <small className="text-[13px] text-white h-full">Subscribe now and receive weekly newletter </small>
           </div>
           <div className="md:flex-1 sm:w-full flex items-center h-[40%]">
             <input
-              className="p-4 pr-0 rounded-l-full w-[90%] h-full  bg-orange-300 outline-none text-[#474747]  placeholder:text-sm placeholder:text-[#474747] placeholder:opacity-50"
+              className="p-4 pr-0 rounded-l-full w-[90%] h-full  bg-[#707070] outline-none text-white placeholder:text-sm placeholder:text-white placeholder:opacity-50"
               type="text"
               name=""
               id=""
               placeholder="Email address"
             />
-            <div className="h-full w-[9%] rounded-r-full bg-orange-300 flex items-center justify-center text-[#474747]">
+            <div className="h-full w-[9%] rounded-r-full bg-[#707070] flex items-center justify-center text-white">
               <IoIosMail size={18} />
             </div>
           </div>
@@ -72,8 +72,8 @@ const Footer = () => {
         <div className="w-main text-yellow-50 h-[10%] ">
           <p className="flex justify-center items-center size-md">
             Copyright ©2024 2020 All rights reserved | This template is made with
-            <IoIosHeartEmpty className="text-red-600 mx-1" /> by
-            <a href="https://colorlib.com" target="_blank" className="text-red-600 mx-1">
+            <IoIosHeartEmpty className="text-orange-500 mx-1" /> by
+            <a href="https://colorlib.com" target="_blank" className="text-orange-500 mx-1">
               Colorlib
             </a>
           </p>

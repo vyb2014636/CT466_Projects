@@ -21,7 +21,7 @@ const Collection = () => {
                   <h4 className="font-bold uppercase">{el.title}</h4>
                   <ul className="text-md">
                     {el?.brand?.map((item) => (
-                      <span className="flex gap-1 items-center text-gray-500">
+                      <span className="flex gap-1 items-center text-gray-500" key={item}>
                         <IoIosArrowForward size={14} />
                         <li key={item}>{item}</li>
                       </span>

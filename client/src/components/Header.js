@@ -10,7 +10,7 @@ const Header = () => {
   return (
     // <div className="w-main border flex justify-around">
     <div className="w-main flex justify-center pb-5 text-center">
-      <div className="flex w-full h-[110px] py-[35px]">
+      <div className="flex w-full h-[90px] py-[35px]">
         <div className="w-full md:w-1/4 lg:w-1/4 pr-4 flex flex-col items-start justify-center">
           <div className="header__logo ">
             <Link to={`/${path.HOME}`}>
@@ -23,25 +23,25 @@ const Header = () => {
 
         <div className="w-full md:w-1/4 lg:w-1/4 pl-4 flex flex-col items-end justify-center">
           <div className="header__nav__option flex gap-4 ">
-            <a href="#" className="border-r px-4 search-switch">
+            <Link href="#" className="border-r px-4 search-switch">
               <GoSearch />
               {/* <img src="img/icon/search.png" alt="" /> */}
-            </a>
-            <a href="#" className="border-r px-4">
+            </Link>
+            <Link href="#" className="border-r px-4">
               {/* <img src="img/icon/heart.png" alt="" /> */}
               <MdFavoriteBorder />
-            </a>
-            <a href="#" className="border-r px-4 relative">
+            </Link>
+            <Link href="#" className="border-r px-4 relative">
               {/* <img src="img/icon/cart.png" alt="" /> */}
               <BsCart2 />
               <span className="absolute -top-1 right-2 block h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
                 0
               </span>
-            </a>
-            <a href="#" className="border-r px-4">
+            </Link>
+            <Link to={`/${path.LOGIN}`} className="border-r px-4">
               {/* <img src="img/icon/cart.png" alt="" /> */}
               <FaRegUser />
-            </a>
+            </Link>
           </div>
         </div>
       </div>
