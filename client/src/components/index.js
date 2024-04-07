@@ -12,3 +12,5 @@ export { default as ProductFS } from "./ProductFS";
 export { default as CustomSlider } from "./CustomSlider";
 export { default as Footer } from "./Footer";
 export { default as Collection } from "./Collection";
+export { default as InputFields } from "./InputFields";
+export { default as Button } from "./Button";

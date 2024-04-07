@@ -1,12 +1,58 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Header, TopHeader } from "../../components";
+import React, { useState, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { InputFields, TopHeader, Button } from "../../components";
+import { apiRegister, apiLogin } from "../../apis";
+import Swal from "sweetalert2";
 import logo from "../../assets/logo.png";
 import path from "../../ultils/path";
 import icons from "../../ultils/icons";
+import { register } from "../../store/user/userSlice";
+import { useDispatch } from "react-redux";
 
 const { IoIosMail, IoIosHeartEmpty } = icons;
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [payload, setPayload] = useState({
+    email: "",
+    password: "",
+    firstname: "",
+    lastname: "",
+    mobile: "",
+  });
+  const [isRegister, setIsRegister] = useState(false);
+  const resetPayload = () => {
+    setPayload({
+      email: "",
+      password: "",
+      firstname: "",
+      lastname: "",
+      mobile: "",
+    });
+  };
+  const handleSubmit = useCallback(async () => {
+    const { firstname, lastname, mobile, ...data } = payload;
+    if (isRegister) {
+      const response = await apiRegister(payload);
+      if (response.success) {
+        Swal.fire("Chúc mừng", response.mes, "success").then(() => {
+          setIsRegister(false);
+          resetPayload();
+        });
+      } else {
+        Swal.fire("Thất bại", response.mes, "error");
+      }
+    } else {
+      const rs = await apiLogin(data);
+      if (rs.success) {
+        dispatch(register({ isLoggedIn: true, token: rs.AccessToken, userData: rs.userData }));
+        navigate(`/${path.HOME}`);
+        console.log(register.token);
+      } else {
+        Swal.fire("Đăng nhập thất bại", rs.mes, "error");
+      }
+    }
+  }, [payload, isRegister]);
   return (
     <div className="w-full h-[100%] bg-orange-500 flex flex-col justify-center items-center">
       <TopHeader />
@@ -33,35 +79,60 @@ const Login = () => {
         <div className="flex items-center justify-center py-12 bg-white rounded-lg">
           <div className="mx-auto grid w-[350px] gap-6">
             <div className="grid gap-2 text-center">
-              <h1 className="text-3xl font-bold">Login</h1>
+              <h1 className="text-3xl font-bold">{isRegister ? "Register" : "Login"}</h1>
               <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
             </div>
             <div className="grid gap-4">
-              <div className="grid gap-2">
-                <label htmlFor="email">Email</label>
-                <input className="border p-2 rounded-lg" id="email" type="email" placeholder="m@example.com" required />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <label htmlFor="password">Password</label>
-                  <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
-                    Forgot your password?
-                  </Link>
+              {isRegister && (
+                <div className="flex gap-2">
+                  <div className="grid gap-2">
+                    <InputFields value={payload.firstname} nameKey="firstname" setValue={setPayload} />
+                  </div>
+                  <div className="grid gap-2">
+                    <InputFields value={payload.lastname} nameKey="lastname" setValue={setPayload} />
+                  </div>
                 </div>
-                <input className="border p-2 rounded-lg" id="password" type="password" required />
+              )}
+              <div className="grid gap-2">
+                <InputFields value={payload.email} nameKey="email" setValue={setPayload} />
               </div>
-              <button type="submit" className="w-full bg-[#18181b] py-2 text-white rounded-lg font-semibold">
-                Login
-              </button>
-              <button variant="outline" className="w-full border py-2 rounded-lg font-semibold">
-                Login with Google
-              </button>
+              {isRegister && (
+                <div className="grid gap-2">
+                  <InputFields value={payload.mobile} nameKey="mobile" setValue={setPayload} />
+                </div>
+              )}
+              <div className="grid gap-2">
+                <InputFields value={payload.password} type="password" nameKey="password" setValue={setPayload} />
+              </div>
+              <Button name={isRegister ? "Register" : "Login"} handleOnClick={handleSubmit} fw />
+              <Button name="Login with Google" styles="border py-2 rounded-lg font-semibold" fw />
             </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="#" className="underline">
-                Sign up
-              </Link>
+            <div className="mt-4 text-center text-sm flex ">
+              {!isRegister ? (
+                <>
+                  Don&apos;t have an account?{" "}
+                  <span
+                    className="text-orange-500 cursor-pointer hover:underline"
+                    onClick={() => {
+                      setIsRegister(true);
+                      resetPayload();
+                    }}
+                  >
+                    Sign up
+                  </span>
+                </>
+              ) : (
+                <span
+                  className="text-orange-500 cursor-pointer hover:underline"
+                  onClick={() => {
+                    setIsRegister(false);
+                    resetPayload();
+                  }}
+                >
+                  Go to sign in
+                </span>
+              )}
+              <span className="ml-auto text-orange-500 cursor-pointer hover:underline">Forgot your password?</span>
             </div>
           </div>
         </div>
