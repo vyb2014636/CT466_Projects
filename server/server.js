@@ -14,6 +14,7 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 ); // cho phép client chỉ có thể truy cập đến server qua 4 PT get,post,put,delete <=> CURD
 dbconnect();

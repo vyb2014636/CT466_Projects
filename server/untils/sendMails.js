@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const asyncHandler = require("express-async-handler");
-const sendMail = asyncHandler(async ({ email, html }) => {
+const sendMail = asyncHandler(async ({ email, html, subject }) => {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
@@ -17,7 +17,7 @@ const sendMail = asyncHandler(async ({ email, html }) => {
   let info = await transporter.sendMail({
     from: '"CT466_Project" <no-reply@CT466.email>', // sender address
     to: email, // list of receivers
-    subject: "Quên mật khẩu", // Subject line
+    subject: subject, // Subject line
     html: html, // html body
   });
   return info;

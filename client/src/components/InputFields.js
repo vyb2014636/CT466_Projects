@@ -4,7 +4,7 @@ const InputFields = ({ value, setValue, nameKey, type, invalidFields, setInvalid
   const [focus, setFocus] = useState(false);
   return (
     <div className="w-full relative">
-      {value.trim() !== "" || focus ? (
+      {value?.trim() !== "" || focus ? (
         <label
           className="text-[0.8rem] absolute top-[-8px] left-2  block bg-white px-1 animate-slide-top-focus "
           htmlFor={nameKey}

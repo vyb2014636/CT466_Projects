@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         serif: ["Nunito Sans", "sans-serif"],
       },
+      backgroundColor: {
+        overlay: "rgba(0,0,0,0.4)",
+      },
       flex: {
         2: "2 2 0%",
         3: "3 3 0%",

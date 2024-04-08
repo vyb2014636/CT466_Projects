@@ -58,6 +58,9 @@ var userSchema = new mongoose.Schema(
     passwordResetExpireToken: {
       type: String,
     },
+    registerToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,
