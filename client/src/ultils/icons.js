@@ -4,8 +4,8 @@ import { BsCart2 } from "react-icons/bs";
 import { FaRegUser } from "react-icons/fa6";
 import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { AiOutlineMenu } from "react-icons/ai";
-import { IoCart } from "react-icons/io5";
-import { FaEye } from "react-icons/fa";
+import { IoCart, IoArrowBack } from "react-icons/io5";
+import { FaEye, FaGoogle } from "react-icons/fa";
 import { IoIosArrowForward, IoIosHeartEmpty, IoIosMail } from "react-icons/io";
 
 const icons = {
@@ -23,6 +23,8 @@ const icons = {
   IoIosArrowForward,
   IoIosHeartEmpty,
   IoIosMail,
+  IoArrowBack,
+  FaGoogle,
 };
 
 export default icons;

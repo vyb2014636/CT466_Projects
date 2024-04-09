@@ -171,7 +171,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   if (!email) throw new Error("Quên nhập email!");
   findUser = await User.findOne({ email });
 
-  if (!user) throw new Error("Email không hợp lệ!");
+  if (!findUser) throw new Error("Email không hợp lệ!");
   const ResetToken = findUser.createPasswordChangedToken();
 
   await findUser.save();
@@ -184,10 +184,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
     subject: "Quên mật khẩu",
   };
   const rs = await sendMail(data);
-
   return res.status(200).json({
-    success: true,
-    rs,
+    success: rs.response?.includes("OK") ? true : false,
+    mes: rs.response?.includes("OK") ? "Hãy kiểm tra mail của bạn để tìm mật khẩu." : "Đã có lỗi hãy thử lại sau.",
   });
 });
 

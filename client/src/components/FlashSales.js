@@ -14,7 +14,7 @@ const FlashSales = () => {
   const [ExpireDeal, setExpireDeal] = useState(false);
 
   const fetchProducts = async () => {
-    const response = await apiGetProducts({ limit: 12 });
+    const response = await apiGetProducts({ limit: 12, page: Math.round() * 5 });
     if (response.success) {
       setProductsFS(response.products);
       const today = `${moment().format("MM/DD/YYYY")} 5:00:00`;

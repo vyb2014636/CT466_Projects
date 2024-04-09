@@ -5,7 +5,7 @@ const Button = ({ name, handleOnClick, styles, iconsBefore, iconsAfter, fw }) =>
     <button
       type="button"
       className={
-        styles ? styles : `bg-[#18181b] py-2 text-white rounded-lg font-semibold ${fw ? "w-full" : "w-fit px-2"}`
+        styles ? styles : `bg-[#18181b] py-2 text-white rounded-lg font-semibold ${fw ? "w-full" : "w-fit px-2 "}`
       }
       onClick={() => {
         handleOnClick && handleOnClick();

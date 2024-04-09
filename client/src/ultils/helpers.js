@@ -34,3 +34,78 @@ export function secondsToHms(d) {
   const s = Math.floor((d % 3600) % 60);
   return { h, m, s };
 }
+
+export const validate = (payload, setInvalidFields) => {
+  let invalids = 0;
+  const formatPayload = Object.entries(payload);
+  for (let arr of formatPayload) {
+    if (arr[1]?.trim() === "") {
+      invalids++;
+      setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Vui lòng nhập thông tin" }]);
+    }
+  }
+  for (let arr of formatPayload) {
+    switch (arr[0]) {
+      case "firstname":
+        if (!arr[1].match(/^[ a-zA-Z\-/']+$/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Họ không hợp lệ" }]);
+        }
+        break;
+      case "lastname":
+        if (!arr[1].match(/^[ a-zA-Z\-/']+$/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Tên không hợp lệ" }]);
+        }
+        break;
+      case "mobile":
+        if (!arr[1].match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/g)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Số điện thoại không hợp lệ" }]);
+        }
+        break;
+      case "email":
+        const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!arr[1].match(regex)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Email không hợp lệ" }]);
+        }
+        break;
+      case "password":
+        if (arr[1].length < 6) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải lớn hơn 6 kí tự" }]);
+        }
+        if (!arr[1].match(/[a-z]+/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có kí tự" }]);
+        }
+        if (!arr[1].match(/[A-Z]+/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải in hoa kí tự đầu" }]);
+        }
+        if (!arr[1].match(/[0-9]+/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có ít nhất 1 số" }]);
+        }
+        if (!arr[1].match(/[$@#&!]+/)) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có 1 kí tự đặc biệt" }]);
+        }
+        break;
+      case "confirmPassword":
+        if (payload.password.length === 0) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Vui lòng nhập mật khẩu" }]);
+        }
+        if (arr[1] !== payload.password) {
+          invalids++;
+          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu không khớp" }]);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+  return invalids;
+};
