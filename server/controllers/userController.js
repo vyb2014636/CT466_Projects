@@ -51,41 +51,51 @@ const register = asyncHandler(async (req, res) => {
     throw new Error("Email đã tồn tại");
   } else {
     const token = makeToken();
-    res.cookie("dataRegister", { ...req.body, token }, { httpOnly: true, maxAge: 15 * 60 * 1000 });
-    const html = `Xin vui lòng click vào link dưới đây để thay đổi mật khẩu. Link này sẽ hết hạn sau 15p kể từ bây giờ. <a href = ${process.env.URI_SERVER}/api/user/finalregister/${token} >click here </a>`;
-    await sendMail({ email, html, subject: "Hoàn tất đăng ký tài khoản cho Local Brand" });
+    const emailBTOA = btoa(email) + "@" + token;
+    const newUser = await User.create({ email: emailBTOA, password, firstname, lastname, mobile });
+    if (newUser) {
+      const html = `<h2>Đây là mã xác minh đăng ký tài khoản của bạn: ${token}</h2>`;
+      await sendMail({ email, html, subject: "Hoàn tất đăng ký tài khoản cho Local Brand" });
+    }
+    setTimeout(async () => {
+      await User.deleteOne({ email: emailBTOA });
+    }, 60000);
+
     return res.json({
-      success: true,
-      mes: "Vui lòng check email của bạn để tạo tài khoản",
+      success: newUser ? true : false,
+      mes: newUser ? "Vui lòng kiểm tra email của bạn" : "Đăng ký thất bại",
     });
   }
 });
 
 const finalRegister = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
   const { token } = req.params;
-  if (!cookie || cookie?.dataRegister?.token != token) {
-    res.clearCookie("dataRegister");
-    return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
+  const activeEmail = await User.findOne({ email: new RegExp(`${token}$`) });
+  if (activeEmail) {
+    activeEmail.email = atob(activeEmail?.email?.split("@")[0]);
+    activeEmail.save();
   }
-  const newUser = await User.create({
-    email: cookie?.dataRegister?.email,
-    password: cookie?.dataRegister?.password,
-    mobile: cookie?.dataRegister?.mobile,
-    lastname: cookie?.dataRegister?.lastname,
-    firstname: cookie?.dataRegister?.firstname,
+  return res.json({
+    success: activeEmail ? true : false,
+    mes: activeEmail ? "Bạn đã tạo tài khoản thành công" : "OTP không hợp lệ",
   });
-  res.clearCookie("dataRegister");
-  if (newUser) {
-    return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
-  } else {
-    return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
-  }
+  // const newUser = await User.create({
+  //   email: cookie?.dataRegister?.email,
+  //   password: cookie?.dataRegister?.password,
+  //   mobile: cookie?.dataRegister?.mobile,
+  //   lastname: cookie?.dataRegister?.lastname,
+  //   firstname: cookie?.dataRegister?.firstname,
+  // });
+  // res.clearCookie("dataRegister");
+  // if (newUser) {
+  //   return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
+  // } else {
+  //   return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
+  // }
 });
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return res.status(400).json({
       success: false,

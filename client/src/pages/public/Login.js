@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { InputFields, Button } from "../../components";
-import { apiRegister, apiLogin, apiForgotPassword } from "../../apis";
+import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "../../apis";
 import Swal from "sweetalert2";
 import logo from "../../assets/logo.png";
 import path from "../../ultils/path";
@@ -37,26 +37,24 @@ const Login = () => {
       confirmPassword: "",
     });
   };
+
+  //CLICK SUBMIT FORGOT PASSWORD
   const handleForgotPassword = async () => {
     const response = await apiForgotPassword({ email: email.email });
     if (response.success) {
       toast.success(response.mes);
     } else toast.info(response.mes);
   };
-
-  //SUBMIT ONCLICK
+  console.log(isRegister);
+  //SUBMIT REGISTER ONCLICK
   const handleSubmit = useCallback(async () => {
-    const { firstname, lastname, mobile, ...data } = payload;
+    const { firstname, lastname, mobile, confirmPassword, ...data } = payload;
     const invalids = isRegister ? validate(payload, setInvalidFields) : validate(data, setInvalidFields);
-    console.log(invalids);
     if (invalids === 0) {
       if (isRegister) {
         const response = await apiRegister(payload);
         if (response.success) {
-          Swal.fire("Chúc mừng", response.mes, "success").then(() => {
-            setIsRegister(false);
-            resetPayload();
-          });
+          setVerifyEmail(true);
         } else {
           Swal.fire("Thất bại", response.mes, "error");
         }
@@ -72,6 +70,26 @@ const Login = () => {
     }
   }, [payload, isRegister]);
 
+  //SUBMIT OTP REGISTER
+  const handleSubmitOTP = async () => {
+    const response = await apiFinalRegister(valueOTP);
+    if (response.success) {
+      Swal.fire("Thành công", response.mes, "success").then(() => {
+        setVerifyEmail(false);
+        setIsRegister(false);
+        setValueOTP("");
+        navigate(`/${path.LOGIN}`);
+      });
+    } else {
+      Swal.fire("Thất bại", response.mes, "error").then(() => {
+        setValueOTP("");
+      });
+    }
+  };
+
+  const [focus, setFocus] = useState(false);
+  const [valueOTP, setValueOTP] = useState("");
+  const [verifyEmail, setVerifyEmail] = useState(false);
   useEffect(() => {
     resetPayload();
     setInvalidFields([]);
@@ -79,6 +97,74 @@ const Login = () => {
 
   return (
     <div className="w-full h-full bg-orange-500 flex flex-col justify-center items-center relative">
+      {verifyEmail && (
+        <div className="absolute top-0 left-0 bottom-0 right-0 bg-overlay z-50 flex justify-center py-8 items-center">
+          <div className="bg-white w-[50%] h-[350px] flex flex-col items-center justify-center relative">
+            <div className="grid gap-2 text-center w-[50%] mb-4">
+              <h1 className="text-3xl font-bold">Xác minh đăng ký</h1>
+              <p className="text-balance text-muted-foreground">
+                Chúng tôi đã gửi OTP qua email của bạn,vui lòng kiểm tra email.
+              </p>
+            </div>
+            <div className="grid gap-4 w-[50%]">
+              <div className="grid gap-2">
+                <div className="w-full flex flex-col relative">
+                  <div className="relative">
+                    {valueOTP?.trim() !== "" || focus ? (
+                      <label
+                        className="text-[0.7rem] absolute top-[-8px] left-2  block bg-white px-1 animate-slide-top-focus "
+                        htmlFor={"OTP"}
+                      >
+                        {"OTP"?.slice(0, 1)?.toUpperCase() + "OTP"?.slice(1)}
+                      </label>
+                    ) : (
+                      !focus && (
+                        <label
+                          className="text-[1rem] absolute top-[50%] translate-y-[-50%] left-2 block bg-white px-1 select-none pointer-events-none text-gray-400"
+                          htmlFor={"OTP"}
+                        >
+                          {"OTP"?.slice(0, 1)?.toUpperCase() + "OTP"?.slice(1)}
+                        </label>
+                      )
+                    )}
+                    <input
+                      type="text"
+                      className="w-full border p-2 rounded-lg outline-none"
+                      value={valueOTP}
+                      onChange={(el) => setValueOTP(el.target.value)}
+                      onFocus={() => {
+                        setFocus(true);
+                      }}
+                      onBlur={() => {
+                        setFocus(false);
+                      }}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <Button
+                name="Gửi"
+                styles="border py-2 rounded-lg font-semibold bg-black text-white"
+                fw
+                handleOnClick={handleSubmitOTP}
+              />
+            </div>
+            <div className="mt-4 text-center text-sm flex ">
+              <span
+                className="ml-auto text-orange-500 cursor-pointer hover:underline"
+                onClick={() => {
+                  setIsRegister(true);
+                  setValueOTP("");
+                }}
+              >
+                Đăng ký lại
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isForgotPassword && (
         <div className="absolute top-0 left-0 bottom-0 right-0 bg-overlay z-50 flex justify-center py-8 items-center">
           <div className="bg-white w-[50%] h-[350px] flex flex-col items-center justify-center relative">
