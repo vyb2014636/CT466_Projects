@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navigation from "./Navigation";
 import logo from "../assets/logo.png";
 import icons from "../ultils/icons";
 import { Link } from "react-router-dom";
 import path from "../ultils/path";
+import { getCurrentUser } from "../store/user/asyncAction"; //sẽ chạy vào userSlice để check
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../store/user/userSlice";
 
 const Header = () => {
-  const { GoSearch, BsCart2, MdFavoriteBorder, FaRegUser } = icons;
+  const { IoMdSearch, IoCartOutline, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
+  const dispatch = useDispatch();
+  const { isLoggedIn, currentUser } = useSelector((state) => state.user);
+  useEffect(() => {
+    if (isLoggedIn) dispatch(getCurrentUser());
+  }, [dispatch, isLoggedIn]);
+
   return (
     // <div className="w-main border flex justify-around">
     <div className="w-main flex justify-center pb-5 text-center">
@@ -22,26 +31,35 @@ const Header = () => {
         <Navigation />
 
         <div className="w-full md:w-1/4 lg:w-1/4 pl-4 flex flex-col items-end justify-center">
-          <div className="header__nav__option flex gap-4 ">
-            <Link href="#" className="border-r px-4 search-switch">
-              <GoSearch />
+          <div className="header__nav__option flex justify-center items-center">
+            <Link className="border-r px-3 search-switch flex justify-center items-center">
+              <IoMdSearch size={18} />
               {/* <img src="img/icon/search.png" alt="" /> */}
             </Link>
-            <Link href="#" className="border-r px-4">
+            <Link className="border-r px-4 flex justify-center items-center">
               {/* <img src="img/icon/heart.png" alt="" /> */}
-              <MdFavoriteBorder />
+              <MdFavoriteBorder size={18} />
             </Link>
-            <Link href="#" className="border-r px-4 relative">
+            <Link className="border-r px-4 relative">
               {/* <img src="img/icon/cart.png" alt="" /> */}
-              <BsCart2 />
-              <span className="absolute -top-1 right-2 block h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
+              <IoCartOutline size={18} />
+              <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
                 0
               </span>
             </Link>
-            <Link to={`/${path.LOGIN}`} className="border-r px-4">
-              {/* <img src="img/icon/cart.png" alt="" /> */}
-              <FaRegUser />
+            <Link to={`/${path.LOGIN}`} className="border-r px-4 flex justify-center items-center gap-2">
+              <HiOutlineUser size={18} />
+              <span className="font-[15px]">{isLoggedIn ? currentUser?.lastname : "Profiles"}</span>
             </Link>
+            {isLoggedIn && (
+              <span
+                to={`/${path.LOGOUT}`}
+                className=" px-4 flex justify-center items-center cursor-pointer"
+                onClick={() => dispatch(logout())}
+              >
+                <IoMdLogOut size={18} />
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -71,28 +71,28 @@ export const validate = (payload, setInvalidFields) => {
           setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Email không hợp lệ" }]);
         }
         break;
-      case "password":
-        if (arr[1].length < 6) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải lớn hơn 6 kí tự" }]);
-        }
-        if (!arr[1].match(/[a-z]+/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có kí tự" }]);
-        }
-        if (!arr[1].match(/[A-Z]+/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải in hoa kí tự đầu" }]);
-        }
-        if (!arr[1].match(/[0-9]+/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có ít nhất 1 số" }]);
-        }
-        if (!arr[1].match(/[$@#&!]+/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có 1 kí tự đặc biệt" }]);
-        }
-        break;
+      // case "password":
+      //   if (arr[1].length < 6) {
+      //     invalids++;
+      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải lớn hơn 6 kí tự" }]);
+      //   }
+      //   if (!arr[1].match(/[a-z]+/)) {
+      //     invalids++;
+      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có kí tự" }]);
+      //   }
+      //   if (!arr[1].match(/[A-Z]+/)) {
+      //     invalids++;
+      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải in hoa kí tự đầu" }]);
+      //   }
+      //   if (!arr[1].match(/[0-9]+/)) {
+      //     invalids++;
+      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có ít nhất 1 số" }]);
+      //   }
+      //   if (!arr[1].match(/[$@#&!]+/)) {
+      //     invalids++;
+      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có 1 kí tự đặc biệt" }]);
+      //   }
+      //   break;
       case "confirmPassword":
         if (payload.password.length === 0) {
           invalids++;

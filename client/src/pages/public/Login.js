@@ -7,10 +7,10 @@ import logo from "../../assets/logo.png";
 import path from "../../ultils/path";
 import { validate } from "../../ultils/helpers";
 import { login } from "../../store/user/userSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import icons from "../../ultils/icons";
-
+let idInterval;
 const { FaGoogle } = icons;
 const Login = () => {
   const navigate = useNavigate();
@@ -27,6 +27,12 @@ const Login = () => {
   const [invalidFields, setInvalidFields] = useState([]);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
+  const [secondOTP, setSecondOTP] = useState(0);
+  const [expireOTP, setExpireOTP] = useState(false);
+  const [focus, setFocus] = useState(false);
+  const [valueCode, setValueCode] = useState("");
+  const [isVerifyEmail, setIsVerifyEmail] = useState(false);
+
   const resetPayload = () => {
     setPayload({
       email: "",
@@ -45,7 +51,6 @@ const Login = () => {
       toast.success(response.mes);
     } else toast.info(response.mes);
   };
-  console.log(isRegister);
   //SUBMIT REGISTER ONCLICK
   const handleSubmit = useCallback(async () => {
     const { firstname, lastname, mobile, confirmPassword, ...data } = payload;
@@ -54,7 +59,8 @@ const Login = () => {
       if (isRegister) {
         const response = await apiRegister(payload);
         if (response.success) {
-          setVerifyEmail(true);
+          setSecondOTP(59);
+          setIsVerifyEmail(true);
         } else {
           Swal.fire("Thất bại", response.mes, "error");
         }
@@ -72,45 +78,60 @@ const Login = () => {
 
   //SUBMIT OTP REGISTER
   const handleSubmitOTP = async () => {
-    const response = await apiFinalRegister(valueOTP);
+    const response = await apiFinalRegister(valueCode);
     if (response.success) {
       Swal.fire("Thành công", response.mes, "success").then(() => {
-        setVerifyEmail(false);
+        setIsVerifyEmail(false);
         setIsRegister(false);
-        setValueOTP("");
+        setValueCode("");
         navigate(`/${path.LOGIN}`);
       });
     } else {
       Swal.fire("Thất bại", response.mes, "error").then(() => {
-        setValueOTP("");
+        setValueCode("");
       });
     }
   };
 
-  const [focus, setFocus] = useState(false);
-  const [valueOTP, setValueOTP] = useState("");
-  const [verifyEmail, setVerifyEmail] = useState(false);
+  //Dùng để xác minh OTP(Mã xác minh)
+
   useEffect(() => {
     resetPayload();
     setInvalidFields([]);
   }, [isRegister]);
+  //Bộ đếm giờ để xác minh email
+  useEffect(() => {
+    idInterval && clearInterval(idInterval);
+  }, [expireOTP]);
+
+  useEffect(() => {
+    idInterval = setInterval(() => {
+      if (secondOTP > 0) setSecondOTP((prev) => prev - 1);
+      else setExpireOTP(!expireOTP);
+    }, 1000);
+    return () => {
+      clearInterval(idInterval);
+    };
+  }, [secondOTP, expireOTP]);
 
   return (
     <div className="w-full h-full bg-orange-500 flex flex-col justify-center items-center relative">
-      {verifyEmail && (
+      {isVerifyEmail && (
         <div className="absolute top-0 left-0 bottom-0 right-0 bg-overlay z-50 flex justify-center py-8 items-center">
           <div className="bg-white w-[50%] h-[350px] flex flex-col items-center justify-center relative">
             <div className="grid gap-2 text-center w-[50%] mb-4">
               <h1 className="text-3xl font-bold">Xác minh đăng ký</h1>
-              <p className="text-balance text-muted-foreground">
-                Chúng tôi đã gửi OTP qua email của bạn,vui lòng kiểm tra email.
+              <p className="text-muted-foreground">
+                Chúng tôi đã gửi OTP qua email của bạn,vui lòng kiểm tra email trong{" "}
+                <span className="font-bold border px-1">{secondOTP}s</span>
+                {/* {<CountDown number={secondOTP} unit={"s"} />} */}
               </p>
             </div>
             <div className="grid gap-4 w-[50%]">
               <div className="grid gap-2">
                 <div className="w-full flex flex-col relative">
                   <div className="relative">
-                    {valueOTP?.trim() !== "" || focus ? (
+                    {valueCode?.trim() !== "" || focus ? (
                       <label
                         className="text-[0.7rem] absolute top-[-8px] left-2  block bg-white px-1 animate-slide-top-focus "
                         htmlFor={"OTP"}
@@ -130,8 +151,8 @@ const Login = () => {
                     <input
                       type="text"
                       className="w-full border p-2 rounded-lg outline-none"
-                      value={valueOTP}
-                      onChange={(el) => setValueOTP(el.target.value)}
+                      value={valueCode}
+                      onChange={(el) => setValueCode(el.target.value)}
                       onFocus={() => {
                         setFocus(true);
                       }}
@@ -155,7 +176,9 @@ const Login = () => {
                 className="ml-auto text-orange-500 cursor-pointer hover:underline"
                 onClick={() => {
                   setIsRegister(true);
-                  setValueOTP("");
+                  setIsVerifyEmail(false);
+                  setValueCode("");
+                  resetPayload();
                 }}
               >
                 Đăng ký lại

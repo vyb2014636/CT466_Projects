@@ -36,7 +36,6 @@ const FlashSales = () => {
 
   useEffect(() => {
     idInterval = setInterval(() => {
-      console.log(1);
       if (Second > 0) setSecond((prev) => prev - 1);
       else {
         if (Minute > 0) {

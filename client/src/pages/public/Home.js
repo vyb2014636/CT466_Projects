@@ -3,7 +3,6 @@ import { Slide, BestSeller, Sidebar, FlashSales, Collection } from "../../compon
 import { useSelector } from "react-redux";
 const Home = () => {
   const { isLoggedIn, current } = useSelector((state) => state.user);
-  console.log({ isLoggedIn, current });
   return (
     <div className="flex w-full flex-col items-center">
       <div className="w-main mb-8 text-center  h-[40rem]">

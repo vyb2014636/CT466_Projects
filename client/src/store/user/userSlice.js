@@ -1,36 +1,43 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getCurrentUser } from "./asyncAction";
 
 export const userSlice = createSlice({
   name: "user",
   initialState: {
     isLoggedIn: false,
-    current: null,
+    currentUser: null,
     token: null,
+    loading: false,
   },
   reducers: {
     login: (state, action) => {
       state.isLoggedIn = action.payload.isLoggedIn;
-      state.current = action.payload.userData;
       state.token = action.payload.token;
     },
+    logout: (state, action) => {
+      state.isLoggedIn = false;
+      state.token = null;
+    },
+    startSaving: (state) => {
+      state.loading = true;
+    },
   },
-  // extraReducers: (builder) => {
-  //   builder.addCase(getNewProducts.pending, (state) => {
-  //     state.isLoading = true;
-  //   });
+  extraReducers: (builder) => {
+    builder.addCase(getCurrentUser.pending, (state) => {
+      state.isLoading = true;
+    });
 
-  //   builder.addCase(getNewProducts.fulfilled, (state, action) => {
-  //     state.isLoading = false;
-  //     state.newProducts = action.payload;
-  //   });
+    builder.addCase(getCurrentUser.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.currentUser = action.payload;
+    });
 
-  //   builder.addCase(getNewProducts.rejected, (state, action) => {
-  //     console.log(getNewProducts);
-  //     state.isLoading = false;
-  //     state.errorMessage = action.payload.message;
-  //   });
-  // },
+    builder.addCase(getCurrentUser.rejected, (state, action) => {
+      state.isLoading = false;
+      state.currentUser = null;
+    });
+  },
 });
 
-export const { login } = userSlice.actions;
+export const { login, logout } = userSlice.actions;
 export default userSlice.reducer;

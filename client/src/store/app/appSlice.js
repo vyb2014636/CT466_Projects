@@ -19,7 +19,6 @@ export const appSlice = createSlice({
     });
 
     builder.addCase(actions.getCategories.rejected, (state, action) => {
-      console.log(actions);
       state.isLoading = false;
       state.errorMessage = action.payload.message;
     });

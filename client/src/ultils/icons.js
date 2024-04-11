@@ -1,15 +1,16 @@
-import { GoSearch } from "react-icons/go";
+import { IoMdSearch } from "react-icons/io";
 import { MdFavoriteBorder } from "react-icons/md";
 import { BsCart2 } from "react-icons/bs";
 import { FaRegUser } from "react-icons/fa6";
 import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
-import { AiOutlineMenu } from "react-icons/ai";
-import { IoCart, IoArrowBack } from "react-icons/io5";
+import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
+import { IoCart, IoArrowBack, IoCartOutline } from "react-icons/io5";
 import { FaEye, FaGoogle } from "react-icons/fa";
-import { IoIosArrowForward, IoIosHeartEmpty, IoIosMail } from "react-icons/io";
-
+import { IoIosArrowForward, IoIosHeartEmpty, IoIosMail, IoMdLogOut } from "react-icons/io";
+import { CiUser } from "react-icons/ci";
+import { HiOutlineUser } from "react-icons/hi";
 const icons = {
-  GoSearch,
+  IoMdSearch,
   MdFavoriteBorder,
   BsCart2,
   FaRegUser,
@@ -25,6 +26,11 @@ const icons = {
   IoIosMail,
   IoArrowBack,
   FaGoogle,
+  IoMdLogOut,
+  CiUser,
+  AiOutlineUser,
+  HiOutlineUser,
+  IoCartOutline,
 };
 
 export default icons;

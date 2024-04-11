@@ -7,7 +7,6 @@ const ResetPassword = () => {
   const [passwordNew, setPasswordNew] = useState({ password: "" });
   const { token } = useParams();
   const handleResetPassword = async () => {
-    console.log(token);
     const response = await apiResetPassword({ passwordNew: passwordNew.password, token: token });
   };
   return (
