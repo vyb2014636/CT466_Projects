@@ -35,3 +35,50 @@ div.slick-list,
 .slick-slide div {
   height: 100%;
 }
+
+.detail-body .slick-track {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.detail-body .slick-next::before {
+  content: "\27F6";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.detail-body .slick-prev::before {
+  content: "\27F5";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+.detail-body .slick-prev {
+  left: 0;
+  color: black;
+}
+.detail-body .slick-next {
+  right: 0;
+}
+/* .img-details > div:nth-child(1) {
+  flex: 0 0 69%;
+}
+.img-details > div:nth-child(2) {
+  flex: 0 0 30%;
+} */
+
+/* .img-details div:nth-child(1) .slick-list,
+.img-details div:nth-child(1) .slick-track,
+.img-details div:nth-child(1) .slick-slide,
+.img-details div:nth-child(1) .slick-slide div {
+  height: 100%;
+}
+.img-details div:nth-child(2) .slick-list,
+.img-details div:nth-child(2) .slick-track,
+.img-details div:nth-child(2) .slick-slide,
+.img-details div:nth-child(2) .slick-slide div {
+  height: 100%;
+} */

@@ -68,7 +68,9 @@ const Login = () => {
         const rs = await apiLogin(data);
         if (rs.success) {
           dispatch(login({ isLoggedIn: true, token: rs.AccessToken, userData: rs.userData }));
-          navigate(`/${path.HOME}`);
+          setTimeout(() => {
+            navigate(`/${path.HOME}`);
+          }, 1000);
         } else {
           Swal.fire("Đăng nhập thất bại", rs.mes, "error");
         }

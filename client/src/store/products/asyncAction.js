@@ -6,3 +6,9 @@ export const getNewProducts = createAsyncThunk("product/newProducts", async (dat
   if (!response.success) return rejectWithValue(response);
   return response.products;
 });
+
+// export const getProductDetail = createAsyncThunk("product/productDetail", async (data, { rejectWithValue }) => {
+//   const response = await apis.apiGetProducts({ limit: "1", });
+//   if (!response.success) return rejectWithValue(response);
+//   return response.products;
+// });
