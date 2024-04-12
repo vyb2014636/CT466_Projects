@@ -14,3 +14,4 @@ export { default as Footer } from "./Footer";
 export { default as Collection } from "./Collection";
 export { default as InputFields } from "./InputFields";
 export { default as Button } from "./Button";
+export { default as Breadcrum } from "./Breadcrum";

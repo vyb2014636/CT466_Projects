@@ -9,7 +9,7 @@ const { AiOutlineMenu, IoCart, FaEye } = icons;
 
 const Product = ({ productData, isNew }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
-
+  console.log(productData);
   return (
     <motion.div // Thay thế div bằng motion.div
       className=" md:w-1/4 lg:w-1/5 sm:w-1/2 px-3 py-4 h-[343px] flex-auto"
@@ -20,7 +20,7 @@ const Product = ({ productData, isNew }) => {
     >
       <Link
         className="flex flex-col"
-        to={`/${path.DETAIL_PRODUCT}/${productData?._id}/${productData?.title}`}
+        to={`/${productData?.category?.title?.toLowerCase()}/${productData?._id}/${productData?.title}`}
         style={{
           boxShadow: "0 2px 4px 0 rgba(0,0,0,.12), 0 -2px 2px 0 rgba(0,0,0,.04)",
           height: "100%",

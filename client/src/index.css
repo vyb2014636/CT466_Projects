@@ -65,10 +65,11 @@ div.slick-list,
 }
 /* .img-details > div:nth-child(1) {
   flex: 0 0 69%;
+}*/
+.img-details .slick-slider:nth-of-type(2) .slick-next,
+.img-details .slick-slider:nth-of-type(2) .slick-prev {
+  opacity: 0;
 }
-.img-details > div:nth-child(2) {
-  flex: 0 0 30%;
-} */
 
 /* .img-details div:nth-child(1) .slick-list,
 .img-details div:nth-child(1) .slick-track,

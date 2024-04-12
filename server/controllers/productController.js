@@ -13,6 +13,14 @@ const createProduct = asyncHandler(async (req, res) => {
     createProduct: newProduct ? newProduct : "Không tạo được sản phẩm",
   });
 });
+const getProductId = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const response = await Product.findById(pid).populate("category", "title");
+  return res.json({
+    success: response ? true : false,
+    product: response ? response : "Không tìm thấy sản phẩm",
+  });
+});
 
 const getProduct = asyncHandler(async (req, res) => {
   const queries = { ...req.query }; //tạo ra thêm 1 vùng dữ liệu nữa ở đó queries->vùngDLCopy và req.query->vùngDL ban đầu (Nếu không có ... trước req.query thì cả queries và req.query sẽ -> cùng 1 vùng DL)
@@ -24,7 +32,7 @@ const getProduct = asyncHandler(async (req, res) => {
   queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
   const formatQueries = JSON.parse(queryString);
   if (queries?.title) formatQueries.title = { $regex: queries.title, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
-  let queryCommand = Product.find(formatQueries); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
+  let queryCommand = Product.find(formatQueries).populate("category", "title"); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
   //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
 
   //Sort sắp xếp
@@ -165,4 +173,5 @@ module.exports = {
   deleteProduct,
   ratings,
   uploadImageProduct,
+  getProductId,
 };

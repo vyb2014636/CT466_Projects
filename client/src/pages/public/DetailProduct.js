@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { apiGetProductDetail } from "../../apis";
 import { formatMoney } from "../../ultils/helpers";
-import { Button } from "../../components";
+import { Button, Breadcrum } from "../../components";
 import Slider from "react-slick";
 
 const DetailProduct = () => {
@@ -13,20 +13,12 @@ const DetailProduct = () => {
   let sliderRef2 = useRef(null);
   const handleOnChangeValueNumber = (value) => {
     if (value === "" || value === "0") {
-      // Nếu giá trị nhập vào là "0", chỉ cập nhật state khi giá trị nhập vào là khác "0"
       setValueNumber(1);
     } else if (/^[1-9]\d*$/.test(value)) {
-      // Nếu giá trị nhập vào là một số khác "0", cập nhật state mà loại bỏ số 0 ở đầu nếu có
       setValueNumber(parseInt(value, 10).toString());
     } else {
       setValueNumber(value);
     }
-
-    // if (value.length === 1 && value === "0") {
-
-    // }
-    // if (value > 0) setValueNumber(value);
-    // else setValueNumber(0);
   };
   const handleChangeUpNumber = () => {
     setValueNumber((prev) => prev + 1);
@@ -43,40 +35,40 @@ const DetailProduct = () => {
     setNav1(sliderRef1);
     setNav2(sliderRef2);
   }, []);
-  const { pid, title } = useParams();
+  const { pid, title, category } = useParams();
   const [descriptions, setDescriptions] = useState([]);
-  const [productDetail, setProductDetail] = useState([]);
+  const [productDetail, setProductDetail] = useState(null);
   const fetchProductDetail = async () => {
-    const response = await apiGetProductDetail({ _id: pid, title: title });
+    const response = await apiGetProductDetail(pid);
     if (response?.success) {
-      setProductDetail(response.products);
-      setDescriptions(response.products[0]?.description?.split("\n")?.filter((line) => line.trim() !== ""));
+      setProductDetail(response.product);
+      setDescriptions(response.product?.description?.split("\n")?.filter((line) => line.trim() !== ""));
     }
   };
   useEffect(() => {
     fetchProductDetail();
-  }, []);
+  }, [pid]);
 
   return (
     <div className="w-full  h-[800px] flex flex-col justify-center items-center py-4">
-      <div className="w-main  h-[100%] ">
-        <div className="detail-header w-full h-[8%]">
-          <div className="text-gray-300 flex gap-2">
-            <span>shop</span>/<span>top</span>/<span>{title}</span>
-          </div>
+      <div className="detail-header w-full h-[8%] bg-gray-200 py-3 mb-3">
+        <div className="w-main h-full m-auto text-black flex gap-2 ">
+          <Breadcrum title={title} category={category} />
         </div>
-        <div className="detail-body w-full  h-[69%] flex gap-1">
+      </div>
+      <div className="w-main  h-[100%] ">
+        <div className="detail-body w-full  h-[74%] flex gap-1">
           <div className="md:w-1/6 lg:w-1/6 w-full  h-full"></div>
           <div className="img-details md:w-2/6 lg:w-2/6  w-full  h-full px-8 flex">
             <div className="flex flex-col  w-full flex-1">
               <Slider asNavFor={nav2} ref={(slider) => (sliderRef1 = slider)}>
-                <img src={productDetail[0]?.thumb} className="object-contain h-full w-full" alt="" />
+                <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
                 <img
                   src="https://slyclothing.vn/images/bigheart_w.webp"
                   className="object-contain h-full w-full"
                   alt=""
                 />
-                <img src={productDetail[0]?.thumb} className="object-contain h-full w-full" alt="" />
+                <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
                 <img
                   src="https://slyclothing.vn/images/bigheart_w.webp"
                   className="object-contain h-full w-full"
@@ -92,7 +84,7 @@ const DetailProduct = () => {
               >
                 {/* {productDetail?.images?.map((el) => ( */}
                 <div className="w-1/4 border  h-full mr-2">
-                  <img src={productDetail[0]?.thumb} className="object-contain h-full w-full" alt="" />
+                  <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
                 </div>
                 <div className="w-1/4 border  h-full ">
                   <img
@@ -102,7 +94,7 @@ const DetailProduct = () => {
                   />
                 </div>
                 <div className="w-1/4 border  h-full ">
-                  <img src={productDetail[0]?.thumb} className="object-contain h-full w-full" alt="" />
+                  <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
                 </div>
                 <div className="w-1/4 border  h-full ">
                   <img
@@ -156,7 +148,7 @@ const DetailProduct = () => {
               </div>
 
               <div className="price-describe px-[0.75rem] font-[1000] text-[1.5rem]">
-                {`${formatMoney(productDetail[0]?.price)}`}
+                {`${formatMoney(productDetail?.price)}`}
                 <span class="align-text-top text-[1rem]">₫</span>
               </div>
               <div className="flex gap-1 mt-4 ">
@@ -199,7 +191,7 @@ const DetailProduct = () => {
           </div>
           <div className="md:w-1/6 lg:w-1/6  w-full  h-full"></div>
         </div>
-        <div className="detail-rating w-full h-[22%]"></div>
+        <div className="detail-rating w-full h-[25%]"></div>
       </div>
     </div>
   );
