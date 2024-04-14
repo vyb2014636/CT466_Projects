@@ -15,3 +15,5 @@ export { default as Collection } from "./Collection";
 export { default as InputFields } from "./InputFields";
 export { default as Button } from "./Button";
 export { default as Breadcrum } from "./Breadcrum";
+export { default as CustomQuantity } from "./CustomQuantity";
+export { default as InfoProduct } from "./DetailProduct/InfoProduct";

@@ -58,16 +58,3 @@ const BestSeller = () => {
 };
 
 export default BestSeller;
-
-// {categories.map((el) => (
-//   <li className="active mixitup-control-active text-[18px] " data-filter="*">
-//     <NavLink
-//       to="/login"
-//       className={({ isActive }) =>
-//         isActive ? "mr-4  " : "mr-4  text-gray-400 hover:text-black"
-//       }
-//     >
-//       {el.title}
-//     </NavLink>
-//   </li>
-// ))}

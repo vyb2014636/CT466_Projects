@@ -21,8 +21,7 @@ const getCategories = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { cid } = req.params;
-  if (Object.keys(req.body).length === 0)
-    throw new Error("Vui lòng nhập vào loại danh mục cần update");
+  if (Object.keys(req.body).length === 0) throw new Error("Vui lòng nhập vào loại danh mục cần update");
   const respone = await Category.findByIdAndUpdate(cid, req.body, {
     new: true,
   });

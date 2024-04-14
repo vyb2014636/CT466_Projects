@@ -1,116 +1,134 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { apiGetProductDetail } from "../../apis";
-import { formatMoney } from "../../ultils/helpers";
-import { Button, Breadcrum } from "../../components";
+import { apiGetProductDetail, apiGetProducts, getFromCategory } from "../../apis";
+import { formatMoney, renderStarFromNumber } from "../../ultils/helpers";
+import { Button, Breadcrum, CustomQuantity, InfoProduct, CustomSlider } from "../../components";
 import Slider from "react-slick";
 
 const DetailProduct = () => {
-  const [valueNumber, setValueNumber] = useState(1);
+  //Slick slider
   const [nav1, setNav1] = useState(null);
   const [nav2, setNav2] = useState(null);
   let sliderRef1 = useRef(null);
   let sliderRef2 = useRef(null);
-  const handleOnChangeValueNumber = (value) => {
-    if (value === "" || value === "0") {
-      setValueNumber(1);
-    } else if (/^[1-9]\d*$/.test(value)) {
-      setValueNumber(parseInt(value, 10).toString());
-    } else {
-      setValueNumber(value);
-    }
-  };
-  const handleChangeUpNumber = () => {
-    setValueNumber((prev) => prev + 1);
-  };
-  const handleChangeDownNumber = () => {
-    setValueNumber((prev) => prev - 1);
-  };
-
-  useEffect(() => {
-    if (valueNumber < 1) setValueNumber(1);
-  }, [valueNumber]);
-
   useEffect(() => {
     setNav1(sliderRef1);
     setNav2(sliderRef2);
   }, []);
+  //Slick slider
+
+  const [quantityNumber, setQuantityNumber] = useState(1);
+  const handleOnChangeQuantityNumber = useCallback(
+    (quantity) => {
+      if (!Number(quantity) || Number(quantity) < 1) return;
+      else if (Number(quantity) > 100) setQuantityNumber(100);
+      else setQuantityNumber(quantity);
+    },
+    [quantityNumber]
+  );
+
+  const handleChangeNumber = useCallback(
+    (flag) => {
+      if (flag === "Minus" && quantityNumber === 1) return;
+      if (flag === "Plus" && quantityNumber === 100) return;
+      if (flag === "Plus") setQuantityNumber((prev) => +prev + 1);
+      if (flag === "Minus") setQuantityNumber((prev) => +prev - 1);
+    },
+    [quantityNumber]
+  );
+
   const { pid, title, category } = useParams();
   const [descriptions, setDescriptions] = useState([]);
+  const [categoryCurrent, setCategoryCurrent] = useState({
+    _id: "",
+    title: "",
+  });
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [productDetail, setProductDetail] = useState(null);
   const fetchProductDetail = async () => {
     const response = await apiGetProductDetail(pid);
     if (response?.success) {
       setProductDetail(response.product);
       setDescriptions(response.product?.description?.split("\n")?.filter((line) => line.trim() !== ""));
+      setCategoryCurrent({ _id: response.product?.category?._id, title: response.product?.category?.title });
     }
   };
+  const fetchProducts = async () => {
+    const findFollowCategory = await getFromCategory(categoryCurrent._id, pid);
+    if (findFollowCategory?.success) {
+      setRelatedProducts(findFollowCategory?.relateProducts);
+    }
+  };
+
   useEffect(() => {
     fetchProductDetail();
   }, [pid]);
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProductDetail]);
 
   return (
-    <div className="w-full  h-[800px] flex flex-col justify-center items-center py-4">
+    <div className="w-full  md:min-h-[800px] sm:h-full flex flex-col items-center py-4">
       <div className="detail-header w-full h-[8%] bg-gray-200 py-3 mb-3">
         <div className="w-main h-full m-auto text-black flex gap-2 ">
           <Breadcrum title={title} category={category} />
         </div>
       </div>
-      <div className="w-main  h-[100%] ">
-        <div className="detail-body w-full  h-[74%] flex gap-1">
+      <div className="detail-body w-main h-[100%] border-orange-500  border-b-4 py-10">
+        <div className="w-full h-[74%] flex gap-1">
           <div className="md:w-1/6 lg:w-1/6 w-full  h-full"></div>
-          <div className="img-details md:w-2/6 lg:w-2/6  w-full  h-full px-8 flex">
-            <div className="flex flex-col  w-full flex-1">
-              <Slider asNavFor={nav2} ref={(slider) => (sliderRef1 = slider)}>
-                <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-                <img
-                  src="https://slyclothing.vn/images/bigheart_w.webp"
-                  className="object-contain h-full w-full"
-                  alt=""
-                />
-                <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-                <img
-                  src="https://slyclothing.vn/images/bigheart_w.webp"
-                  className="object-contain h-full w-full"
-                  alt=""
-                />
-              </Slider>
-              <Slider
-                asNavFor={nav1}
-                ref={(slider) => (sliderRef2 = slider)}
-                slidesToShow={4}
-                swipeToSlide={true}
-                focusOnSelect={true}
-              >
-                {/* {productDetail?.images?.map((el) => ( */}
-                <div className="w-1/4 border  h-full mr-2">
-                  <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-                </div>
-                <div className="w-1/4 border  h-full ">
-                  <img
-                    src="https://slyclothing.vn/images/bigheart_w.webp"
-                    className="object-contain h-full w-full"
-                    alt=""
-                  />
-                </div>
-                <div className="w-1/4 border  h-full ">
-                  <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-                </div>
-                <div className="w-1/4 border  h-full ">
-                  <img
-                    src="https://slyclothing.vn/images/bigheart_w.webp"
-                    className="object-contain h-full w-full"
-                    alt=""
-                  />
-                </div>
-                {/* ))} */}
-              </Slider>
-            </div>
+          <div className="details-left md:w-2/6 lg:w-2/6 w-full h-full px-8 flex flex-col gap-2">
+            <Slider
+              className="details-left-top h-[77%] sm:w-[20%] md:w-full"
+              asNavFor={nav2}
+              ref={(slider) => (sliderRef1 = slider)}
+            >
+              <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
+              <img
+                src="https://slyclothing.vn/images/bigheart_w.webp"
+                className="object-contain h-full w-full"
+                alt=""
+              />
+              <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
+              <img
+                src="https://slyclothing.vn/images/bigheart_w.webp"
+                className="object-contain h-full w-full"
+                alt=""
+              />
+            </Slider>
+            <Slider
+              className="details-left-bottom flex-grow sm:w-full"
+              asNavFor={nav1}
+              ref={(slider) => (sliderRef2 = slider)}
+              slidesToShow={4}
+              swipeToSlide={true}
+              focusOnSelect={true}
+            >
+              {/* {productDetail?.images?.map((el) => ( */}
+              <img src={productDetail?.thumb} className="object-contain h-full w-full " alt="" />
+              <img
+                src="https://slyclothing.vn/images/bigheart_w.webp"
+                className="object-contain h-full w-full"
+                alt=""
+              />
+              <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
+              <img
+                src="https://slyclothing.vn/images/bigheart_w.webp"
+                className="object-contain h-full w-full"
+                alt=""
+              />
+              {/* ))} */}
+            </Slider>
           </div>
-          <div className="describe-details md:w-2/6 lg:w-2/6  sm:w-full  h-full border ">
+          <div className="details-right md:w-2/6 lg:w-2/6 border ">
             <div className="flex flex-col  w-full  h-full gap-2 border px-4">
               <div className="title-describe mb-2">
                 <h1 className="font-[700] tracking-widest leading-6 text-[1.3rem] text-[#555555] my-3">{title}</h1>
+                <div className="flex">
+                  {renderStarFromNumber(productDetail?.totalsRatings)?.map((el, index) => (
+                    <span key={index}>{el}</span>
+                  ))}
+                </div>
               </div>
               <div className="body-describeborder-black relative my-2">
                 <div className="absolute top-[20%] right-0 bottom-[20%] bg-black w-[0.1rem]"></div>
@@ -146,7 +164,6 @@ const DetailProduct = () => {
                   Size
                 </label>
               </div>
-
               <div className="price-describe px-[0.75rem] font-[1000] text-[1.5rem]">
                 {`${formatMoney(productDetail?.price)}`}
                 <span class="align-text-top text-[1rem]">₫</span>
@@ -154,33 +171,14 @@ const DetailProduct = () => {
               <div className="flex gap-1 mt-4 ">
                 <Button
                   name="THÊM VÀO GIỎ HÀNG"
-                  styles={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[85%]"}
+                  styles={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[80%]"}
                 ></Button>
-                <div className="flex w-[14%]">
-                  <input
-                    type="text"
-                    className="border outline-none text-center w-[60%] "
-                    value={valueNumber}
-                    onChange={(el) => handleOnChangeValueNumber(el.target.value)}
-                    size="4"
-                    min="1"
-                    max=""
-                    step="1"
+                <div className="flex w-[20%]">
+                  <CustomQuantity
+                    quantity={quantityNumber}
+                    handleOnchangeQuantityNumber={handleOnChangeQuantityNumber}
+                    handleChangeNumber={handleChangeNumber}
                   />
-                  <div className="w-[40%]">
-                    <div
-                      className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white"
-                      onClick={handleChangeUpNumber}
-                    >
-                      +
-                    </div>
-                    <div
-                      className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white"
-                      onClick={handleChangeDownNumber}
-                    >
-                      -
-                    </div>
-                  </div>
                 </div>
               </div>
               <div className="border-t-2 border-black pt-8 h-[20%] mt-auto">
@@ -192,6 +190,19 @@ const DetailProduct = () => {
           <div className="md:w-1/6 lg:w-1/6  w-full  h-full"></div>
         </div>
         <div className="detail-rating w-full h-[25%]"></div>
+      </div>
+      <div className="detail-info w-main mt-8">
+        <InfoProduct />
+      </div>
+      <div className="detail-info w-main my-8">
+        <h3 className="border-orange-500 border-b-2 font-bold track mb-4">SẢN PHẨM LIÊN QUAN</h3>
+        <div className="mx-[-10px]">
+          <CustomSlider
+            products={relatedProducts}
+            normal={true}
+            scroll={relatedProducts.length < 5 && relatedProducts.length}
+          />
+        </div>
       </div>
     </div>
   );

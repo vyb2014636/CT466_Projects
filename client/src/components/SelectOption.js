@@ -1,10 +1,13 @@
 import React from "react";
-
-const SelectOption = ({ icon }) => {
+import { Link } from "react-router-dom";
+const SelectOption = ({ icon, navi }) => {
   return (
-    <div className="w-[38px] h-[36px] rounded-full shadow-md flex justify-center items-center bg-slate-300 cursor-pointer hover:bg-black hover:text-white  ">
+    <Link
+      className="w-[38px] h-[36px] rounded-full shadow-md flex justify-center items-center bg-slate-300 cursor-pointer hover:bg-black hover:text-white  "
+      to={navi}
+    >
       {icon}
-    </div>
+    </Link>
   );
 };
 

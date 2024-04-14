@@ -15,8 +15,8 @@ const FlashSales = () => {
 
   const fetchProducts = async () => {
     const response = await apiGetProducts({ limit: 12, page: Math.round() * 5 });
-    if (response.success) {
-      setProductsFS(response.products);
+    if (response?.success) {
+      setProductsFS(response?.products);
       const today = `${moment().format("MM/DD/YYYY")} 5:00:00`;
       const seconds = new Date(today).getTime() - new Date().getTime() + 24 * 3600 * 1000;
       const number = secondsToHms(seconds);

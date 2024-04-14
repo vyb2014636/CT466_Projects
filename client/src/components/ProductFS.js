@@ -1,11 +1,16 @@
 import React, { memo, useState } from "react";
+// import { Navigate, useNavigate } from "react-router-dom";
 import { formatMoney, renderStarFromNumber } from "../ultils/helpers";
 import { SelectOption } from "./";
 import { motion } from "framer-motion";
 import icons from "../ultils/icons";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
-const ProductFS = ({ productData }) => {
+const ProductFS = ({ productData, normal }) => {
+  // const navigate = useNavigate();
+  // const navigationClick = (titleCate, idSP, titleSP) => {
+  //   navigate(`/${titleCate.toLowerCase()}/${idSP}/${titleSP}`);
+  // };
   const [isShowOptions, setisShowOptions] = useState(false);
   return (
     <div
@@ -23,10 +28,7 @@ const ProductFS = ({ productData }) => {
       <div className="relative outline-8  overflow-hidden ">
         <img
           className="object-contain w-[100%] h-[180px]"
-          src={
-            productData?.thumb ||
-            "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "
-          }
+          src={productData?.thumb || "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "}
           alt=""
         />
         <motion.ul
@@ -36,13 +38,18 @@ const ProductFS = ({ productData }) => {
           transition={{ duration: 0.4 }}
           whileHover={{ y: 0 }}
         >
-          <SelectOption icon={<FaEye />} />
+          <SelectOption
+            icon={<FaEye />}
+            navi={`/${productData?.category?.title?.toLowerCase()}/${productData?._id}/${productData?.title}`}
+          />
           <SelectOption icon={<IoCart />} />
           <SelectOption icon={<AiOutlineMenu />} />
         </motion.ul>
-        <span className="absolute top-3 left-0 text-center z-10 bg-orange-500 w-[50px] leading-6 text-white tracking-widest border-r border-solid border-orange-500 rounded-tr-full rounded-br-full">
-          Sales
-        </span>
+        {!normal && (
+          <span className="absolute top-3 left-0 text-center z-10 bg-orange-500 w-[50px] leading-6 text-white tracking-widest border-r border-solid border-orange-500 rounded-tr-full rounded-br-full">
+            Sales
+          </span>
+        )}
       </div>
       <div className="flex flex-col items-start py-4 px-4 gap-2 ">
         {isShowOptions ? (
@@ -53,9 +60,7 @@ const ProductFS = ({ productData }) => {
             + Add To Cart
           </motion.span>
         ) : (
-          <h6 className="line-clamp-1 font-semibold text-left text-[15px] ">
-            {productData?.title}
-          </h6>
+          <h6 className="line-clamp-1 font-semibold text-left text-[15px] ">{productData?.title}</h6>
         )}
         <h5 className="font-bold">{`${formatMoney(productData?.price)} VNĐ`}</h5>
         <span className="rating flex h-4">

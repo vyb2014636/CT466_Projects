@@ -1,6 +1,7 @@
 import React from "react";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 import { Link } from "react-router-dom";
+import { createSlug } from "../ultils/helpers";
 import icons from "../ultils/icons";
 
 const Breadcrum = ({ title, category }) => {
@@ -20,7 +21,7 @@ const Breadcrum = ({ title, category }) => {
             <Link
               className="flex gap-1 items-center hover:text-orange-500 capitalize"
               key={match.pathname}
-              to={match.pathname}
+              to={createSlug(match.pathname)}
             >
               <span>{breadcrumb}</span>
               <IoIosArrowForward />

@@ -76,6 +76,19 @@ const getProduct = asyncHandler(async (req, res) => {
     });
 });
 
+const getProductsFromCategory = asyncHandler(async (req, res) => {
+  const { cate_Id, product_Id } = req.query;
+  if (!cate_Id) throw new Error("Chưa có thể loại");
+  const populatedProducts = await Product.find().populate("category", "title");
+  let findProducts = populatedProducts.filter((product) => String(product.category._id) === String(cate_Id));
+  findProducts = findProducts.filter((product) => String(product._id) !== String(product_Id));
+
+  return res.status(200).json({
+    success: findProducts ? true : false,
+    relateProducts: findProducts ? findProducts : "Khong tim thay san pham",
+  });
+});
+
 const getAllProducts = asyncHandler(async (req, res) => {
   const findProducts = await Product.find();
   return res.status(200).json({
@@ -174,4 +187,5 @@ module.exports = {
   ratings,
   uploadImageProduct,
   getProductId,
+  getProductsFromCategory,
 };
