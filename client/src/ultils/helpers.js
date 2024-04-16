@@ -116,3 +116,12 @@ export const validate = (payload, setInvalidFields) => {
   }
   return invalids;
 };
+
+export const colors = [
+  { vn: "đỏ", en: "red" },
+  { vn: "đen", en: "black" },
+  { vn: "vàng", en: "yellow" },
+  { vn: "xanh biển", en: "blue" },
+  { vn: "tím", en: "purple" },
+  { vn: "kem", en: "cream" },
+];

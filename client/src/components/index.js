@@ -17,3 +17,4 @@ export { default as Button } from "./Button";
 export { default as Breadcrum } from "./Breadcrum";
 export { default as CustomQuantity } from "./CustomQuantity";
 export { default as InfoProduct } from "./DetailProduct/InfoProduct";
+export { default as SearchItems } from "./SearchItems";

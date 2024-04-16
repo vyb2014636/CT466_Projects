@@ -7,17 +7,12 @@ import icons from "../ultils/icons";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
 const ProductFS = ({ productData, normal }) => {
-  // const navigate = useNavigate();
-  // const navigationClick = (titleCate, idSP, titleSP) => {
-  //   navigate(`/${titleCate.toLowerCase()}/${idSP}/${titleSP}`);
-  // };
   const [isShowOptions, setisShowOptions] = useState(false);
   return (
     <div
       className="product__item mx-2 my-2 border rounded-md "
       style={{
         boxShadow: "0 2px 4px 0 rgba(0,0,0,.12), 0 -2px 2px 0 rgba(0,0,0,.04)",
-        height: "100%",
       }}
       onMouseEnter={(e) => {
         e.stopPropagation();

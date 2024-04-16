@@ -4,12 +4,10 @@ import { formatMoney, renderStarFromNumber } from "../ultils/helpers";
 import { SelectOption } from "./";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
 import icons from "../ultils/icons";
-import path from "../ultils/path";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
-const Product = ({ productData, isNew }) => {
+const Product = ({ productData, isNew, normal }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
-  console.log(productData);
   return (
     <motion.div // Thay thế div bằng motion.div
       className="md:w-1/4 lg:w-1/5 sm:w-1/2 px-3 py-4 h-[343px] flex-auto"
@@ -39,15 +37,16 @@ const Product = ({ productData, isNew }) => {
             className="object-contain h-full w-full"
             alt=""
           />
-          {isNew ? (
-            <span className="absolute top-3 left-0 text-center z-10 bg-black w-[50px] leading-6 text-white tracking-widest border-r border-solid border-black rounded-tr-full rounded-br-full">
-              New
-            </span>
-          ) : (
-            <span className="border-r border-solid border-amber-600 rounded-tr-full rounded-br-full label absolute top-3 left-0 text-center z-10 bg-amber-600 w-[55px] leading-6 text-white tracking-widest">
-              Sales
-            </span>
-          )}
+          {!normal &&
+            (isNew ? (
+              <span className="absolute top-3 left-0 text-center z-10 bg-black w-[50px] leading-6 text-white tracking-widest border-r border-solid border-black rounded-tr-full rounded-br-full">
+                New
+              </span>
+            ) : (
+              <span className="border-r border-solid border-amber-600 rounded-tr-full rounded-br-full label absolute top-3 left-0 text-center z-10 bg-amber-600 w-[55px] leading-6 text-white tracking-widest">
+                Sales
+              </span>
+            ))}
           <motion.div
             className="absolute top-2 right-2 flex flex-col items-center gap-2 "
             initial={{ opacity: 0, x: 50 }}
@@ -60,7 +59,7 @@ const Product = ({ productData, isNew }) => {
             <SelectOption icon={<AiOutlineMenu />} />
           </motion.div>
         </div>
-        <div className="product__item__text flex flex-col items-start  py-4 px-4 gap-2 flex-grow">
+        <div className="flex flex-col items-start  py-4 px-4 gap-2 flex-grow">
           {isShowOptions ? (
             <motion.div // Thay thế div bằng motion.div
               className="add-cart text-red-800 animate-slide-bottom cursor-pointer text-[15px]"

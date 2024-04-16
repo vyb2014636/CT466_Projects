@@ -94,3 +94,19 @@ div.slick-list,
   display: flex;
   gap: 0;
 }
+
+/* --layout product */
+.my-masonry-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: auto;
+  margin: 0 -10px;
+}
+.my-masonry-grid_column {
+  /* padding-left: 8px; gutter size */
+  background-clip: padding-box;
+}
+
+.my-masonry-grid_column > div {
+}

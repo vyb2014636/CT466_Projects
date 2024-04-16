@@ -49,7 +49,7 @@ const BestSeller = () => {
         </ul>
       </div>
       <div className="flex flex-wrap mx-[-1rem]">
-        {productsActive.map((el, i) => (
+        {productsActive?.map((el, i) => (
           <Product key={el._id} productData={el} isNew={activedTab === 1 ? false : true} transI={i} />
         ))}
       </div>

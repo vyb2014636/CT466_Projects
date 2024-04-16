@@ -65,7 +65,7 @@ const DetailProduct = () => {
   }, [pid]);
   useEffect(() => {
     fetchProducts();
-  }, [fetchProductDetail]);
+  }, [categoryCurrent]);
 
   return (
     <div className="w-full  md:min-h-[800px] sm:h-full flex flex-col items-center py-4">
