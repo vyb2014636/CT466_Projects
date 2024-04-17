@@ -10,7 +10,7 @@ const Product = ({ productData, isNew, normal }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
   return (
     <motion.div // Thay thế div bằng motion.div
-      className="md:w-1/4 lg:w-1/5 sm:w-1/2 px-3 py-4 h-[343px] flex-auto"
+      className="md:w-1/4 lg:w-1/5 sm:w-1/2 px-3 py-4 h-[343px]"
       animate={{ opacity: 1 }}
       initial={{ opacity: 0 }}
       exit={{ opacity: 0 }}

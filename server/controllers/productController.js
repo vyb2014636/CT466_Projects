@@ -33,9 +33,16 @@ const getProduct = asyncHandler(async (req, res) => {
   let queryString = JSON.stringify(queries);
   queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
   const formatQueries = JSON.parse(queryString);
+  let colorQueryObject = {};
   if (queries?.title) formatQueries.title = { $regex: queries.title, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
-  if (queries?.color) formatQueries.color = { $regex: queries.color, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
-  let queryCommand = Product.find(formatQueries).populate("category", "title"); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
+  if (queries?.color) {
+    delete formatQueries.color;
+    const colorArr = queries.color?.split(",");
+    const colorQuery = colorArr.map((el) => ({ color: { $regex: el, $options: "i" } }));
+    colorQueryObject = { $or: colorQuery };
+  } //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
+  const q = { ...colorQueryObject, ...formatQueries };
+  let queryCommand = Product.find(q).populate("category", "title"); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
   //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
 
   //Sort sắp xếp
@@ -60,16 +67,14 @@ const getProduct = asyncHandler(async (req, res) => {
   queryCommand
     .exec()
     .then(async (response) => {
-      // const counts = await Product.find(formatQueries).countDocuments();
-      // if (counts === 0)
-      //   return res.status(400).json({
-      //     success: false,
-      //     mes: "không tìm thấy sản phẩm",
-      //   });
+      const counts = await Product.find(q).countDocuments();
       let findProducts;
       if (category) {
         const populatedProducts = await Product.find().populate("category", "title");
-        const capitalizedCategory = category.replace(/\b\w/g, (char) => char.toUpperCase());
+        const capitalizedCategory = category
+          .replace(/\b\w/g, (char) => char.toUpperCase())
+          .split("-")
+          .join(" ");
         findProducts = populatedProducts.filter(
           (product) => String(product.category.title) === String(capitalizedCategory)
         );
@@ -77,7 +82,7 @@ const getProduct = asyncHandler(async (req, res) => {
 
       return res.status(200).json({
         success: response ? true : false,
-        // counts,
+        counts,
         products: response ? response : "không tìm thấy cái cần tìm",
         productsCategory: findProducts ? findProducts : 0,
       });

@@ -125,3 +125,36 @@ export const colors = [
   { vn: "tím", en: "purple" },
   { vn: "kem", en: "cream" },
 ];
+
+export const sorts = [
+  {
+    id: 1,
+    value: "-sold",
+    text: "Mua nhiều nhất",
+  },
+  {
+    id: 2,
+    value: "title",
+    text: "Từ A - Z",
+  },
+  {
+    id: 3,
+    value: "-title",
+    text: "Từ Z - A",
+  },
+  {
+    id: 4,
+    value: "-price",
+    text: "Giá từ cao đến thấp",
+  },
+  {
+    id: 5,
+    value: "price",
+    text: "Giá từ thấp đến cao",
+  },
+  {
+    id: 6,
+    value: "-createdAt",
+    text: "Sản phẩm mới nhất",
+  },
+];
