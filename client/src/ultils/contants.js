@@ -71,8 +71,4 @@ export const tabsInfoProduct = [
     Quý khách gởi lại hàng vui lòng quay lại quá trình đóng gói, để sản phẩm còn mới 100% khi SLY nhận hàng để hỗ trợ đổi - trả nhanh nhất
     + Việc vận chuyển sẽ qua nhiều khâu trung gian hoặc có vấn đề phát sinh từ bên vận chuyển, để đảm bảo quyền lợi tốt nhất cho bạn. Nên quay video trong quá trình mở hàng khi túi niêm phong SLY chưa bị khui, để SLY có thể giải quyết đơn của bạn nhanh nhất.`,
   },
-  {
-    id: 4,
-    name: "ĐÁNH GIÁ",
-  },
 ];

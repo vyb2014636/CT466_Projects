@@ -61,7 +61,8 @@ const DetailProduct = () => {
   };
 
   useEffect(() => {
-    fetchProductDetail();
+    if (pid) fetchProductDetail();
+    window.scrollTo(0, 0);
   }, [pid]);
   useEffect(() => {
     fetchProducts();
@@ -192,7 +193,7 @@ const DetailProduct = () => {
         <div className="detail-rating w-full h-[25%]"></div>
       </div>
       <div className="detail-info w-main mt-8">
-        <InfoProduct />
+        <InfoProduct totalRatings={productDetail?.totalsRatings} totalCount={18} nameProduct={productDetail?.title} />
       </div>
       <div className="detail-info w-main my-8">
         <h3 className="border-orange-500 border-b-2 font-bold track mb-4">SẢN PHẨM LIÊN QUAN</h3>

@@ -15,17 +15,20 @@ import {
 } from "./pages/public";
 import path from "./ultils/path";
 import { getCategories } from "./store/app/asyncAction";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Modal } from "./components";
 
 function App() {
   const dispath = useDispatch();
+  const { isShowModal, modalChildren } = useSelector((state) => state.app);
   useEffect(() => {
     dispath(getCategories());
   }, []);
   return (
-    <div className="min-h-screen font-serif">
+    <div className="min-h-screen font-serif relative">
+      {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />

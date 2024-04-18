@@ -21,3 +21,10 @@ export const getFromCategory = (cate_Id, product_Id) =>
       product_Id: product_Id,
     },
   });
+
+export const apiRatings = (data) =>
+  axios({
+    url: "/product/ratings",
+    method: "put",
+    data,
+  });

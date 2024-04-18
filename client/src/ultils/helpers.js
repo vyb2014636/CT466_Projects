@@ -11,26 +11,26 @@ export const createSlug = (string) =>
     .join("-");
 
 export const formatMoney = (number) => Number(number?.toFixed(1)).toLocaleString();
-export const renderStarFromNumber = (number) => {
+export const renderStarFromNumber = (number, size) => {
   // if (!Number(number)) return;
   if (typeof number !== "number") return;
   let stars = [];
   if (number === 0) {
     for (let i = 0; i < 5; i++) {
-      stars.push(<FaRegStar />);
+      stars.push(<FaRegStar size={size || 15} />);
     }
     return stars;
   }
 
   if (number % 1 !== 0) {
     const originalNum = Math.floor(number);
-    for (let i = 0; i < +originalNum; i++) stars.push(<FaStar />);
-    stars.splice(originalNum, 0, <FaStarHalfAlt />);
+    for (let i = 0; i < +originalNum; i++) stars.push(<FaStar size={size || 15} />);
+    stars.splice(originalNum, 0, <FaStarHalfAlt size={size || 15} />);
     const nonStar = originalNum + 1;
-    for (let i = nonStar; i < 5; i++) stars.push(<FaRegStar />);
+    for (let i = nonStar; i < 5; i++) stars.push(<FaRegStar size={size || 15} />);
   } else {
-    for (let i = 0; i < +number; i++) stars.push(<FaStar />);
-    for (let i = 5; i > +number; i--) stars.push(<FaRegStar />);
+    for (let i = 0; i < +number; i++) stars.push(<FaStar size={size || 15} />);
+    for (let i = 5; i > +number; i--) stars.push(<FaRegStar size={size || 15} />);
   }
   return stars;
 };
@@ -156,5 +156,28 @@ export const sorts = [
     id: 6,
     value: "-createdAt",
     text: "Sản phẩm mới nhất",
+  },
+];
+
+export const voteOptions = [
+  {
+    id: 5,
+    text: "Rất tốt",
+  },
+  {
+    id: 4,
+    text: "Tốt",
+  },
+  {
+    id: 3,
+    text: "Bình thường",
+  },
+  {
+    id: 2,
+    text: "Tệ",
+  },
+  {
+    id: 1,
+    text: "Rất tệ",
   },
 ];
