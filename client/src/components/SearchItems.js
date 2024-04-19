@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from "react";
 import icons from "../ultils/icons";
-import { colors } from "../ultils/helpers";
+import { colors } from "../ultils/contants";
 import { createSearchParams, useNavigate, useParams } from "react-router-dom";
 import { apiGetProducts } from "../apis";
 import { formatMoney } from "../ultils/helpers";

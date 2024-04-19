@@ -72,3 +72,68 @@ export const tabsInfoProduct = [
     + Việc vận chuyển sẽ qua nhiều khâu trung gian hoặc có vấn đề phát sinh từ bên vận chuyển, để đảm bảo quyền lợi tốt nhất cho bạn. Nên quay video trong quá trình mở hàng khi túi niêm phong SLY chưa bị khui, để SLY có thể giải quyết đơn của bạn nhanh nhất.`,
   },
 ];
+
+export const colors = [
+  { vn: "đỏ", en: "red" },
+  { vn: "đen", en: "black" },
+  { vn: "vàng", en: "yellow" },
+  { vn: "xanh biển", en: "blue" },
+  { vn: "tím", en: "purple" },
+  { vn: "kem", en: "cream" },
+];
+
+export const sorts = [
+  {
+    id: 1,
+    value: "-sold",
+    text: "Mua nhiều nhất",
+  },
+  {
+    id: 2,
+    value: "title",
+    text: "Từ A - Z",
+  },
+  {
+    id: 3,
+    value: "-title",
+    text: "Từ Z - A",
+  },
+  {
+    id: 4,
+    value: "-price",
+    text: "Giá từ cao đến thấp",
+  },
+  {
+    id: 5,
+    value: "price",
+    text: "Giá từ thấp đến cao",
+  },
+  {
+    id: 6,
+    value: "-createdAt",
+    text: "Sản phẩm mới nhất",
+  },
+];
+
+export const voteOptions = [
+  {
+    id: 1,
+    text: "Rất tệ",
+  },
+  {
+    id: 2,
+    text: "Tệ",
+  },
+  {
+    id: 3,
+    text: "Bình thường",
+  },
+  {
+    id: 4,
+    text: "Tốt",
+  },
+  {
+    id: 5,
+    text: "Rất tốt",
+  },
+];

@@ -5,7 +5,8 @@ const { FaStar } = icons;
 const VoteBar = ({ number, ratingCount, ratingTotal }) => {
   const percentRef = useRef();
   useEffect(() => {
-    percentRef.current.style.cssText = `right: ${100 - Math.round((ratingCount * 100) / ratingTotal)}%`;
+    const percent = Math.round((ratingCount * 100) / ratingTotal) || 0;
+    percentRef.current.style.cssText = `right: ${100 - percent}%`;
   }, [ratingCount, ratingTotal]);
 
   return (
@@ -16,7 +17,7 @@ const VoteBar = ({ number, ratingCount, ratingTotal }) => {
       </div>
       <div className="w-[80%]">
         <div className="relative w-full h-[6px] bg-gray-200 rounded-l-full rounded-r-full">
-          <div ref={percentRef} className="absolute inset-0 bg-orange-500"></div>
+          <div ref={percentRef} className="absolute inset-0 bg-orange-500 rounded-l-full rounded-r-full"></div>
         </div>
       </div>
       <div className="w-[10%] text-xs text-400">{`${ratingCount || 0} đánh giá`}</div>

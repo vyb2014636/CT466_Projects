@@ -13,7 +13,12 @@ const Header = () => {
   const dispatch = useDispatch();
   const { isLoggedIn, currentUser } = useSelector((state) => state.user);
   useEffect(() => {
-    if (isLoggedIn) dispatch(getCurrentUser());
+    const setTimeoutId = setTimeout(() => {
+      if (isLoggedIn) dispatch(getCurrentUser());
+    }, 300);
+    return () => {
+      clearTimeout(setTimeoutId);
+    };
   }, [dispatch, isLoggedIn]);
 
   return (

@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
 import { Breadcrum, ProductFS, SearchItems, InputSelect } from "../../components";
 import { apiGetProducts } from "../../apis";
-import { sorts } from "../../ultils/helpers";
+import { sorts } from "../../ultils/contants";
 import Masonry from "react-masonry-css";
 
 const breakpointColumnsObj = {

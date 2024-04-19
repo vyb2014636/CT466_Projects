@@ -17,6 +17,16 @@ const DetailProduct = () => {
   }, []);
   //Slick slider
 
+  //Khi ta cập nhật j đó thì sẽ trích suất cơ sở dữ liệu
+  const [update, setUpdate] = useState(false);
+  useEffect(() => {
+    fetchProductDetail();
+  }, [update]);
+  const rerender = useCallback(() => {
+    setUpdate(!update);
+  }, [update]);
+  //Khi ta cập nhật j đó thì sẽ trích suất cơ sở dữ liệu!------
+
   const [quantityNumber, setQuantityNumber] = useState(1);
   const handleOnChangeQuantityNumber = useCallback(
     (quantity) => {
@@ -193,7 +203,13 @@ const DetailProduct = () => {
         <div className="detail-rating w-full h-[25%]"></div>
       </div>
       <div className="detail-info w-main mt-8">
-        <InfoProduct totalRatings={productDetail?.totalsRatings} totalCount={18} nameProduct={productDetail?.title} />
+        <InfoProduct
+          totalRatings={productDetail?.totalsRatings}
+          ratings={productDetail?.rating}
+          nameProduct={productDetail?.title}
+          pid={productDetail?._id}
+          rerender={rerender}
+        />
       </div>
       <div className="detail-info w-main my-8">
         <h3 className="border-orange-500 border-b-2 font-bold track mb-4">SẢN PHẨM LIÊN QUAN</h3>

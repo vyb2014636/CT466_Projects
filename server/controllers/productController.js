@@ -17,7 +17,15 @@ const createProduct = asyncHandler(async (req, res) => {
 });
 const getProductId = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const response = await Product.findById(pid).populate("category", "title");
+  const response = await Product.findById(pid)
+    .populate("category", "title")
+    .populate({
+      path: "rating",
+      populate: {
+        path: "postedBy",
+        select: "firstname lastname",
+      },
+    });
   return res.json({
     success: response ? true : false,
     product: response ? response : "Không tìm thấy sản phẩm",
@@ -140,7 +148,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 const ratings = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { star, comment, pid } = req.body;
+  const { star, comment, pid, updatedAt } = req.body;
   if (!star || !pid) throw new Error("Bạn chưa đánh giá sao hoặc chưa chọn sản phẩm");
   const findProductRating = await Product.findById(pid);
   const alreadyIdRating = findProductRating?.rating?.find((el) => el.postedBy.toString() === _id);
@@ -153,7 +161,7 @@ const ratings = asyncHandler(async (req, res) => {
         rating: { $elemMatch: alreadyIdRating }, //nó sẽ tìm trong ratings những phần tử tương ứng với alreadyRating
       },
       {
-        $set: { "rating.$.star": star, "rating.$.comment": comment }, // .$ tương ứng với elementMatch tìm được trong csdl
+        $set: { "rating.$.star": star, "rating.$.comment": comment, "rating.$.updatedAt": updatedAt }, // .$ tương ứng với elementMatch tìm được trong csdl
       },
       { new: true }
     );
@@ -161,7 +169,7 @@ const ratings = asyncHandler(async (req, res) => {
     await Product.findByIdAndUpdate(
       pid,
       {
-        $push: { rating: { star, comment, postedBy: _id } },
+        $push: { rating: { star, comment, postedBy: _id, updatedAt } },
       },
       { new: true }
     );

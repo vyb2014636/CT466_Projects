@@ -1,11 +1,13 @@
 import React, { memo, useRef, useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import { Button } from "./";
-import { voteOptions } from "../ultils/helpers";
+import { voteOptions } from "../ultils/contants";
 import { FaStar } from "react-icons/fa";
 
-const VotesOption = ({ nameProduct }) => {
+const VotesOption = ({ nameProduct, handleVoteSubmitOption }) => {
   const modalRef = useRef();
+  const [chosenScore, setChosenScore] = useState(null);
+  const [comment, setComment] = useState("");
   useEffect(() => {
     modalRef.current.scrollIntoView({ block: "center", behavior: "smooth" });
   }, []);
@@ -21,19 +23,27 @@ const VotesOption = ({ nameProduct }) => {
       <textarea
         className="form-textarea w-full placeholder:italic placeholder:text-xs placeholder:text-gray-500 text-sm"
         placeholder="Suy nghĩ của bạn về sản phẩm?"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
       ></textarea>
       <div className="w-full flex flex-col gap-4">
         <p>Bạn cảm thấy thế nào</p>
         <div className="flex justify-center items-center">
           {voteOptions.map((el) => (
-            <div className="w-[100px] h-[60px] flex items-center justify-center flex-col gap-2 cursor-pointer" key={el}>
-              <FaStar className="hover:text-orange-500 text-gray-500" />
+            <div
+              className="w-[100px] h-[60px] flex items-center justify-center flex-col gap-2 cursor-pointer hover:text-orange-500"
+              key={el.id}
+              onClick={() => {
+                setChosenScore(el.id);
+              }}
+            >
+              {Number(chosenScore) && chosenScore >= el.id ? <FaStar color="orange" /> : <FaStar color="gray" />}
               <span>{el.text}</span>
             </div>
           ))}
         </div>
       </div>
-      <Button name="Gửi" fw></Button>
+      <Button name="Gửi" fw handleOnClick={() => handleVoteSubmitOption({ comment, score: chosenScore })}></Button>
     </div>
   );
 };
