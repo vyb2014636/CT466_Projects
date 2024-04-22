@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
-import { Breadcrum, ProductFS, SearchItems, InputSelect } from "../../components";
+import { Breadcrum, ProductFS, SearchItems, InputSelect, Pagination } from "../../components";
 import { apiGetProducts } from "../../apis";
 import { sorts } from "../../ultils/contants";
 import Masonry from "react-masonry-css";
@@ -18,6 +18,7 @@ const Products = () => {
   const [params] = useSearchParams();
   const [valueSort, setValueSort] = useState("");
   const { category } = useParams();
+  const [countProducts, setCountProducts] = useState(0);
 
   //GỌI APT LẤY DỮ LIỆU CHO  TRANG SẢN PHẨM KHI BẮT ĐẦU
   useEffect(() => {
@@ -42,8 +43,13 @@ const Products = () => {
   const fetchSearchs = async (queries) => {
     const response = await apiGetProducts(queries);
     if (response.success) {
-      if (response.productsCategory === 0) setProducts(response.products);
-      else setProducts(response.productsCategory);
+      if (response.productsCategory === 0) {
+        setProducts(response.products);
+        setCountProducts(response.counts);
+      } else {
+        setProducts(response.productsCategory);
+        setCountProducts(response.countCategory);
+      }
     }
   };
 
@@ -59,9 +65,10 @@ const Products = () => {
         $and: [{ price: { gte: queries.from } }, { price: { lte: queries.to } }],
       };
       delete queries.price;
+    } else {
+      if (queries.from) queries.price = { gte: queries.from };
+      if (queries.to) queries.price = { lte: queries.to };
     }
-    if (queries.from) queries.price = { gte: queries.from };
-    if (queries.to) queries.price = { lte: queries.to };
 
     delete queries.to;
     delete queries.from;
@@ -69,6 +76,7 @@ const Products = () => {
     //GỌI API
     fetchSearchs({ ...priceQuery, ...queries });
     //GỌI API
+    window.scrollTo(0, 0);
   }, [params]);
   //XỬ LÝ KHI LỌC FILTER
 
@@ -80,15 +88,13 @@ const Products = () => {
     [valueSort]
   );
   useEffect(() => {
-    if (valueSort !== "") {
+    if (valueSort) {
       navigate({
         pathname: `/${category}`,
         search: createSearchParams({
           sort: valueSort,
         }).toString(),
       });
-    } else {
-      navigate(`/${category}`);
     }
   }, [valueSort]);
 
@@ -126,7 +132,7 @@ const Products = () => {
             </div>
           </div>
         </div>
-        <div className="products-body-middle">
+        <div className="products-body-middle my-8">
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid"
@@ -137,6 +143,9 @@ const Products = () => {
             ))}
           </Masonry>
         </div>
+      </div>
+      <div className="products-pagination w-main flex justify-end">
+        <Pagination totalCount={countProducts} />
       </div>
     </div>
   );

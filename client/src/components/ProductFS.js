@@ -20,7 +20,7 @@ const ProductFS = ({ productData, normal }) => {
       }}
       onMouseLeave={() => setisShowOptions(false)}
     >
-      <div className="relative outline-8  overflow-hidden ">
+      <div className="relative outline-8 overflow-hidden ">
         <img
           className="object-contain w-[100%] h-[180px]"
           src={productData?.thumb || "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "}

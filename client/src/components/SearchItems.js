@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from "react";
 import icons from "../ultils/icons";
 import { colors } from "../ultils/contants";
-import { createSearchParams, useNavigate, useParams } from "react-router-dom";
+import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { apiGetProducts } from "../apis";
 import { formatMoney } from "../ultils/helpers";
 import useDebounce from "../hooks/useDebounce";
@@ -11,6 +11,7 @@ const { FaChevronDown } = icons;
 const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" }) => {
   const [selected, setSelected] = useState([]);
   const [maxPrice, setMaxPrice] = useState(null);
+  const [params] = useSearchParams();
   const [price, setPrice] = useState({
     from: 0,
     to: 500000,
@@ -37,16 +38,19 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   };
 
   useEffect(() => {
+    let param = [];
+    for (let i of params.entries()) param.push(i);
+    const queries = {};
+    for (let i of param) queries[i[0]] = i[1];
     if (selected.length > 0) {
-      navigate({
-        pathname: `/${category}`,
-        search: createSearchParams({
-          color: selected.join(","),
-        }).toString(),
-      });
-    } else {
-      navigate(`/${category}`);
-    }
+      queries.color = selected.join(",");
+      queries.page = 1;
+    } else delete queries.color;
+
+    navigate({
+      pathname: `/${category}`,
+      search: createSearchParams(queries).toString(),
+    });
   }, [selected]);
   //XỬ LÝ KHI TA CHECKBOX VÀO MÀU SẮC
 
@@ -55,17 +59,29 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   const debouncePriceTo = useDebounce(price.to, 500);
 
   useEffect(() => {
-    const data = {};
-    if (Number(price.from) > 0) data.from = price.from;
-    if (Number(price.to) > 0) if (Number(price.to) < 500000) data.to = price.to;
+    let param = [];
+    for (let i of params.entries()) param.push(i);
+    const queries = {};
+    for (let i of param) queries[i[0]] = i[1];
+
+    queries.page = 1;
+    if (Number(price.from) > 0) queries.from = price.from;
+    else delete queries.from;
+    if (Number(price.to) > 0) {
+      if (Number(price.to) < 500000) queries.to = price.to;
+    } else delete queries.to;
+    queries.page = 1;
     navigate({
       pathname: `/${category}`,
-      search: createSearchParams(data).toString(),
+      search: createSearchParams(queries).toString(),
     });
   }, [debouncePriceFrom, debouncePriceTo]);
 
   useEffect(() => {
-    if (price.from > price.to) alert("Vui lòng nhập giá trong phạm vi cho phép");
+    if (price.from && price.to && price.from > price.to) alert("Vui lòng nhập giá trong phạm vi cho phép");
+    if (price.from > maxPrice) {
+      setPrice({ from: maxPrice - 1 });
+    }
   }, [price]);
 
   //XỬ LÝ KHI TA NHẬP PRICE VÀO INPUT
@@ -126,6 +142,7 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
                       from: "",
                       to: "",
                     });
+                    changeActiveFilter(null);
                   }}
                 >
                   Reset

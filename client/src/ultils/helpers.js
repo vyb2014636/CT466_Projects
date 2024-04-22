@@ -1,3 +1,4 @@
+import { AiFillInfoCircle } from "react-icons/ai";
 import icons from "./icons";
 const { FaRegStar, FaStar, FaStarHalfAlt } = icons;
 export const createSlug = (string) =>
@@ -115,4 +116,9 @@ export const validate = (payload, setInvalidFields) => {
     }
   }
   return invalids;
+};
+
+export const generateRange = (start, end) => {
+  const length = end + 1 - start;
+  return Array.from({ length }, (_, index) => start + index);
 };
