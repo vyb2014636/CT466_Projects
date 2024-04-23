@@ -4,7 +4,6 @@ const asyncHandler = require("express-async-handler");
 const { Error } = require("mongoose");
 const slugify = require("slugify");
 const product = require("../models/product");
-require("dotenv").config();
 
 const createProduct = asyncHandler(async (req, res) => {
   if (Object.keys(req.body).length === 0) throw new Error("Vui lòng nhập thông tin sản phẩm");
@@ -77,6 +76,7 @@ const getProduct = asyncHandler(async (req, res) => {
     .then(async (response) => {
       const counts = await Product.find(q).countDocuments();
       let findProducts;
+      let countCategory = 0;
       if (category) {
         const populatedProducts = await Product.find().populate("category", "title");
         const capitalizedCategory = category
@@ -86,11 +86,13 @@ const getProduct = asyncHandler(async (req, res) => {
         findProducts = populatedProducts.filter(
           (product) => String(product.category.title) === String(capitalizedCategory)
         );
+        countCategory = findProducts.length;
       }
 
       return res.status(200).json({
         success: response ? true : false,
         counts,
+        countCategory,
         products: response ? response : "không tìm thấy cái cần tìm",
         productsCategory: findProducts ? findProducts : 0,
       });
