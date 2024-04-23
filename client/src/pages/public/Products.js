@@ -20,16 +20,6 @@ const Products = () => {
   const { category } = useParams();
   const [countProducts, setCountProducts] = useState(0);
 
-  //GỌI APT LẤY DỮ LIỆU CHO  TRANG SẢN PHẨM KHI BẮT ĐẦU
-  useEffect(() => {
-    if (category === "Sản phẩm") {
-      fetchSearchs();
-    } else {
-      fetchSearchs({ category: category });
-    }
-  }, [category]);
-  //GỌI APT LẤY DỮ LIỆU CHO  TRANG SẢN PHẨM KHI BẮT ĐẦU
-
   //XỬ LÝ KHI TA CLICK VÀO BỘ LỌC FILTER
   const changeActiveFilter = useCallback(
     (name) => {
@@ -43,13 +33,8 @@ const Products = () => {
   const fetchSearchs = async (queries) => {
     const response = await apiGetProducts(queries);
     if (response.success) {
-      if (response.productsCategory === 0) {
-        setProducts(response.products);
-        setCountProducts(response.counts);
-      } else {
-        setProducts(response.productsCategory);
-        setCountProducts(response.countCategory);
-      }
+      setProducts(response.products);
+      setCountProducts(response.counts);
     }
   };
 
@@ -69,7 +54,7 @@ const Products = () => {
       if (queries.from) queries.price = { gte: queries.from };
       if (queries.to) queries.price = { lte: queries.to };
     }
-
+    if (category !== "Sản phẩm") queries.category = category;
     delete queries.to;
     delete queries.from;
     //Lọc theo giá
@@ -77,9 +62,8 @@ const Products = () => {
     fetchSearchs({ ...priceQuery, ...queries });
     //GỌI API
     window.scrollTo(0, 0);
-  }, [params]);
+  }, [params, category]);
   //XỬ LÝ KHI LỌC FILTER
-
   //XỬ LÝ SẮP XẾP SORT
   const changeValue = useCallback(
     (value) => {
@@ -88,12 +72,15 @@ const Products = () => {
     [valueSort]
   );
   useEffect(() => {
+    let param = [];
+    for (let i of params.entries()) param.push(i);
+    const queries = {};
+    for (let i of params) queries[i[0]] = i[1];
     if (valueSort) {
+      queries.sort = valueSort;
       navigate({
         pathname: `/${category}`,
-        search: createSearchParams({
-          sort: valueSort,
-        }).toString(),
+        search: createSearchParams(queries).toString(),
       });
     }
   }, [valueSort]);

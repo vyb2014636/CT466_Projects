@@ -4,6 +4,7 @@ const path = {
   ALL: "*",
   LOGIN: "login",
   PRODUCTS: ":category",
+  PROFILES: ":id_user",
   BLOGS: "blogs",
   FAQS: "faqs",
   CONTACTS: "contacts",

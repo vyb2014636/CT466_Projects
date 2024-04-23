@@ -78,7 +78,7 @@ export const colors = [
   { vn: "đen", en: "black" },
   { vn: "vàng", en: "yellow" },
   { vn: "xanh biển", en: "blue" },
-  { vn: "tím", en: "purple" },
+  { vn: "trắng", en: "white" },
   { vn: "kem", en: "cream" },
 ];
 

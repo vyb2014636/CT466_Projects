@@ -74,27 +74,30 @@ const getProduct = asyncHandler(async (req, res) => {
   queryCommand
     .exec()
     .then(async (response) => {
-      const counts = await Product.find(q).countDocuments();
-      let findProducts;
-      let countCategory = 0;
+      let counts = await Product.find(q).countDocuments();
       if (category) {
-        const populatedProducts = await Product.find().populate("category", "title");
+        let Refind;
+        if (req.query.sort) {
+          const sortBy = req.query.sort.split(",").join(" ");
+          Refind = await Product.find(q).populate("category", "title").sort(sortBy);
+        } else if (req.query.sort) {
+          const fields = req.query.fields.split(",").join(" ");
+          Refind = await Product.find(q).populate("category", "title").select(fields);
+        } else {
+          Refind = await Product.find(q).populate("category", "title");
+        }
+
         const capitalizedCategory = category
           .replace(/\b\w/g, (char) => char.toUpperCase())
           .split("-")
           .join(" ");
-        findProducts = populatedProducts.filter(
-          (product) => String(product.category.title) === String(capitalizedCategory)
-        );
-        countCategory = findProducts.length;
+        response = Refind.filter((product) => String(product.category.title) === String(capitalizedCategory));
+        counts = response.length;
       }
-
       return res.status(200).json({
         success: response ? true : false,
         counts,
-        countCategory,
         products: response ? response : "không tìm thấy cái cần tìm",
-        productsCategory: findProducts ? findProducts : 0,
       });
     })
     .catch((err) => {
@@ -155,9 +158,6 @@ const ratings = asyncHandler(async (req, res) => {
   const findProductRating = await Product.findById(pid);
   const alreadyIdRating = findProductRating?.rating?.find((el) => el.postedBy.toString() === _id);
   if (alreadyIdRating) {
-    // const updateRatingBy = await Product.findByIdAndUpdate(pid, {
-    //   ratings: { star, comment, postedBy: _id },
-    // });
     await Product.updateOne(
       {
         rating: { $elemMatch: alreadyIdRating }, //nó sẽ tìm trong ratings những phần tử tương ứng với alreadyRating

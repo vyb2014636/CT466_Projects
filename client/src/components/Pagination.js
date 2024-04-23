@@ -8,14 +8,13 @@ const Pagination = ({ totalCount }) => {
     const page = params.get("page") || 1;
   }, [params]);
 
-  const pagination = usePagination(totalCount, 2);
+  const pagination = usePagination(totalCount, 1);
 
   const range = () => {
     const currentPage = +params.get("page");
     const pageSize = process.env.REACT_APP_PRODUCT_LIMIT || 8;
     const start = (currentPage - 1) * pageSize + 1;
     const end = Math.min(currentPage * pageSize, totalCount);
-
     return `${start} - ${end}`;
   };
   return (

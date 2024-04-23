@@ -12,6 +12,7 @@ import {
   Contacts,
   FinalRegister,
   ResetPassword,
+  Profile,
 } from "./pages/public";
 import path from "./ultils/path";
 import { getCategories } from "./store/app/asyncAction";
@@ -39,6 +40,7 @@ function App() {
           <Route path={path.OUR_SERVICE} element={<Services />} />
           <Route path={path.CONTACTS} element={<Contacts />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
+          <Route path={path.PROFILES} element={<Profile />} />
         </Route>
         <Route path={path.FINAL_REGISTER} element={<FinalRegister />} />
         <Route path={path.LOGIN} element={<Login />}></Route>

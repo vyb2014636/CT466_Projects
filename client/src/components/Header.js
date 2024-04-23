@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
 import Navigation from "./Navigation";
 import logo from "../assets/logo.png";
+import avatardf from "../assets/avatar_default.png";
 import icons from "../ultils/icons";
 import { Link } from "react-router-dom";
 import path from "../ultils/path";
 import { getCurrentUser } from "../store/user/asyncAction"; //sẽ chạy vào userSlice để check
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/user/userSlice";
+import Avatar from "@mui/material/Avatar";
+import { deepOrange, deepPurple } from "@mui/material/colors";
 
 const Header = () => {
   const { IoMdSearch, IoCartOutline, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
@@ -38,31 +41,49 @@ const Header = () => {
         <div className="w-full md:w-1/4 lg:w-1/4 pl-4 flex flex-col items-end justify-center">
           <div className="header__nav__option flex justify-center items-center">
             <Link className="border-r px-3 search-switch flex justify-center items-center">
-              <IoMdSearch size={18} />
+              <IoMdSearch size={24} />
               {/* <img src="img/icon/search.png" alt="" /> */}
             </Link>
             <Link className="border-r px-4 flex justify-center items-center">
               {/* <img src="img/icon/heart.png" alt="" /> */}
-              <MdFavoriteBorder size={18} />
+              <MdFavoriteBorder size={24} />
             </Link>
             <Link className="border-r px-4 relative">
               {/* <img src="img/icon/cart.png" alt="" /> */}
-              <IoCartOutline size={18} />
+              <IoCartOutline size={24} />
               <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
                 0
               </span>
             </Link>
-            <Link to={`/${path.LOGIN}`} className="border-r px-4 flex justify-center items-center gap-2">
-              <HiOutlineUser size={18} />
-              <span className="font-[15px]">{isLoggedIn ? currentUser?.lastname : "Profiles"}</span>
-            </Link>
+            {isLoggedIn ? (
+              <Link
+                to={`/profile/${currentUser?._id}`}
+                className="border-r px-4 flex justify-center items-center gap-2"
+              >
+                <Avatar
+                  sx={{
+                    bgcolor: deepOrange[500],
+                    width: 32,
+                    height: 24,
+                    fontSize: 14,
+                  }}
+                  className="text-sm"
+                >
+                  {currentUser?.lastname[0]}
+                </Avatar>
+              </Link>
+            ) : (
+              <Link to={`/${path.LOGIN}`} className="border-r px-4 flex justify-center items-center gap-2">
+                <HiOutlineUser size={24} />
+              </Link>
+            )}
             {isLoggedIn && (
               <span
                 to={`/${path.LOGOUT}`}
                 className=" px-4 flex justify-center items-center cursor-pointer"
                 onClick={() => dispatch(logout())}
               >
-                <IoMdLogOut size={18} />
+                <IoMdLogOut size={24} />
               </span>
             )}
           </div>
