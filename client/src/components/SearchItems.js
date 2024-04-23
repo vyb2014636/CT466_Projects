@@ -9,8 +9,6 @@ import useDebounce from "../hooks/useDebounce";
 const { FaChevronDown } = icons;
 
 const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" }) => {
-  const hello = 0;
-  // dákldjaskljdlkasjlkdjsakldjkl
   const [selected, setSelected] = useState([]);
   const [maxPrice, setMaxPrice] = useState(null);
   const [params] = useSearchParams();
