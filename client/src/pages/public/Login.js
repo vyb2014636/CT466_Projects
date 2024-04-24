@@ -1,15 +1,16 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { InputFields, Button } from "../../components";
-import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "../../apis";
+import { useDispatch } from "react-redux";
+import { InputFields, Button, Loading } from "components";
+import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "apis";
 import Swal from "sweetalert2";
-import logo from "../../assets/logo.png";
-import path from "../../ultils/path";
-import { validate } from "../../ultils/helpers";
-import { login } from "../../store/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import logo from "assets/logo.png";
+import path from "ultils/path";
+import { validate } from "ultils/helpers";
+import { login } from "store/user/userSlice";
 import { toast } from "react-toastify";
-import icons from "../../ultils/icons";
+import { showModal } from "store/app/appSlice";
+import icons from "ultils/icons";
 let idInterval;
 const { FaGoogle } = icons;
 const Login = () => {
@@ -57,7 +58,9 @@ const Login = () => {
     const invalids = isRegister ? validate(payload, setInvalidFields) : validate(data, setInvalidFields);
     if (invalids === 0) {
       if (isRegister) {
+        dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
         const response = await apiRegister(payload);
+        dispatch(showModal({ isShowModal: false, modalChildren: null }));
         if (response.success) {
           setSecondOTP(59);
           setIsVerifyEmail(true);
@@ -68,7 +71,14 @@ const Login = () => {
         const rs = await apiLogin(data);
         if (rs.success) {
           dispatch(login({ isLoggedIn: true, token: rs.AccessToken, userData: rs.userData }));
-          navigate(`/${path.HOME}`);
+          dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+          const setTimeoutId = setTimeout(() => {
+            dispatch(showModal({ isShowModal: false, modalChildren: null }));
+            navigate(`/${path.HOME}`);
+          }, 1000);
+          return () => {
+            clearTimeout(setTimeoutId);
+          };
         } else {
           Swal.fire("Đăng nhập thất bại", rs.mes, "error");
         }

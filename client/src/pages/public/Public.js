@@ -1,5 +1,5 @@
 import React from "react";
-import { Header, TopHeader, Footer } from "../../components";
+import { Header, TopHeader, Footer } from "components";
 import { Outlet } from "react-router-dom";
 const Public = () => {
   return (

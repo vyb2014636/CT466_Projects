@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, InputFields } from "../../components/";
+import { Button, InputFields } from "components/";
 import { useParams } from "react-router-dom";
-import { apiResetPassword } from "../../apis";
+import { apiResetPassword } from "apis";
 
 const ResetPassword = () => {
   const [passwordNew, setPasswordNew] = useState({ password: "" });

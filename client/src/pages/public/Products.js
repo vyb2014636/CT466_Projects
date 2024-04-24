@@ -1,8 +1,8 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useParams, useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
-import { Breadcrum, ProductFS, SearchItems, InputSelect, Pagination } from "../../components";
-import { apiGetProducts } from "../../apis";
-import { sorts } from "../../ultils/contants";
+import { Breadcrum, ProductFS, SearchItems, InputSelect, Pagination } from "components";
+import { apiGetProducts } from "apis";
+import { sorts } from "ultils/contants";
 import Masonry from "react-masonry-css";
 
 const breakpointColumnsObj = {
@@ -108,7 +108,7 @@ const Products = () => {
                   type="input"
                 />
                 <SearchItems name="màu" activeClick={activeClick} changeActiveFilter={changeActiveFilter} />
-                <SearchItems name="lượt bán" activeClick={activeClick} changeActiveFilter={changeActiveFilter} />
+                {/* <SearchItems name="lượt bán" activeClick={activeClick} changeActiveFilter={changeActiveFilter} /> */}
               </div>
             </div>
             <div className="w-3/10 flex gap-3 items-center">

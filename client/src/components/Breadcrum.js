@@ -1,8 +1,8 @@
 import React from "react";
 import useBreadcrumbs from "use-react-router-breadcrumbs";
 import { Link } from "react-router-dom";
-import { createSlug } from "../ultils/helpers";
-import icons from "../ultils/icons";
+import { createSlug } from "ultils/helpers";
+import icons from "ultils/icons";
 
 const Breadcrum = ({ title, category }) => {
   const { IoIosArrowForward } = icons;

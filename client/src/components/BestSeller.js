@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { apiGetProducts } from "../apis/";
+import { apiGetProducts } from "apis/";
 import Product from "./Product";
-import "../css/filter.css";
+import "css/filter.css";
 import { useDispatch, useSelector } from "react-redux";
-import { getNewProducts } from "../store/products/asyncAction";
+import { getNewProducts } from "store/products/asyncAction";
 const tabs = [
   { id: 1, name: "best seller" },
   { id: 2, name: "new arrivals" },

@@ -129,7 +129,7 @@ const login = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const findUser = await User.findById({ _id: _id }).select("-refreshToken -role -password");
+  const findUser = await User.findById({ _id: _id }).select("-refreshToken -password");
   return res.status(200).json({
     success: findUser ? true : false,
     rs: findUser ? findUser : "Không tìm thấy người dùng",

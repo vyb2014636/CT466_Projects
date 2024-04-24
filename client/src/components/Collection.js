@@ -1,5 +1,5 @@
 import React from "react";
-import icons from "../ultils/icons";
+import icons from "ultils/icons";
 import { useSelector } from "react-redux";
 
 const { IoIosArrowForward } = icons;

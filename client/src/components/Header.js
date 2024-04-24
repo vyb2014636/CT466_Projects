@@ -1,20 +1,23 @@
 import React, { useEffect } from "react";
 import Navigation from "./Navigation";
-import logo from "../assets/logo.png";
-import avatardf from "../assets/avatar_default.png";
-import icons from "../ultils/icons";
-import { Link } from "react-router-dom";
-import path from "../ultils/path";
-import { getCurrentUser } from "../store/user/asyncAction"; //sẽ chạy vào userSlice để check
+import logo from "assets/logo.png";
+import icons from "ultils/icons";
+import { Link, useNavigate } from "react-router-dom";
+import path from "ultils/path";
+import { getCurrentUser } from "store/user/asyncAction"; //sẽ chạy vào userSlice để check
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../store/user/userSlice";
+import { logout, clearMessage } from "store/user/userSlice";
 import Avatar from "@mui/material/Avatar";
-import { deepOrange, deepPurple } from "@mui/material/colors";
+import { deepOrange } from "@mui/material/colors";
+import Swal from "sweetalert2";
+import { Loading } from "components";
+import { showModal } from "store/app/appSlice";
 
 const Header = () => {
   const { IoMdSearch, IoCartOutline, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
   const dispatch = useDispatch();
-  const { isLoggedIn, currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const { isLoggedIn, currentUser, mes } = useSelector((state) => state.user);
   useEffect(() => {
     const setTimeoutId = setTimeout(() => {
       if (isLoggedIn) dispatch(getCurrentUser());
@@ -23,6 +26,13 @@ const Header = () => {
       clearTimeout(setTimeoutId);
     };
   }, [dispatch, isLoggedIn]);
+  useEffect(() => {
+    if (mes)
+      Swal.fire("Thông báo!", mes, "info").then(() => {
+        dispatch(clearMessage());
+        navigate(`/${path.LOGIN}`);
+      });
+  }, [mes]);
 
   return (
     // <div className="w-main border flex justify-around">
@@ -55,7 +65,7 @@ const Header = () => {
                 0
               </span>
             </Link>
-            {isLoggedIn ? (
+            {isLoggedIn && currentUser ? (
               <Link
                 to={`/profile/${currentUser?._id}`}
                 className="border-r px-4 flex justify-center items-center gap-2"

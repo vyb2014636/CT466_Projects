@@ -1,5 +1,5 @@
 import React from "react";
-import avatar from "../assets/avatar_default.png";
+import avatar from "assets/avatar_default.png";
 import "moment/locale/vi";
 import moment from "moment";
 import { renderStarFromNumber } from "../ultils/helpers";

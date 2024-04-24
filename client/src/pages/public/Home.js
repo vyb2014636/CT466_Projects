@@ -1,5 +1,5 @@
 import React from "react";
-import { Slide, BestSeller, Sidebar, FlashSales, Collection } from "../../components";
+import { Slide, BestSeller, Sidebar, FlashSales, Collection } from "components";
 import { useSelector } from "react-redux";
 const Home = () => {
   const { isLoggedIn, current } = useSelector((state) => state.user);
