@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "components";
+import { MemberLayout, Personal } from "pages/member";
 
 function App() {
   const dispath = useDispatch();
@@ -45,6 +46,10 @@ function App() {
           <Route path={path.PROFILES} element={<Profile />} />
           <Route path={path.ALL} element={<Home />} />
         </Route>
+        <Route path={path.MEMBER} element={<MemberLayout />}>
+          <Route path={path.PERSONAL} element={<Personal />} />
+        </Route>
+
         <Route path={path.ADMIN} element={<AdminLayout />}>
           <Route path={path.DASHBOARD} element={<Dashboard />} />
           <Route path={path.MANAGE_ORDER} element={<ManageOrder />} />

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Collapse from "react-collapse";
-import { createSlug } from "../ultils/helpers";
+import { createSlug } from "ultils/helpers";
 import { NavLink } from "react-router-dom";
-import icons from "../ultils/icons";
+import icons from "ultils/icons";
 import { useSelector } from "react-redux";
 
 const Sidebar = () => {

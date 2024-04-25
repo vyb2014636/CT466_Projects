@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import Slider from "react-slick";
-import { ProductFS } from "./";
+import { ProductFS } from "components";
 
 const CustomSlider = ({ products, normal, scroll }) => {
   const settings = {

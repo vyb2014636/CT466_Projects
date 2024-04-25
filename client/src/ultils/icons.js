@@ -1,13 +1,16 @@
-import { MdFavoriteBorder } from "react-icons/md";
+import { MdFavoriteBorder, MdDashboard, MdGroup } from "react-icons/md";
 import { BsCart2 } from "react-icons/bs";
-import { FaRegUser } from "react-icons/fa6";
-import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
+import { FaRegUser, FaProductHunt } from "react-icons/fa6";
+import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt, FaMoneyBill } from "react-icons/fa";
 import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
-import { IoCart, IoArrowBack, IoCartOutline } from "react-icons/io5";
+import { IoCart, IoArrowBack, IoCartOutline, IoLogoVue } from "react-icons/io5";
 import { FaEye, FaGoogle } from "react-icons/fa";
 import { IoIosArrowForward, IoIosHeartEmpty, IoIosMail, IoMdLogOut, IoMdSearch } from "react-icons/io";
 import { CiUser } from "react-icons/ci";
 import { HiOutlineUser } from "react-icons/hi";
+import { PiShoppingBagFill } from "react-icons/pi";
+import { BiLogoStripe } from "react-icons/bi";
+
 const icons = {
   IoMdSearch,
   MdFavoriteBorder,
@@ -30,6 +33,13 @@ const icons = {
   AiOutlineUser,
   HiOutlineUser,
   IoCartOutline,
+  MdDashboard,
+  FaProductHunt,
+  MdGroup,
+  FaMoneyBill,
+  BiLogoStripe,
+  PiShoppingBagFill,
+  IoLogoVue,
 };
 
 export default icons;

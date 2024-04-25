@@ -1,17 +1,15 @@
-import React, { useEffect } from "react";
-import Navigation from "./Navigation";
+import React, { useEffect, Fragment } from "react";
+import { Navigation } from "components";
 import logo from "assets/logo.png";
 import icons from "ultils/icons";
-import { Link, useNavigate } from "react-router-dom";
 import path from "ultils/path";
+import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "store/user/asyncAction"; //sẽ chạy vào userSlice để check
 import { useDispatch, useSelector } from "react-redux";
 import { logout, clearMessage } from "store/user/userSlice";
-import Avatar from "@mui/material/Avatar";
 import { deepOrange } from "@mui/material/colors";
+import Avatar from "@mui/material/Avatar";
 import Swal from "sweetalert2";
-import { Loading } from "components";
-import { showModal } from "store/app/appSlice";
 
 const Header = () => {
   const { IoMdSearch, IoCartOutline, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
@@ -54,34 +52,41 @@ const Header = () => {
               <IoMdSearch size={24} />
               {/* <img src="img/icon/search.png" alt="" /> */}
             </Link>
-            <Link className="border-r px-4 flex justify-center items-center">
-              {/* <img src="img/icon/heart.png" alt="" /> */}
-              <MdFavoriteBorder size={24} />
-            </Link>
-            <Link className="border-r px-4 relative">
-              {/* <img src="img/icon/cart.png" alt="" /> */}
-              <IoCartOutline size={24} />
-              <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
-                0
-              </span>
-            </Link>
+
             {isLoggedIn && currentUser ? (
-              <Link
-                to={`/profile/${currentUser?._id}`}
-                className="border-r px-4 flex justify-center items-center gap-2"
-              >
-                <Avatar
-                  sx={{
-                    bgcolor: deepOrange[500],
-                    width: 32,
-                    height: 24,
-                    fontSize: 14,
-                  }}
-                  className="text-sm"
+              <Fragment>
+                <Link
+                  to={
+                    +currentUser?.role === 1945
+                      ? `/${path.ADMIN}/${path.DASHBOARD}`
+                      : `/${path.MEMBER}/${path.PERSONAL}`
+                  }
+                  className="border-r px-4 flex justify-center items-center gap-2"
                 >
-                  {currentUser?.lastname[0]}
-                </Avatar>
-              </Link>
+                  <Avatar
+                    sx={{
+                      bgcolor: deepOrange[500],
+                      width: 32,
+                      height: 24,
+                      fontSize: 14,
+                    }}
+                    className="text-sm"
+                  >
+                    {currentUser?.lastname[0]}
+                  </Avatar>
+                </Link>
+                <Link className="border-r px-4 flex justify-center items-center">
+                  {/* <img src="img/icon/heart.png" alt="" /> */}
+                  <MdFavoriteBorder size={24} />
+                </Link>
+                <Link className="border-r px-4 relative">
+                  {/* <img src="img/icon/cart.png" alt="" /> */}
+                  <IoCartOutline size={24} />
+                  <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
+                    0
+                  </span>
+                </Link>
+              </Fragment>
             ) : (
               <Link to={`/${path.LOGIN}`} className="border-r px-4 flex justify-center items-center gap-2">
                 <HiOutlineUser size={24} />
@@ -99,9 +104,9 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <div className="canvas__open">
+      {/* <div className="canvas__open">
         <i className="fa fa-bars"></i>
-      </div>
+      </div> */}
     </div>
   );
 };

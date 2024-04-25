@@ -1,7 +1,7 @@
 import React, { memo, useRef, useEffect, useState } from "react";
-import logo from "../assets/logo.png";
-import { Button } from "./";
-import { voteOptions } from "../ultils/contants";
+import logo from "assets/logo.png";
+import { Button } from "components";
+import { voteOptions } from "ultils/contants";
 import { FaStar } from "react-icons/fa";
 
 const VotesOption = ({ nameProduct, handleVoteSubmitOption }) => {

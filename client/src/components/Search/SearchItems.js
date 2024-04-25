@@ -1,10 +1,10 @@
 import React, { memo, useState, useEffect } from "react";
-import icons from "../ultils/icons";
-import { colors } from "../ultils/contants";
+import icons from "ultils/icons";
 import { createSearchParams, useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { apiGetProducts } from "../apis";
-import { formatMoney } from "../ultils/helpers";
-import useDebounce from "../hooks/useDebounce";
+import { apiGetProducts } from "apis";
+import { colors } from "ultils/contants";
+import { formatMoney } from "ultils/helpers";
+import useDebounce from "hooks/useDebounce";
 
 const { FaChevronDown } = icons;
 

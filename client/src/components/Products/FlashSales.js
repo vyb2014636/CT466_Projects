@@ -1,8 +1,8 @@
 import React, { useState, useEffect, memo } from "react";
-import { apiGetProducts } from "../apis/";
-import { CountDown, CustomSlider } from "./";
+import { apiGetProducts } from "apis";
+import { CountDown, CustomSlider } from "components";
 import moment from "moment";
-import { secondsToHms } from "../ultils/helpers";
+import { secondsToHms } from "ultils/helpers";
 
 let idInterval;
 

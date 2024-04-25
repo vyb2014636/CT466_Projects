@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
-import path from "../ultils/path";
+import path from "ultils/path";
 const TopHeader = () => {
   return (
     <div className="w-full flex justify-center bg-[#474747] h-[3rem]">

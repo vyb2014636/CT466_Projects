@@ -2,7 +2,7 @@ import React from "react";
 import avatar from "assets/avatar_default.png";
 import "moment/locale/vi";
 import moment from "moment";
-import { renderStarFromNumber } from "../ultils/helpers";
+import { renderStarFromNumber } from "ultils/helpers";
 
 const Comment = ({ image = avatar, name = "Tài khoản vô danh", idUser, comment, star, updatedAt }) => {
   return (

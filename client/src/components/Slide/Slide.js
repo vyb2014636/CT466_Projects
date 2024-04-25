@@ -1,9 +1,8 @@
 import React from "react";
-import slide1 from "../assets/hero-1.jpg";
-// import slide2 from "../assets/hero-2.jpg";
-import banner_acc from "../assets/banner_acc.jpg";
+import slide1 from "assets/hero-1.jpg";
+import banner_acc from "assets/banner_acc.jpg";
 
-import "../css/slideStyle.css";
+import "css/slideStyle.css";
 import Slider from "react-slick";
 
 const settings = {

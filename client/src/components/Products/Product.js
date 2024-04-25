@@ -1,9 +1,9 @@
 import React, { memo, useState } from "react";
 import { Link } from "react-router-dom";
-import { formatMoney, renderStarFromNumber } from "../ultils/helpers";
-import { SelectOption } from "./";
+import { formatMoney, renderStarFromNumber } from "ultils/helpers";
+import { SelectOption } from "components";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
-import icons from "../ultils/icons";
+import icons from "ultils/icons";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
 const Product = ({ productData, isNew, normal }) => {

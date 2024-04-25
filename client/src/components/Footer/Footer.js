@@ -1,6 +1,6 @@
 import React, { memo } from "react";
-import icons from "../ultils/icons";
-import logo from "../assets/logo.png";
+import icons from "ultils/icons";
+import logo from "assets/logo.png";
 const { IoIosHeartEmpty, IoIosMail } = icons;
 const Footer = () => {
   return (

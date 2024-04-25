@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import usePagination from "../hooks/usePagination";
-import { PaginationItem } from "./";
+import React, { useEffect } from "react";
+import usePagination from "hooks/usePagination";
+import { PaginationItem } from "components";
 import { useSearchParams } from "react-router-dom";
 const Pagination = ({ totalCount }) => {
   const [params] = useSearchParams();

@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useCallback, useState } from "react";
-import icons from "../ultils/icons";
+import React, { useRef, useEffect, memo } from "react";
+import icons from "ultils/icons";
 
 const { FaStar } = icons;
 const VoteBar = ({ number, ratingCount, ratingTotal }) => {
@@ -25,4 +25,4 @@ const VoteBar = ({ number, ratingCount, ratingTotal }) => {
   );
 };
 
-export default VoteBar;
+export default memo(VoteBar);

@@ -1,5 +1,11 @@
 import path from "./path";
-
+import icons from "./icons";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import GroupIcon from "@mui/icons-material/Group";
+import DescriptionIcon from "@mui/icons-material/Description";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 export const navigation = [
   {
     id: 1,
@@ -40,7 +46,7 @@ export const tabsInfoProduct = [
     id: 2,
     name: "HƯỚNG DẪN MUA HÀNG",
     content: `Hướng dẫn sử dụng website TSUN:
-
+    
     - Các bước mua hàng tại Web TSUN:
     
     + Chọn sản phẩm -> chọn Size sản phẩm -> thêm vào giỏ hàng -> thanh toán
@@ -135,5 +141,48 @@ export const voteOptions = [
   {
     id: 5,
     text: "Rất tốt",
+  },
+];
+const { MdDashboard, FaProductHunt, MdGroup, FaMoneyBill } = icons;
+
+export const adminSidebar = [
+  {
+    id: 1,
+    type: "single",
+    text: "Dashboard",
+    path: `/${path.ADMIN}/${path.DASHBOARD}`,
+    icon: <DashboardIcon />,
+  },
+  {
+    id: 2,
+    type: "single",
+    text: "Quản lý tài khoản",
+    path: `/${path.ADMIN}/${path.MANAGE_USER}`,
+    icon: <GroupIcon />,
+  },
+  {
+    id: 3,
+    type: "parent",
+    text: "Quản lý sản phẩm",
+    icon: <InventoryIcon />,
+    submenu: [
+      {
+        icon: <AddCircleIcon />,
+        text: "Tạo sản phẩm",
+        path: `/${path.ADMIN}/${path.CREATE_PRODUCT}`,
+      },
+      {
+        icon: <ManageSearchIcon />,
+        text: "Quản lý sản phẩm",
+        path: `/${path.ADMIN}/${path.MANAGE_PRODUCTS}`,
+      },
+    ],
+  },
+  {
+    id: 4,
+    type: "single",
+    text: "Quản lý đơn hàng",
+    path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
+    icon: <DescriptionIcon />,
   },
 ];

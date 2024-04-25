@@ -1,9 +1,9 @@
 import React, { memo, useState } from "react";
 // import { Navigate, useNavigate } from "react-router-dom";
-import { formatMoney, renderStarFromNumber } from "../ultils/helpers";
-import { SelectOption } from "./";
+import { formatMoney, renderStarFromNumber } from "ultils/helpers";
+import { SelectOption } from "components";
 import { motion } from "framer-motion";
-import icons from "../ultils/icons";
+import icons from "ultils/icons";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
 const ProductFS = ({ productData, normal }) => {
