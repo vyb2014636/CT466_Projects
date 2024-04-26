@@ -1,5 +1,6 @@
 import React, { Fragment, memo, useState } from "react";
 import icons from "ultils/icons";
+import { useSelector } from "react-redux";
 import { adminSidebar } from "ultils/contants";
 import { NavLink } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
@@ -16,13 +17,13 @@ import Collapse from "@mui/material/Collapse";
 const { BiLogoStripe, PiShoppingBagFill, IoLogoVue } = icons;
 const AdminSidebar = () => {
   const [open, setOpen] = useState(true);
-
+  const { currentUser } = useSelector((state) => state.user);
   const handleClick = () => {
     setOpen(!open);
   };
 
   return (
-    <div className="p-4 bg-white flex flex-col gap-8">
+    <div className="p-4 bg-white flex flex-col gap-8  h-full">
       <div className="flex justify-between items-center py-4">
         <div className="flex items-center">
           <BiLogoStripe color="green" size={35} />
@@ -36,14 +37,17 @@ const AdminSidebar = () => {
           avatar={
             <Avatar
               alt="Remy Sharp"
-              src="https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
+              src={
+                currentUser.avatar ||
+                "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
+              }
             />
           }
-          title="Shrimp and Chorizo Paella"
+          title={`${currentUser.firstname} ${currentUser.lastname}`}
           // subheader="September 14, 2016"
         />
       </div>
-      <div className="rounded-2xl bg-[#EDEFF1] list-sidebar-admin">
+      <div className="rounded-2xl bg-white list-sidebar-admin">
         <List component="nav" aria-labelledby="nested-list-subheader">
           {adminSidebar?.map((el) => (
             <Fragment>
@@ -52,7 +56,10 @@ const AdminSidebar = () => {
                   <ListItem disablePadding>
                     <ListItemButton>
                       <ListItemIcon>{el.icon}</ListItemIcon>
-                      <ListItemText primary={el.text} />
+                      <ListItemText
+                        primary={el.text}
+                        style={{ color: "gray", letterSpacing: "8px", fontWeight: "bold" }}
+                      />
                     </ListItemButton>
                   </ListItem>
                 </NavLink>
@@ -62,8 +69,15 @@ const AdminSidebar = () => {
                   <ListItem disablePadding>
                     <ListItemButton onClick={handleClick}>
                       <ListItemIcon>{el.icon}</ListItemIcon>
-                      <ListItemText primary={el.text} />
-                      {open ? <ExpandLess /> : <ExpandMore />}
+                      <ListItemText
+                        primary={el.text}
+                        style={{ color: "gray", letterSpacing: "8px", fontWeight: "bold" }}
+                      />
+                      {open ? (
+                        <ExpandLess style={{ color: "gray", letterSpacing: "8px", fontWeight: "bold" }} />
+                      ) : (
+                        <ExpandMore style={{ color: "gray", letterSpacing: "8px", fontWeight: "bold" }} />
+                      )}
                     </ListItemButton>
                   </ListItem>
                   <Collapse in={open} timeout="auto" unmountOnExit>

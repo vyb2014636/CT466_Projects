@@ -9,34 +9,6 @@ const sendMail = require("../untils/sendMails");
 const crypto = require("crypto");
 const makeToken = require("uniqid");
 
-// const register = asyncHandler(async (req, res) => {
-//   const { email, password, firstname, lastname } = req.body;
-
-//   if (!email || !password || !firstname || !lastname) {
-//     return res.status(400).json({
-//       success: false,
-//       mes: "Chưa nhập đủ thông tin",
-//     });
-//   }
-
-//   const findUser = await User.findOne({ email: email });
-
-//   if (!findUser) {
-//     const newUser = await User.create(req.body);
-
-//     return res.status(200).json({
-//       success: newUser ? true : false,
-//       mes: newUser
-//         ? "Đăng ký thành công, bạn có thẻ đăng nhập tại đây"
-//         : "Đăng ký không thành công ",
-//     });
-//   } else {
-//     throw new Error("Email đã tồn tại");
-//   }
-// });
-//Refresh Token => cấp mới access token
-//AccessToken => Xác thực người dùng , phân quyền người dùng
-
 const register = asyncHandler(async (req, res) => {
   const { email, password, firstname, lastname, mobile } = req.body;
 
@@ -79,19 +51,6 @@ const finalRegister = asyncHandler(async (req, res) => {
     success: activeEmail ? true : false,
     mes: activeEmail ? "Bạn đã tạo tài khoản thành công" : "OTP không hợp lệ",
   });
-  // const newUser = await User.create({
-  //   email: cookie?.dataRegister?.email,
-  //   password: cookie?.dataRegister?.password,
-  //   mobile: cookie?.dataRegister?.mobile,
-  //   lastname: cookie?.dataRegister?.lastname,
-  //   firstname: cookie?.dataRegister?.firstname,
-  // });
-  // res.clearCookie("dataRegister");
-  // if (newUser) {
-  //   return res.redirect(`${process.env.CLIENT_URL}/finalregister/success`);
-  // } else {
-  //   return res.redirect(`${process.env.CLIENT_URL}/finalregister/failed`);
-  // }
 });
 
 const login = asyncHandler(async (req, res) => {
@@ -225,12 +184,54 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 const getAllUser = asyncHandler(async (req, res) => {
-  const response = await User.find().select("-refreshToken -role -password");
+  const queries = { ...req.query }; //tạo ra thêm 1 vùng dữ liệu nữa ở đó queries->vùngDLCopy và req.query->vùngDL ban đầu (Nếu không có ... trước req.query thì cả queries và req.query sẽ -> cùng 1 vùng DL)
+  const excludedFields = ["page", "sort", "limit", "fields"];
+  excludedFields.forEach((el) => delete queries[el]);
 
-  return res.status(200).json({
-    success: response ? true : false,
-    user: response,
-  });
+  //Lọc theo filter
+  let queryString = JSON.stringify(queries);
+  queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
+  const formatQueries = JSON.parse(queryString);
+
+  let queryCommand = User.find(formatQueries); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
+  //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
+
+  //Sort sắp xếp
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+    queryCommand = queryCommand.sort(sortBy); //sắp xếp default là tăng dần
+  }
+
+  //
+  //fields chọn theo trường
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    queryCommand = queryCommand.select(fields);
+  }
+  //
+  //pagination
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
+
+  queryCommand
+    .exec()
+    .then(async (response) => {
+      let counts = await User.find(formatQueries).countDocuments();
+
+      return res.status(200).json({
+        success: response ? true : false,
+        counts,
+        users: response ? response : "không tìm thấy người dùng",
+      });
+    })
+    .catch((err) => {
+      return res.status(400).json({
+        success: false,
+        users: err,
+      });
+    });
 });
 
 const deleteUser = asyncHandler(async (req, res) => {

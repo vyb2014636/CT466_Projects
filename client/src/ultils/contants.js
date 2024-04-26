@@ -186,3 +186,14 @@ export const adminSidebar = [
     icon: <DescriptionIcon />,
   },
 ];
+
+export const roles = [
+  {
+    code: 1945,
+    value: "Admin",
+  },
+  {
+    code: 1979,
+    value: "Người dùng",
+  },
+];

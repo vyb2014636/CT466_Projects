@@ -28,3 +28,4 @@ export { default as Pagination } from "./Pagination/Pagination";
 export { default as PaginationItem } from "./Pagination/PaginationItem";
 export { default as Loading } from "./Common/Loading";
 export { default as AdminSidebar } from "./Sidebar/AdminSidebar";
+export { default as HeaderAdmin } from "./Sidebar/HeaderAdmin";
