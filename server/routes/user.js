@@ -12,10 +12,10 @@ router.get("/logout", user.logout);
 router.post("/forgotpassword", user.forgotPassword);
 router.put("/resetpassword", user.resetPassword);
 router.get("/", [verifyToken, isAdmin], user.getAllUser);
-router.delete("/", [verifyToken, isAdmin], user.deleteUser);
+router.delete("/:uid", [verifyToken, isAdmin], user.deleteUser);
 router.put("/updateUser", verifyToken, user.updateUser);
 router.put("/updateAddress", verifyToken, user.updateAddressUser);
 router.put("/addToCart", verifyToken, user.addToCart);
-router.put("/updateUserByAdmin/:userID", [verifyToken, isAdmin], user.updateUser);
+router.put("/updateUserByAdmin/:uid", [verifyToken, isAdmin], user.updateUserByAdmin);
 
 module.exports = router;

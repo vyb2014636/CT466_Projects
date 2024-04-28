@@ -235,15 +235,15 @@ const getAllUser = asyncHandler(async (req, res) => {
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  const { _id } = req.query;
+  const { uid } = req.params;
 
-  if (!_id) throw new Error("Chưa chọn id muốn xóa");
+  if (!uid) throw new Error("Chưa chọn id muốn xóa");
 
-  const findUser = await User.findByIdAndDelete(_id);
+  const findUser = await User.findByIdAndDelete(uid);
 
   return res.status(200).json({
     success: findUser ? true : false,
-    deleteUser: findUser ? `Người dùng ${findUser.email} đã được xóa` : "xóa thất bại",
+    mes: findUser ? `Người dùng ${findUser.email} đã được xóa` : "xóa thất bại",
   });
 });
 
@@ -263,10 +263,10 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 const updateUserByAdmin = asyncHandler(async (req, res) => {
-  const { userId } = req.params;
-  if (!userId || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
+  const { uid } = req.params;
+  if (!uid || Object.keys(req.body).length === 0) throw new Error("Chưa có dữ liệu cần update");
 
-  const findUpdate = await User.findByIdAndUpdate(userId, req.body, {
+  const findUpdate = await User.findByIdAndUpdate(uid, req.body, {
     new: true,
   }).select("-role -password");
 

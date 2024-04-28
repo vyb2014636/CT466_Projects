@@ -1,25 +1,127 @@
-import React, { useEffect, useState } from "react";
-import { apiGetAllUsers } from "apis/user";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { apiGetAllUsers, apiUpdateUser, apiDeleteUser } from "apis/user";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { roles } from "ultils/contants";
-import { Avatar, Badge, Box, IconButton, Menu, MenuItem } from "@mui/material";
+import { roles, blockStatus } from "ultils/contants";
+import { Avatar, Badge, Box, IconButton } from "@mui/material";
+import { Button, InputForm, SelectAdmin } from "components";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import moment from "moment";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const ManageUsers = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const handleEditClick = (id) => {
-    console.log("Edit clicked for id:", id);
-    // Bạn có thể xử lý _id ở đây, ví dụ: mở một modal chỉnh sửa thông tin của user có _id này.
+  const [edit, setEdit] = useState(null);
+  const [update, setUpdate] = useState(false);
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm({
+    email: "",
+    lastname: "",
+    firstname: "",
+    role: "",
+    mobile: "",
+    isBlocked: "",
+  });
+
+  const requiredEdit = (user) => {
+    Swal.fire({
+      title: "Bạn có muốn chỉnh sửa cho tài khoản này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "Không",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setEdit(user);
+      }
+    });
   };
-  const handleRowClick = (params) => {
-    const clickedRowId = params.row._idTemp; // Lấy _id của dòng được click
-    console.log("Clicked Row Id:", clickedRowId);
-    // Bạn có thể xử lý _id ở đây, ví dụ: gửi _id đến server, hiển thị thông tin chi tiết v.v.
+  // useEffect(() => {
+  //   if (edit !== null) {
+  //     setEdit(edit);
+  //   }
+  // }, [edit]);
+  const render = useCallback(() => {
+    setUpdate(!update);
+  }, [update]);
+
+  const handleUpdate = (data) => {
+    Swal.fire({
+      title: "Bạn có muốn chỉnh sửa cho tài khoản này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "Không",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await apiUpdateUser(data, edit._id);
+        if (response.success) {
+          setEdit(null);
+          render();
+          toast.success(response.mes);
+        } else {
+          setEdit(null);
+          toast.error(response.mes);
+        }
+      }
+    });
   };
+  const handleDelete = (uid) => {
+    Swal.fire({
+      title: "Bạn có muốn xóa tài khoản này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "Không",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await apiDeleteUser(uid);
+        if (response.success) {
+          render();
+          toast.success(response.mes);
+        } else {
+          toast.success(response.mes);
+        }
+      }
+    });
+  };
+  const [rows, setRows] = useState([]);
+  useEffect(() => {
+    const findUsers = async (params) => {
+      const response = await apiGetAllUsers(params);
+      if (response.success) {
+        setRows(
+          response.users.map((user, index) => ({
+            _idTemp: user._id, // Thêm thuộc tính _idTemp vào mỗi dòng
+            user: user,
+            id: index + 1,
+            email: user.email,
+            lastname: user.lastname,
+            firstname: user.firstname,
+            avatar: user.avatar,
+            role: roles?.find((role) => +role.code === +user.role)?.value,
+            roleCode: roles?.find((role) => +role.code === +user.role)?.code,
+            mobile: user.mobile,
+            isBlocked: user.isBlocked,
+            createdAt: moment(user.createdAt).format("DD/MM/YYYY"),
+            update: "",
+          }))
+        );
+      }
+    };
+
+    findUsers();
+  }, [update, edit]);
+
   const [filterModel, setFilterModel] = useState({
     items: [],
     quickFilterExcludeHiddenColumns: true,
@@ -42,62 +144,151 @@ const ManageUsers = () => {
         </div>
       ),
     },
-
-    { field: "firstname", headerName: "Họ", width: 130 },
-    { field: "lastname", headerName: "Tên", width: 130 },
+    {
+      field: "email",
+      headerName: "Email",
+      width: 160,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <InputForm
+            id={"email"}
+            register={register}
+            fullWidth
+            errors={errors}
+            defaultValue={edit && edit._id === params.row._idTemp ? edit?.email : ""}
+            validate={{
+              required: "Nhập email",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Mail không hợp lệ",
+              },
+            }}
+          />
+        ) : (
+          params.row.email
+        );
+      },
+    },
+    {
+      field: "firstname",
+      headerName: "Họ",
+      width: 100,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <InputForm
+            id={"firstname"}
+            register={register}
+            fullWidth
+            errors={errors}
+            defaultValue={edit && edit._id === params.row._idTemp ? edit?.firstname : ""}
+            validate={{ required: "Nhập tên" }}
+          />
+        ) : (
+          params.row.firstname
+        );
+      },
+    },
+    {
+      field: "lastname",
+      headerName: "Tên",
+      width: 100,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <InputForm
+            id={"lastname"}
+            register={register}
+            fullWidth
+            errors={errors}
+            defaultValue={edit && edit._id === params.row._idTemp ? edit?.lastname : ""}
+            validate={{ required: "Nhập tên" }}
+          />
+        ) : (
+          params.row.lastname
+        );
+      },
+    },
     {
       field: "fullname",
-      headerName: "Full name",
+      headerName: "Tên đầy đủ",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 160,
+      width: 120,
       valueGetter: (value, row) => `${row.firstname || ""} ${row.lastname || ""}`,
     },
-    { field: "role", headerName: "Vai trò", width: 100 },
-    { field: "mobile", headerName: "Liên hệ", width: 100 },
+    {
+      field: "role",
+      headerName: "Vai trò",
+      width: 150,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <SelectAdmin
+            register={register}
+            fullWidth
+            errors={errors}
+            defaultValue={params?.row?.roleCode}
+            id={"role"}
+            validate={{
+              required: true,
+            }}
+            options={roles}
+          />
+        ) : (
+          params.row.role
+        );
+      },
+    },
+
+    {
+      field: "mobile",
+      headerName: "Liên hệ",
+      width: 150,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <InputForm
+            register={register}
+            fullWidth
+            errors={errors}
+            defaultValue={params?.row?.mobile}
+            id={"mobile"}
+            validate={{
+              required: "Nhập phone",
+              pattern: {
+                value: /^[62|0]+\d{9}/gi,
+                message: "Phone không hợp lệ",
+              },
+            }}
+          />
+        ) : (
+          params.row.mobile
+        );
+      },
+    },
     {
       field: "isBlocked",
       headerName: "Trạng thái",
-      width: 100,
+      width: 150,
       renderCell: (params) => {
-        const handleClick = (event, userId) => {
-          setSelectedUserId(userId);
-          setAnchorEl(event.currentTarget);
-        };
-
-        const handleClose = () => {
-          setAnchorEl(null);
-        };
-
-        const handleMenuItemClick = (value) => {
-          console.log("Selected:", value);
-          handleClose();
-        };
-
-        return (
-          <Box sx={{ height: "100%", position: "relative" }}>
+        return edit && edit._id === params.row._idTemp ? (
+          <SelectAdmin
+            register={register}
+            fullWidth
+            errors={errors}
+            id={"isBlocked"}
+            validate={{
+              required: true,
+            }}
+            options={blockStatus}
+            defaultValue={params?.row?.isBlocked}
+          />
+        ) : (
+          <div className="h-full relative">
             <Badge
               color={params.value ? "error" : "success"}
-              variant="outlined"
               badgeContent={params.value ? "Khóa" : "Kích hoạt"}
               overlap="rectangle"
-              sx={{
-                position: "absolute",
-                bottom: "70%",
-                left: "50%",
-                right: "0",
-                transform: "translate(-50%)",
-                width: "100%",
-                minWidth: "60px",
-                cursor: "pointer",
-              }}
-              onClick={(event) => handleClick(event, params.row.id)}
+              style={{ position: "absolute", left: "0", top: "50%", fontSize: "1.2rem" }}
             />
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-              <MenuItem onClick={() => handleMenuItemClick(false)}>Kích hoạt</MenuItem>
-              <MenuItem onClick={() => handleMenuItemClick(true)}>Khóa</MenuItem>
-            </Menu>
-          </Box>
+          </div>
         );
       },
     },
@@ -107,76 +298,77 @@ const ManageUsers = () => {
       width: 130,
       renderCell: (params) => (
         <Box display="flex" justifyContent="start">
-          <IconButton onClick={() => handleEditClick(params.row._idTemp)}>
-            <EditIcon />
-          </IconButton>
+          {edit && edit?._id === params?.row?._idTemp ? (
+            <IconButton onClick={() => setEdit(null)}>
+              <CloseIcon />
+            </IconButton>
+          ) : (
+            <IconButton onClick={() => requiredEdit(params.row.user)}>
+              <EditIcon />
+            </IconButton>
+          )}
           /
-          <IconButton>
+          <IconButton onClick={() => handleDelete(params.row._idTemp)}>
             <DeleteIcon />
           </IconButton>
         </Box>
       ),
     },
     { field: "createdAt", headerName: "Ngày tạo", width: 100 },
-  ];
-
-  const [rows, setRows] = useState([]);
-
-  useEffect(() => {
-    const findUsers = async (params) => {
-      const response = await apiGetAllUsers(params);
-      if (response.success) {
-        setRows(
-          response.users.map((user, index) => ({
-            _idTemp: user._id, // Thêm thuộc tính _idTemp vào mỗi dòng
-            id: index + 1,
-            lastname: user.lastname,
-            firstname: user.firstname,
-            avatar: user.avatar,
-            role: roles?.find((role) => +role.code === +user.role)?.value,
-            mobile: user.mobile,
-            isBlocked: user.isBlocked,
-            createdAt: moment(user.createdAt).format("DD/MM/YYYY"),
-          }))
+    {
+      field: "update",
+      headerName: "Cập nhật",
+      width: 110,
+      renderCell: (params) => {
+        return edit && edit._id === params.row._idTemp ? (
+          <div className="h-full w-full overflow-hidden flex justify-center items-center">
+            <Button type="submit" name="Cập nhật" fw fh />
+          </div>
+        ) : (
+          ""
         );
-      }
-    };
-
-    findUsers();
-  }, []);
-
-  const localeText = {
-    // Thay đổi các giá trị cho ô tìm kiếm và các nút trong toolbar
-    // Ví dụ: toolbarSearchPlaceholder: "Tìm kiếm",
-    toolbarSearchPlaceholder: "Tìm kiếm",
-  };
+      },
+    },
+  ];
+  useEffect(() => {
+    if (edit)
+      reset({
+        firstname: edit.firstname,
+        lastname: edit.lastname,
+        mobile: edit.mobile,
+        role: edit.role,
+        isBlocked: edit.isBlocked,
+      });
+  }, [edit]);
 
   return (
     <div style={{ width: "99%" }} className="bg-white p-2">
-      <DataGrid
-        style={{ border: "none" }} // Đặt lineHeight
-        rowHeight={80}
-        toolbarSearchPlaceholder={"Tìm kiếm"}
-        rows={rows}
-        columns={columns}
-        slots={{ toolbar: GridToolbar }}
-        disableColumnFilter
-        disableDensitySelector
-        filterModel={filterModel}
-        onFilterModelChange={(newModel) => setFilterModel(newModel)}
-        slotProps={{ toolbar: { showQuickFilter: true } }}
-        columnVisibilityModel={columnVisibilityModel}
-        onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
-        localeText={localeText} // Sử dụng localeText để thay đổi ngôn ngữ
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 4 },
-          },
-        }}
-        pageSizeOptions={[1, 2, 3, 4, 5]}
-        onRowClick={handleRowClick}
-        checkboxSelection
-      />
+      <form onSubmit={handleSubmit(handleUpdate)}>
+        <DataGrid
+          style={{ border: "none" }} // Đặt lineHeight
+          rowHeight={80}
+          toolbarSearchPlaceholder={"Tìm kiếm"}
+          rows={rows}
+          columns={columns}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          disableColumnFilter
+          filterModel={filterModel}
+          onFilterModelChange={(newModel) => setFilterModel(newModel)}
+          slotProps={{ toolbar: { showQuickFilter: true } }}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 4 },
+            },
+          }}
+          pageSizeOptions={[1, 2, 3, 4, 5]}
+          // onRowClick={handleRowClick}
+          // checkboxSelection
+        />
+      </form>
     </div>
   );
 };

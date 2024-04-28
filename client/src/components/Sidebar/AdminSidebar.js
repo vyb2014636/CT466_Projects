@@ -16,7 +16,7 @@ import Collapse from "@mui/material/Collapse";
 
 const { BiLogoStripe, PiShoppingBagFill, IoLogoVue } = icons;
 const AdminSidebar = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const handleClick = () => {
     setOpen(!open);

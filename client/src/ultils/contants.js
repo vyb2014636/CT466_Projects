@@ -197,3 +197,14 @@ export const roles = [
     value: "Người dùng",
   },
 ];
+
+export const blockStatus = [
+  {
+    code: true,
+    value: "Đã khóa",
+  },
+  {
+    code: false,
+    value: "Kích hoạt",
+  },
+];
