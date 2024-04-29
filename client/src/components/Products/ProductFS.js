@@ -35,7 +35,7 @@ const ProductFS = ({ productData, normal }) => {
         >
           <SelectOption
             icon={<FaEye />}
-            navi={`/${productData?.category?.title?.toLowerCase()}/${productData?._id}/${productData?.title}`}
+            navi={`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`}
           />
           <SelectOption icon={<IoCart />} />
           <SelectOption icon={<AiOutlineMenu />} />

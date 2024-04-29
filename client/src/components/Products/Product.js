@@ -18,7 +18,7 @@ const Product = ({ productData, isNew, normal }) => {
     >
       <Link
         className="flex flex-col"
-        to={`/${productData?.category?.title?.toLowerCase()}/${productData?._id}/${productData?.title}`}
+        to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`}
         style={{
           boxShadow: "0 2px 4px 0 rgba(0,0,0,.12), 0 -2px 2px 0 rgba(0,0,0,.04)",
           height: "100%",

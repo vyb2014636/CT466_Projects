@@ -38,10 +38,7 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   };
 
   useEffect(() => {
-    let param = [];
-    for (let i of params.entries()) param.push(i);
-    const queries = {};
-    for (let i of param) queries[i[0]] = i[1];
+    const queries = Object.fromEntries([...params]);
     if (selected.length > 0) {
       queries.color = selected.join(",");
       queries.page = 1;
@@ -59,10 +56,7 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   const debouncePriceTo = useDebounce(price.to, 500);
 
   useEffect(() => {
-    let param = [];
-    for (let i of params.entries()) param.push(i);
-    const queries = {};
-    for (let i of param) queries[i[0]] = i[1];
+    const queries = Object.fromEntries([...params]);
 
     queries.page = 1;
     if (Number(price.from) > 0) queries.from = price.from;

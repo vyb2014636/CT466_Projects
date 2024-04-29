@@ -1,20 +1,61 @@
-import { Button, InputForm, SelectAdmin } from "components";
-import React from "react";
+import { Button, InputForm, InputTextarea, SelectAdmin } from "components";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { getBase64 } from "ultils/helpers";
+import { apiCreateProduct } from "apis";
 
 const CreateProduct = () => {
   const { categories } = useSelector((state) => state.app);
   const {
     register,
     formState: { errors },
-    reset,
     handleSubmit,
     watch,
   } = useForm();
-  const handleCreateProduct = (data) => {
+  const [preview, setPreview] = useState({
+    thumb: null,
+    images: [],
+  });
+
+  const handlePreviewThumb = async (file) => {
+    const base64Thumb = await getBase64(file);
+    setPreview((prev) => ({ ...prev, thumb: base64Thumb }));
+  };
+
+  const handlePreviewImages = async (files) => {
+    const imagesPreview = [];
+    for (let file of files) {
+      if (file.type !== "image/png" && file.type !== "image/jpeg") {
+        toast.warning("File ảnh không đúng!");
+        return;
+      }
+      const base64 = await getBase64(file);
+      imagesPreview.push({ name: file.name, path: base64 });
+    }
+    setPreview((prev) => ({ ...prev, images: imagesPreview }));
+  };
+
+  useEffect(() => {
+    handlePreviewThumb(watch("thumb")[0]);
+  }, [watch("thumb")]);
+
+  useEffect(() => {
+    handlePreviewImages(watch("images"));
+  }, [watch("images")]);
+
+  const handleCreateProduct = async (data) => {
     if (data.category) data.category = categories?.find((el) => el._id === data.category)?.title;
-    console.log(data);
+    const formData = new FormData();
+    for (let i of Object.entries(data)) formData.append(i[0], i[1]);
+    console.log(data.thumb);
+    if (data.thumb) formData.append("thumb", data.thumb[0]);
+    if (data.images) {
+      for (let image of data.images) formData.append("images", image);
+    }
+    const response = await apiCreateProduct(formData);
+    console.log(response);
   };
   return (
     <div className="w-full flex flex-col justify-center items-center">
@@ -72,13 +113,12 @@ const CreateProduct = () => {
           </div>
           <div className="w-full flex gap-4 my-6">
             <SelectAdmin
-              label="thể loại"
+              label="Thể loại"
               options={categories?.map((el) => ({ code: el?._id, value: el?.title }))}
               register={register}
               id="category"
               errors={errors}
               styled="flex-1"
-              defaultValue=""
               fullWidth
             />
             <SelectAdmin
@@ -91,10 +131,48 @@ const CreateProduct = () => {
               errors={errors}
               styled="flex-1"
               fullWidth
-              defaultValue=""
+              followCate
             />
           </div>
-          <Button type="submit" name="tạo sản phẩm" />
+          <div className="my-4">
+            <InputTextarea
+              id="description"
+              errors={errors}
+              register={register}
+              validate={{
+                required: "Vui lòng nhập mô tả",
+              }}
+            />
+          </div>
+          <div className="my-4 flex flex-col gap-2">
+            <label className="font-bold" htmlFor="thumb">
+              Ảnh sản phẩm
+            </label>
+            <input {...register("thumb", { required: "cần chọn" })} type="file" id="thumb" />
+            {errors["thumb"] && <small className="text-xs text-red-600">{errors["thumb"]?.message}</small>}
+          </div>
+          {preview.thumb && (
+            <div className="my-4">
+              <img src={preview.thumb} alt="thumbnail" className="w-[100px] object-contain" />
+            </div>
+          )}
+          <div className="my-4 flex flex-col gap-2">
+            <label className="font-bold" htmlFor="images">
+              Ảnh còn lại
+            </label>
+            <input {...register("images", { required: "cần chọn" })} type="file" id="images" multiple />
+            {errors["images"] && <small className="text-xs text-red-600">{errors["images"].message}</small>}
+          </div>
+          {preview.images.length > 0 && (
+            <div className="my-4 flex w-full gap-3 flex-wrap">
+              {preview.images?.map((el, idx) => (
+                <div key={idx} className="w-fit relative">
+                  <img src={el.path} alt="product" className="w-[100px] object-contain" />
+                </div>
+              ))}
+            </div>
+          )}
+          <Button type="submit" name="Tạo sản phẩm" fw />
         </form>
       </div>
     </div>

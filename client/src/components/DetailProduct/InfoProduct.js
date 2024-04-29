@@ -115,7 +115,7 @@ const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
               idUser={el._id}
               star={el.star}
               updatedAt={el.updatedAt}
-              name={`${el.postedBy.lastname} ${el.postedBy.firstname}`}
+              name={`${el?.postedBy?.lastname} ${el?.postedBy?.firstname}`}
             />
           ))}
         </div>

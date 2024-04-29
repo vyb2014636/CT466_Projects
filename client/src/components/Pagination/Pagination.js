@@ -4,11 +4,8 @@ import { PaginationItem } from "components";
 import { useSearchParams } from "react-router-dom";
 const Pagination = ({ totalCount }) => {
   const [params] = useSearchParams();
-  useEffect(() => {
-    const page = params.get("page") || 1;
-  }, [params]);
-
-  const pagination = usePagination(totalCount, 1);
+  // console.log("Số lượng sản phẩm trên 1 trang pagination:", pageSize);
+  const pagination = usePagination(totalCount, +params.get("page") || 1);
 
   const range = () => {
     const currentPage = +params.get("page");
@@ -21,7 +18,7 @@ const Pagination = ({ totalCount }) => {
     <div className="flex w-main justify-between items-center">
       {!+params.get("page") && (
         <span className="text-sm italic">{`Sản phẩm từ 1 - ${
-          process.env.REACT_APP_PRODUCT_LIMIT || 8
+          Math.min(+process.env.REACT_APP_PRODUCT_LIMIT, totalCount) || 8
         } của tổng ${totalCount} sản phẩm`}</span>
       )}
       {+params.get("page") && (

@@ -43,11 +43,6 @@ const ManageUsers = () => {
       }
     });
   };
-  // useEffect(() => {
-  //   if (edit !== null) {
-  //     setEdit(edit);
-  //   }
-  // }, [edit]);
   const render = useCallback(() => {
     setUpdate(!update);
   }, [update]);
@@ -153,9 +148,7 @@ const ManageUsers = () => {
           <InputForm
             id={"email"}
             register={register}
-            fullWidth
             errors={errors}
-            defaultValue={edit && edit._id === params.row._idTemp ? edit?.email : ""}
             validate={{
               required: "Nhập email",
               pattern: {
@@ -175,14 +168,7 @@ const ManageUsers = () => {
       width: 100,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
-          <InputForm
-            id={"firstname"}
-            register={register}
-            fullWidth
-            errors={errors}
-            defaultValue={edit && edit._id === params.row._idTemp ? edit?.firstname : ""}
-            validate={{ required: "Nhập tên" }}
-          />
+          <InputForm id={"firstname"} register={register} errors={errors} validate={{ required: "Nhập họ" }} />
         ) : (
           params.row.firstname
         );
@@ -194,14 +180,7 @@ const ManageUsers = () => {
       width: 100,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
-          <InputForm
-            id={"lastname"}
-            register={register}
-            fullWidth
-            errors={errors}
-            defaultValue={edit && edit._id === params.row._idTemp ? edit?.lastname : ""}
-            validate={{ required: "Nhập tên" }}
-          />
+          <InputForm id={"lastname"} register={register} errors={errors} validate={{ required: "Nhập tên" }} />
         ) : (
           params.row.lastname
         );
@@ -218,12 +197,11 @@ const ManageUsers = () => {
     {
       field: "role",
       headerName: "Vai trò",
-      width: 150,
+      width: 130,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
           <SelectAdmin
             register={register}
-            fullWidth
             errors={errors}
             defaultValue={params?.row?.roleCode}
             id={"role"}
@@ -246,9 +224,7 @@ const ManageUsers = () => {
         return edit && edit._id === params.row._idTemp ? (
           <InputForm
             register={register}
-            fullWidth
             errors={errors}
-            defaultValue={params?.row?.mobile}
             id={"mobile"}
             validate={{
               required: "Nhập phone",
@@ -266,17 +242,13 @@ const ManageUsers = () => {
     {
       field: "isBlocked",
       headerName: "Trạng thái",
-      width: 150,
+      width: 130,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
           <SelectAdmin
             register={register}
-            fullWidth
             errors={errors}
             id={"isBlocked"}
-            validate={{
-              required: true,
-            }}
             options={blockStatus}
             defaultValue={params?.row?.isBlocked}
           />
@@ -317,8 +289,8 @@ const ManageUsers = () => {
     { field: "createdAt", headerName: "Ngày tạo", width: 100 },
     {
       field: "update",
-      headerName: "Cập nhật",
-      width: 110,
+      headerName: "Ghi chú",
+      width: 100,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
           <div className="h-full w-full overflow-hidden flex justify-center items-center">
@@ -333,6 +305,7 @@ const ManageUsers = () => {
   useEffect(() => {
     if (edit)
       reset({
+        email: edit.email,
         firstname: edit.firstname,
         lastname: edit.lastname,
         mobile: edit.mobile,
@@ -340,36 +313,30 @@ const ManageUsers = () => {
         isBlocked: edit.isBlocked,
       });
   }, [edit]);
-
   return (
-    <div style={{ width: "99%" }} className="bg-white p-2">
-      <form onSubmit={handleSubmit(handleUpdate)}>
-        <DataGrid
-          style={{ border: "none" }} // Đặt lineHeight
-          rowHeight={80}
-          toolbarSearchPlaceholder={"Tìm kiếm"}
-          rows={rows}
-          columns={columns}
-          slots={{
-            toolbar: GridToolbar,
-          }}
-          disableColumnFilter
-          filterModel={filterModel}
-          onFilterModelChange={(newModel) => setFilterModel(newModel)}
-          slotProps={{ toolbar: { showQuickFilter: true } }}
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 4 },
-            },
-          }}
-          pageSizeOptions={[1, 2, 3, 4, 5]}
-          // onRowClick={handleRowClick}
-          // checkboxSelection
-        />
-      </form>
-    </div>
+    <form onSubmit={handleSubmit(handleUpdate)}>
+      <DataGrid
+        style={{ border: "none" }} // Đặt lineHeight
+        rowHeight={80}
+        rows={rows}
+        columns={columns}
+        slots={{
+          toolbar: GridToolbar,
+        }}
+        disableColumnFilter
+        filterModel={filterModel}
+        onFilterModelChange={(newModel) => setFilterModel(newModel)}
+        slotProps={{ toolbar: { showQuickFilter: true } }}
+        columnVisibilityModel={columnVisibilityModel}
+        onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
+        initialState={{
+          pagination: {
+            paginationModel: { page: 0, pageSize: 4 },
+          },
+        }}
+        pageSizeOptions={[1, 2, 3, 4, 5]}
+      />
+    </form>
   );
 };
 

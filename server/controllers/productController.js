@@ -6,9 +6,16 @@ const slugify = require("slugify");
 const product = require("../models/product");
 
 const createProduct = asyncHandler(async (req, res) => {
-  if (Object.keys(req.body).length === 0) throw new Error("Vui lòng nhập thông tin sản phẩm");
-  if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
+  const { title, price, description, brand, category, color } = req.body;
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((el) => el.path);
+  if (!(title && price && description && brand && category && color))
+    throw new Error("Vui lòng nhập đầy đủ thông tin sản phẩm");
+  req.body.slug = slugify(title);
+  if (thumb) req.body.thumb = thumb;
+  if (images) req.body.images = images;
   const newProduct = await Product.create(req.body);
+  console.log(req.body.thumb);
   return res.status(200).json({
     success: newProduct ? true : false,
     createProduct: newProduct ? newProduct : "Không tạo được sản phẩm",
@@ -32,15 +39,22 @@ const getProductId = asyncHandler(async (req, res) => {
 });
 
 const getProduct = asyncHandler(async (req, res) => {
-  const { category, ...queries } = { ...req.query }; //tạo ra thêm 1 vùng dữ liệu nữa ở đó queries->vùngDLCopy và req.query->vùngDL ban đầu (Nếu không có ... trước req.query thì cả queries và req.query sẽ -> cùng 1 vùng DL)
+  const queries = { ...req.query }; //tạo ra thêm 1 vùng dữ liệu nữa ở đó queries->vùngDLCopy và req.query->vùngDL ban đầu (Nếu không có ... trước req.query thì cả queries và req.query sẽ -> cùng 1 vùng DL)
   const excludedFields = ["page", "sort", "limit", "fields"];
   excludedFields.forEach((el) => delete queries[el]);
 
   //Lọc theo filter
   let queryString = JSON.stringify(queries);
   queryString = queryString.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`); // có nghĩa là nếu toán tử trong chuỗi VD: 'price[gt]' thì nó sẽ chuyển 'price[$gt]' để truy vấn monggo
-  const formatQueries = JSON.parse(queryString);
+  let formatQueries = JSON.parse(queryString);
   let colorQueryObject = {};
+  if (queries?.category) {
+    formatQueries.category = formatQueries.category
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+      .split("-")
+      .join(" ");
+    formatQueries.category = { $regex: formatQueries.category, $options: "i" };
+  }
   if (queries?.title) formatQueries.title = { $regex: queries.title, $options: "i" }; //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
   if (queries?.color) {
     delete formatQueries.color;
@@ -49,7 +63,7 @@ const getProduct = asyncHandler(async (req, res) => {
     colorQueryObject = { $or: colorQuery };
   } //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
   const q = { ...colorQueryObject, ...formatQueries };
-  let queryCommand = Product.find(q).populate("category", "title"); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
+  let queryCommand = Product.find(q); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
   //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
 
   //Sort sắp xếp
@@ -74,26 +88,26 @@ const getProduct = asyncHandler(async (req, res) => {
   queryCommand
     .exec()
     .then(async (response) => {
-      let counts = await Product.find(q).countDocuments();
-      if (category) {
-        let Refind;
-        if (req.query.sort) {
-          const sortBy = req.query.sort.split(",").join(" ");
-          Refind = await Product.find(q).populate("category", "title").sort(sortBy);
-        } else if (req.query.sort) {
-          const fields = req.query.fields.split(",").join(" ");
-          Refind = await Product.find(q).populate("category", "title").select(fields);
-        } else {
-          Refind = await Product.find(q).populate("category", "title");
-        }
+      const counts = await Product.find(q).countDocuments();
+      // if (category) {
+      //   let Refind;
+      //   if (req.query.sort) {
+      //     const sortBy = req.query.sort.split(",").join(" ");
+      //     Refind = await Product.find(q).populate("category", "title").sort(sortBy);
+      //   } else if (req.query.sort) {
+      //     const fields = req.query.fields.split(",").join(" ");
+      //     Refind = await Product.find(q).populate("category", "title").select(fields);
+      //   } else {
+      //     Refind = await Product.find(q).populate("category", "title");
+      //   }
 
-        const capitalizedCategory = category
-          .replace(/\b\w/g, (char) => char.toUpperCase())
-          .split("-")
-          .join(" ");
-        response = Refind.filter((product) => String(product.category.title) === String(capitalizedCategory));
-        counts = response.length;
-      }
+      //   const capitalizedCategory = category
+      //     .replace(/\b\w/g, (char) => char.toUpperCase())
+      //     .split("-")
+      //     .join(" ");
+      //   response = Refind.filter((product) => String(product.category.title) === String(capitalizedCategory));
+      //   counts = response.length;
+      // }
       return res.status(200).json({
         success: response ? true : false,
         counts,

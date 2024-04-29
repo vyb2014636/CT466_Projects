@@ -19,7 +19,6 @@ const InputForm = ({
     <div className={clsx("flex flex-col gap-1 h-full", styled)}>
       <div className="h-[70%]">
         {label && <label htmlFor={id}>{label}</label>}
-
         <Input
           type={type}
           id={id}

@@ -3,7 +3,15 @@ const product = require("../controllers/productController");
 const { verifyToken, isAdmin } = require("../middlewares/verifyToken");
 const uploadCloud = require("../config/cloudinary.config");
 
-router.post("/", [verifyToken, isAdmin], product.createProduct);
+router.post(
+  "/",
+  [verifyToken, isAdmin],
+  uploadCloud.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  product.createProduct
+);
 router.get("/getProduct", product.getProduct);
 router.get("/getProductId/:pid", product.getProductId);
 

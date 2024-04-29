@@ -39,10 +39,7 @@ const Products = () => {
   };
 
   useEffect(() => {
-    let param = [];
-    for (let i of params.entries()) param.push(i);
-    const queries = {};
-    for (let i of params) queries[i[0]] = i[1];
+    const queries = Object.fromEntries([...params]);
     //Lọc theo giá
     let priceQuery = {};
     if (queries.to && queries.from) {
@@ -72,10 +69,7 @@ const Products = () => {
     [valueSort]
   );
   useEffect(() => {
-    let param = [];
-    for (let i of params.entries()) param.push(i);
-    const queries = {};
-    for (let i of params) queries[i[0]] = i[1];
+    const queries = Object.fromEntries([...params]);
     if (valueSort) {
       queries.sort = valueSort;
       navigate({
@@ -132,7 +126,7 @@ const Products = () => {
         </div>
       </div>
       <div className="products-pagination w-main flex justify-end">
-        <Pagination totalCount={countProducts} />
+        <Pagination totalCount={countProducts} pageSize={products?.length} />
       </div>
     </div>
   );

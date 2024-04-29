@@ -2,7 +2,7 @@ import React, { Fragment, memo, useState } from "react";
 import icons from "ultils/icons";
 import { useSelector } from "react-redux";
 import { adminSidebar } from "ultils/contants";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import CardHeader from "@mui/material/CardHeader";
 import List from "@mui/material/List";
@@ -25,11 +25,11 @@ const AdminSidebar = () => {
   return (
     <div className="p-4 bg-white flex flex-col gap-8  h-full">
       <div className="flex justify-between items-center py-4">
-        <div className="flex items-center">
+        <Link to={"/"} className="flex items-center">
           <BiLogoStripe color="green" size={35} />
           <PiShoppingBagFill color="green" size={35} />
           <IoLogoVue color="green" size={30} />
-        </div>
+        </Link>
         <span className="font-bold text-xl">Quản lý</span>
       </div>
       <div className="rounded-2xl bg-[#EDEFF1]">
