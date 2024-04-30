@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import usePagination from "hooks/usePagination";
 import { PaginationItem } from "components";
 import { useSearchParams } from "react-router-dom";
@@ -9,17 +9,18 @@ const Pagination = ({ totalCount }) => {
 
   const range = () => {
     const currentPage = +params.get("page");
-    const pageSize = process.env.REACT_APP_PRODUCT_LIMIT || 8;
-    const start = (currentPage - 1) * pageSize + 1;
+    const pageSize = +process.env.REACT_APP_PRODUCT_LIMIT || 8;
+    const start = Math.min((currentPage - 1) * pageSize + 1, totalCount);
     const end = Math.min(currentPage * pageSize, totalCount);
     return `${start} - ${end}`;
   };
   return (
     <div className="flex w-main justify-between items-center">
       {!+params.get("page") && (
-        <span className="text-sm italic">{`Sản phẩm từ 1 - ${
-          Math.min(+process.env.REACT_APP_PRODUCT_LIMIT, totalCount) || 8
-        } của tổng ${totalCount} sản phẩm`}</span>
+        <span className="text-sm italic">{`Sản phẩm từ 1 - ${Math.min(
+          +process.env.REACT_APP_PRODUCT_LIMIT,
+          totalCount
+        )} của tổng ${totalCount} sản phẩm`}</span>
       )}
       {+params.get("page") && (
         <span className="text-sm italic">{`Sản phẩm từ ${range()} của tổng ${totalCount} sản phẩm`}</span>

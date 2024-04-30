@@ -1,19 +1,27 @@
-import { Button, InputForm, InputTextarea, SelectAdmin } from "components";
+import { Button, InputForm, InputTextarea, Loading, SelectAdmin } from "components";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { getBase64 } from "ultils/helpers";
 import { apiCreateProduct } from "apis";
+import { showModal } from "store/app/appSlice";
+import Swal from "sweetalert2";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import { FormControl, InputLabel } from "@mui/material";
 
 const CreateProduct = () => {
+  const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.app);
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
     watch,
   } = useForm();
+
   const [preview, setPreview] = useState({
     thumb: null,
     images: [],
@@ -49,13 +57,31 @@ const CreateProduct = () => {
     if (data.category) data.category = categories?.find((el) => el._id === data.category)?.title;
     const formData = new FormData();
     for (let i of Object.entries(data)) formData.append(i[0], i[1]);
-    console.log(data.thumb);
     if (data.thumb) formData.append("thumb", data.thumb[0]);
     if (data.images) {
       for (let image of data.images) formData.append("images", image);
     }
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiCreateProduct(formData);
-    console.log(response);
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
+    if (response?.success) {
+      Swal.fire({
+        icon: "success",
+        title: "Chúc mừng",
+        text: "Tạo sản phẩm thành công!",
+      });
+      reset();
+      setPreview({
+        thumb: null,
+        images: [],
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Thất bại",
+        text: response.mes,
+      });
+    }
   };
   return (
     <div className="w-full flex flex-col justify-center items-center">
@@ -112,27 +138,26 @@ const CreateProduct = () => {
             />
           </div>
           <div className="w-full flex gap-4 my-6">
-            <SelectAdmin
-              label="Thể loại"
-              options={categories?.map((el) => ({ code: el?._id, value: el?.title }))}
-              register={register}
-              id="category"
-              errors={errors}
-              styled="flex-1"
-              fullWidth
-            />
-            <SelectAdmin
-              label="Brand (theo thể loại)"
-              options={categories
-                ?.find((el) => el._id === watch("category"))
-                ?.brand?.map((el) => ({ code: el, value: el }))}
-              register={register}
-              id="brand"
-              errors={errors}
-              styled="flex-1"
-              fullWidth
-              followCate
-            />
+            <div className="h-full flex flex-col justify-center flex-1">
+              <SelectAdmin
+                label="Thể loại"
+                options={categories?.map((el) => ({ code: el._id, value: el.title }))}
+                register={register}
+                id={"category"}
+                errors={errors}
+              />
+            </div>
+            <div className="h-full flex flex-col justify-center flex-1">
+              <SelectAdmin
+                label="Brand (theo thể loại)"
+                options={categories
+                  ?.find((el) => el._id === watch("category"))
+                  ?.brand?.map((el) => ({ code: el, value: el }))}
+                register={register}
+                id={"brand"}
+                errors={errors}
+              />
+            </div>
           </div>
           <div className="my-4">
             <InputTextarea

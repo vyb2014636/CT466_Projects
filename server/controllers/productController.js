@@ -9,16 +9,14 @@ const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  if (!(title && price && description && brand && category && color))
-    throw new Error("Vui lòng nhập đầy đủ thông tin sản phẩm");
+  if (!(title && price && description && brand && category && color)) throw new Error("Vui lòng nhập đủ thông tin");
   req.body.slug = slugify(title);
   if (thumb) req.body.thumb = thumb;
   if (images) req.body.images = images;
   const newProduct = await Product.create(req.body);
-  console.log(req.body.thumb);
   return res.status(200).json({
     success: newProduct ? true : false,
-    createProduct: newProduct ? newProduct : "Không tạo được sản phẩm",
+    mes: newProduct ? "Sản phẩm đã được tạo" : "Không tạo được sản phẩm",
   });
 });
 const getProductId = asyncHandler(async (req, res) => {
@@ -62,8 +60,21 @@ const getProduct = asyncHandler(async (req, res) => {
     const colorQuery = colorArr.map((el) => ({ color: { $regex: el, $options: "i" } }));
     colorQueryObject = { $or: colorQuery };
   } //Nếu tìm theo tên SP thì ta sẽ thêm vào object formatQueries một key title có thể tìm tương đối bất kể hoa thường
-  const q = { ...colorQueryObject, ...formatQueries };
-  let queryCommand = Product.find(q); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
+  const queryObject = {};
+  if (queries?.q) {
+    delete formatQueries.q;
+    queryObject = {
+      $or: [
+        { color: { $regex: queries.q, $options: "i" } },
+        { title: { $regex: queries.q, $options: "i" } },
+        { category: { $regex: queries.q, $options: "i" } },
+        { brand: { $regex: queries.q, $options: "i" } },
+        { description: { $regex: queries.q, $options: "i" } },
+      ],
+    };
+  }
+  const query = { ...colorQueryObject, ...formatQueries };
+  let queryCommand = Product.find(query); //Không cần thực hiện liền vì không có await thì đây chỉ là truy vấn chưa có excute
   //Số lượng sản phẩm thỏa mãn điều kiện !== số lượng sp trả về 1 lần gọi API
 
   //Sort sắp xếp
@@ -88,7 +99,7 @@ const getProduct = asyncHandler(async (req, res) => {
   queryCommand
     .exec()
     .then(async (response) => {
-      const counts = await Product.find(q).countDocuments();
+      const counts = await Product.find(query).countDocuments();
       // if (category) {
       //   let Refind;
       //   if (req.query.sort) {
@@ -139,7 +150,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
   const findProducts = await Product.find();
   return res.status(200).json({
     success: findProducts ? true : false,
-    detailProduct: findProducts ? findProducts : "Khong tim thay san pham",
+    products: findProducts ? findProducts : "Khong tim thay san pham",
   });
 });
 

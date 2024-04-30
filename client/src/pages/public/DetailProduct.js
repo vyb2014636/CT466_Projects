@@ -90,45 +90,28 @@ const DetailProduct = () => {
           <div className="md:w-1/6 lg:w-1/6 w-full  h-full"></div>
           <div className="details-left md:w-2/6 lg:w-2/6 w-full h-full px-8 flex flex-col gap-2">
             <Slider
-              className="details-left-top h-[77%] sm:w-[20%] md:w-full"
+              className="details-left-top h-[77%] sm:w-[20%] md:w-full "
               asNavFor={nav2}
               ref={(slider) => (sliderRef1 = slider)}
             >
               <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-              <img
-                src="https://slyclothing.vn/images/bigheart_w.webp"
-                className="object-contain h-full w-full"
-                alt=""
-              />
-              <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-              <img
-                src="https://slyclothing.vn/images/bigheart_w.webp"
-                className="object-contain h-full w-full"
-                alt=""
-              />
+              {productDetail?.images?.map((image) => (
+                <img src={image} className="object-contain border" alt="" />
+              ))}
             </Slider>
             <Slider
               className="details-left-bottom flex-grow sm:w-full"
               asNavFor={nav1}
               ref={(slider) => (sliderRef2 = slider)}
-              slidesToShow={4}
+              slidesToShow={3}
               swipeToSlide={true}
               focusOnSelect={true}
             >
-              {/* {productDetail?.images?.map((el) => ( */}
-              <img src={productDetail?.thumb} className="object-contain h-full w-full " alt="" />
-              <img
-                src="https://slyclothing.vn/images/bigheart_w.webp"
-                className="object-contain h-full w-full"
-                alt=""
-              />
               <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" />
-              <img
-                src="https://slyclothing.vn/images/bigheart_w.webp"
-                className="object-contain h-full w-full"
-                alt=""
-              />
-              {/* ))} */}
+
+              {productDetail?.images?.map((image) => (
+                <img src={image} className="object-contain h-full w-full" alt="" />
+              ))}
             </Slider>
           </div>
           <div className="details-right md:w-2/6 lg:w-2/6 border ">

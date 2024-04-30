@@ -89,7 +89,9 @@ const ManageUsers = () => {
       }
     });
   };
+
   const [rows, setRows] = useState([]);
+  const [lengthTable, setLengthTable] = useState([]);
   useEffect(() => {
     const findUsers = async (params) => {
       const response = await apiGetAllUsers(params);
@@ -113,16 +115,12 @@ const ManageUsers = () => {
         );
       }
     };
-
     findUsers();
   }, [update, edit]);
+  useEffect(() => {
+    setLengthTable(Array.from({ length: rows.length }, (_, index) => +index + 1));
+  }, [rows]);
 
-  const [filterModel, setFilterModel] = useState({
-    items: [],
-    quickFilterExcludeHiddenColumns: true,
-    quickFilterValues: [""],
-  });
-  const [columnVisibilityModel, setColumnVisibilityModel] = useState({});
   const columns = [
     {
       field: "avatar",
@@ -200,16 +198,18 @@ const ManageUsers = () => {
       width: 130,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
-          <SelectAdmin
-            register={register}
-            errors={errors}
-            defaultValue={params?.row?.roleCode}
-            id={"role"}
-            validate={{
-              required: true,
-            }}
-            options={roles}
-          />
+          <div className="h-full flex items-center justify-center">
+            <SelectAdmin
+              register={register}
+              errors={errors}
+              defaultValue={params?.row?.roleCode}
+              id={"role"}
+              validate={{
+                required: true,
+              }}
+              options={roles}
+            />
+          </div>
         ) : (
           params.row.role
         );
@@ -245,20 +245,22 @@ const ManageUsers = () => {
       width: 130,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
-          <SelectAdmin
-            register={register}
-            errors={errors}
-            id={"isBlocked"}
-            options={blockStatus}
-            defaultValue={params?.row?.isBlocked}
-          />
+          <div className="h-full flex items-center justify-center">
+            <SelectAdmin
+              register={register}
+              errors={errors}
+              id={"isBlocked"}
+              options={blockStatus}
+              defaultValue={params?.row?.isBlocked}
+            />
+          </div>
         ) : (
           <div className="h-full relative">
             <Badge
               color={params.value ? "error" : "success"}
               badgeContent={params.value ? "Khóa" : "Kích hoạt"}
               overlap="rectangle"
-              style={{ position: "absolute", left: "0", top: "50%", fontSize: "1.2rem" }}
+              style={{ position: "absolute", left: "0", top: "40%", fontSize: "1.5rem" }}
             />
           </div>
         );
@@ -313,29 +315,29 @@ const ManageUsers = () => {
         isBlocked: edit.isBlocked,
       });
   }, [edit]);
+
   return (
     <form onSubmit={handleSubmit(handleUpdate)}>
-      <DataGrid
-        style={{ border: "none" }} // Đặt lineHeight
-        rowHeight={80}
-        rows={rows}
-        columns={columns}
-        slots={{
-          toolbar: GridToolbar,
-        }}
-        disableColumnFilter
-        filterModel={filterModel}
-        onFilterModelChange={(newModel) => setFilterModel(newModel)}
-        slotProps={{ toolbar: { showQuickFilter: true } }}
-        columnVisibilityModel={columnVisibilityModel}
-        onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
-        initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 4 },
-          },
-        }}
-        pageSizeOptions={[1, 2, 3, 4, 5]}
-      />
+      <Box sx={{ height: 400, width: 1 }}>
+        <DataGrid
+          style={{ border: "none" }} // Đặt lineHeight
+          rowHeight={80}
+          rows={rows}
+          columns={columns}
+          slots={{
+            toolbar: GridToolbar,
+          }}
+          slotProps={{ toolbar: { showQuickFilter: true } }}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 3 },
+            },
+          }}
+          pageSizeOptions={lengthTable}
+          disableColumnFilter
+          disableDensitySelector
+        />
+      </Box>
     </form>
   );
 };

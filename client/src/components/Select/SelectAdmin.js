@@ -1,49 +1,26 @@
-import React, { memo, useState } from "react";
+import React, { memo } from "react";
 import clsx from "clsx";
 import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { FormControl, InputLabel } from "@mui/material";
+import { TextField } from "@mui/material";
 
-const SelectAdmin = ({
-  label,
-  options = [],
-  register,
-  errors,
-  id,
-  validate,
-  styled,
-  fullWidth,
-  defaultValue,
-  followCate,
-}) => {
-  const [age, setAge] = useState("");
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
+const SelectAdmin = ({ label, options = [], register, errors, id, validate, fullWidth, defaultValue }) => {
   return (
-    <div className={clsx("h-full flex flex-col justify-center ", styled)}>
-      <FormControl sx={{ minWidth: 120 }}>
-        {/* {label && <label htmlFor={id}>{label}</label>} */}
-        <InputLabel id={id}>{label}</InputLabel>
-        <Select
-          defaultValue={defaultValue}
-          className={clsx(fullWidth && "w-full")}
-          id={id}
-          {...register(id, validate)}
-          label={label}
-          onChange={handleChange}
-        >
-          {followCate && <MenuItem value="">--Chọn theo thể loại--</MenuItem>}
-          {options?.map((el) => (
-            <MenuItem value={el.code} key={el.code}>
-              {el.value}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+    <TextField
+      id={id}
+      select
+      label={label}
+      defaultValue={defaultValue}
+      helperText="Vui lòng chọn 1 giá trị"
+      className={clsx(fullWidth && "w-full")}
+      {...register(id, validate)}
+    >
+      {options.map((el) => (
+        <MenuItem value={el.code} key={el.code}>
+          {el.value}
+        </MenuItem>
+      ))}
       {errors[id] && <small className="text-xs text-red-600">{errors[id]?.message}</small>}
-    </div>
+    </TextField>
   );
 };
 

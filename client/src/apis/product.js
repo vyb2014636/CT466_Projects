@@ -35,3 +35,9 @@ export const apiCreateProduct = (data) =>
     method: "post",
     data,
   });
+
+export const apiAllProducts = () =>
+  axios({
+    url: "/product/getAllProducts",
+    method: "get",
+  });
