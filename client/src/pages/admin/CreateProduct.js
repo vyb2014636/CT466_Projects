@@ -7,9 +7,7 @@ import { getBase64 } from "ultils/helpers";
 import { apiCreateProduct } from "apis";
 import { showModal } from "store/app/appSlice";
 import Swal from "sweetalert2";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import { FormControl, InputLabel } from "@mui/material";
+import { sizes } from "ultils/contants";
 
 const CreateProduct = () => {
   const dispatch = useDispatch();
@@ -84,11 +82,11 @@ const CreateProduct = () => {
     }
   };
   return (
-    <div className="w-full flex flex-col justify-center items-center">
+    <div className="w-full flex flex-col justify-center items-center gap-4">
       <h1 className="flex justify-center items-center text-3xl font-bold p-4 border-b w-full">
         <span>Tạo sản phẩm mới</span>
       </h1>
-      <div className="p-4 w-main">
+      <div className="p-4 w-[80%]">
         <form onSubmit={handleSubmit(handleCreateProduct)}>
           <InputForm
             register={register}
@@ -155,6 +153,15 @@ const CreateProduct = () => {
                   ?.brand?.map((el) => ({ code: el, value: el }))}
                 register={register}
                 id={"brand"}
+                errors={errors}
+              />
+            </div>
+            <div className="h-full flex flex-col justify-center flex-1">
+              <SelectAdmin
+                label="Size"
+                options={sizes.map((el) => ({ code: el.value, value: el.value }))}
+                register={register}
+                id={"size"}
                 errors={errors}
               />
             </div>

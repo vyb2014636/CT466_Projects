@@ -20,6 +20,16 @@ router.get("/getAllProducts", product.getAllProducts);
 router.get("/getProductsFromCategory", product.getProductsFromCategory);
 
 router.put(
+  "/varriant/:pid",
+  [verifyToken, isAdmin],
+  uploadCloud.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  product.addVarriant
+);
+
+router.put(
   "/updateProduct/:pid",
   [verifyToken, isAdmin],
   uploadCloud.fields([

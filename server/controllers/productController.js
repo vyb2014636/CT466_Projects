@@ -3,13 +3,14 @@ const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const { Error } = require("mongoose");
 const slugify = require("slugify");
-const product = require("../models/product");
+const makeSKU = require("uniqid");
 
 const createProduct = asyncHandler(async (req, res) => {
-  const { title, price, description, brand, category, color } = req.body;
+  const { title, price, description, brand, category, color, size } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  if (!(title && price && description && brand && category && color)) throw new Error("Vui lòng nhập đủ thông tin");
+  if (!(title && price && description && brand && category && color && size))
+    throw new Error("Vui lòng nhập đủ thông tin");
   req.body.slug = slugify(title);
   if (thumb) req.body.thumb = thumb;
   if (images) req.body.images = images;
@@ -156,8 +157,9 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const files = req?.files;
+  const files = req.files;
   if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+
   if (files?.images) req.body.images = files?.images?.map((el) => el.path);
 
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
@@ -231,6 +233,28 @@ const uploadImageProduct = asyncHandler(async (req, res) => {
     updatedImageProduct: respone ? respone : "Không thể upload ảnh sản phẩm",
   });
 });
+
+const addVarriant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { title, price, color, size } = req.body;
+
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req?.files?.images?.map((el) => el.path);
+
+  if (!(title && price && color && size)) throw new Error("Chưa có files");
+  const response = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: { varriants: { color, price, title, size, thumb, images, SKU: makeSKU().toUpperCase() } },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    mes: response ? response : "Không thể upload ảnh sản phẩm",
+  });
+});
+
 module.exports = {
   createProduct,
   getProduct,
@@ -241,4 +265,5 @@ module.exports = {
   uploadImageProduct,
   getProductId,
   getProductsFromCategory,
+  addVarriant,
 };

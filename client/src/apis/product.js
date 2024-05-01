@@ -54,3 +54,10 @@ export const apiDeleteProduct = (pid) =>
     url: "/product/deleteProduct/" + pid,
     method: "delete",
   });
+
+export const apiVarriant = (data, pid) =>
+  axios({
+    url: "/product/varriant/" + pid,
+    method: "put",
+    data,
+  });

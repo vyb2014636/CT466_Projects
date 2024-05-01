@@ -12,6 +12,7 @@ import { apiUpdateProduct } from "apis";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { sizes } from "ultils/contants";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -42,6 +43,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
       color: editProduct?.color || "",
       category: editProduct?.category || "",
       brand: editProduct?.brand || "",
+      size: editProduct?.size || "",
     });
     setPreview({
       thumb: editProduct?.thumb || "",
@@ -81,14 +83,22 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
   useEffect(() => {
     if (watch("images") instanceof FileList && watch("images").length > 0) handlePreviewImages(watch("images"));
   }, [watch("images")]);
-
   const handleUpdateProduct = async (data) => {
     if (data.category) data.category = categories?.find((el) => el.title === data.category)?.title;
     data.thumb = data?.thumb?.length === 0 ? preview.thumb : data.thumb[0];
     const formData = new FormData();
-    for (let i of Object.entries(data)) formData.append(i[0], i[1]);
-    data.images = data.images?.length === 0 ? preview.images : data.images;
-    for (let image of data.images) formData.append("images", image);
+    for (let i of Object.entries(data)) {
+      // Chỉ thêm vào formData nếu giá trị không rỗng và không phải là mảng images
+      if (i[1] !== "" && i[0] !== "images") {
+        formData.append(i[0], i[1]);
+      }
+    }
+    // Kiểm tra và chỉ thêm hình ảnh vào formData nếu data.images tồn tại và không rỗng
+    if (data.images && data.images.length > 0) {
+      for (let image of data.images) {
+        formData.append("images", image);
+      }
+    }
     dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiUpdateProduct(formData, editProduct._id);
     dispatch(showModal({ isShowModal: false, modalChildren: null }));
@@ -99,8 +109,16 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
         text: response.mes,
       });
       render();
+      setPreview({
+        thumb: null,
+        images: [],
+      });
       setEdit(null);
     } else {
+      setPreview({
+        thumb: null,
+        images: [],
+      });
       Swal.fire({
         icon: "error",
         title: "Thất bại",
@@ -108,6 +126,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
       });
     }
   };
+
   return (
     <div className="absolute inset-0 bg-overlay z-50 flex items-center justify-center">
       <Box
@@ -200,7 +219,18 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                     defaultValue={editProduct?.brand}
                   />
                 </div>
+                <div className="h-full flex flex-col justify-center flex-1">
+                  <SelectAdmin
+                    label="Size"
+                    options={sizes.map((el) => ({ code: el.value, value: el.value }))}
+                    register={register}
+                    id={"size"}
+                    errors={errors}
+                    defaultValue={editProduct?.size}
+                  />
+                </div>
               </div>
+
               <div className="my-4">
                 <InputTextarea
                   id="description"
@@ -215,10 +245,6 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
               <div className="flex">
                 <div className="flex-1">
                   <div className="my-4 flex flex-col gap-2">
-                    {/* <label className="font-bold" htmlFor="thumb">
-                  Ảnh sản phẩm
-                </label>
-                <input {...register("thumb", { required: "cần chọn" })} type="file" id="thumb" /> */}
                     <Button
                       component="label"
                       role={undefined}
@@ -240,10 +266,6 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                 </div>
                 <div className="flex-1">
                   <div className="my-4 flex flex-col gap-2">
-                    {/* <label className="font-bold" htmlFor="images">
-                  Ảnh còn lại
-                </label>
-                <input {...register("images", { required: "cần chọn" })} type="file" id="images" multiple /> */}
                     <Button
                       component="label"
                       role={undefined}

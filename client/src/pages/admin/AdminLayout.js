@@ -21,7 +21,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex w-full bg-[#F9FAFB] min-h-screen relative gap-1">
-      <div className="w-[20%]">
+      <div className="md:w-[20%] sm:w-[30%]">
         <AdminSidebar />
       </div>
       <Box sx={{ width: "100%" }}>

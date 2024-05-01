@@ -4,15 +4,18 @@ import { apiAllProducts } from "apis/product";
 import { Box, IconButton, TextField } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import MenuIcon from "@mui/icons-material/Menu";
 import moment from "moment";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import FormEditProduct from "./FormEditProduct";
 import { apiDeleteProduct } from "apis";
+import { CustomizeVarriant } from "components";
 
 const ManageProducts = () => {
   const [update, setUpdate] = useState(false);
   const [edit, setEdit] = useState(null);
+  const [customizeVarriant, setCustomizeVarriant] = useState(null);
   const render = useCallback(() => {
     setUpdate(!update);
   }, [update]);
@@ -139,6 +142,10 @@ const ManageProducts = () => {
           <IconButton onClick={() => handleDeleteProduct(params.row.idProduct, params.row.title)}>
             <DeleteIcon />
           </IconButton>
+          /
+          <IconButton onClick={() => setCustomizeVarriant(params.row.product)}>
+            <MenuIcon />
+          </IconButton>
         </Box>
       ),
     },
@@ -146,13 +153,19 @@ const ManageProducts = () => {
   useEffect(() => {
     fetchUsers();
   }, [update]);
-  const handleSubmitEdit = async () => {};
   return (
     <Box sx={{ height: 650, width: 1 }}>
       {edit && <FormEditProduct editProduct={edit} render={render} setEdit={setEdit} />}
+      {customizeVarriant && (
+        <CustomizeVarriant
+          customizeVarriant={customizeVarriant}
+          render={render}
+          setCustomizeVarriant={setCustomizeVarriant}
+        />
+      )}
       <DataGrid
         style={{ border: "none" }} // Đặt lineHeight
-        rowHeight={80}
+        rowHeight={83}
         rows={rows}
         columns={columns}
         slots={{

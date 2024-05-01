@@ -3,7 +3,7 @@ import clsx from "clsx";
 import MenuItem from "@mui/material/MenuItem";
 import { TextField } from "@mui/material";
 
-const SelectAdmin = ({ label, options = [], register, errors, id, validate, fullWidth, defaultValue }) => {
+const SelectAdmin = ({ label, options = [], register, errors, id, validate, fullWidth, defaultValue, styled }) => {
   return (
     <TextField
       id={id}
@@ -11,7 +11,7 @@ const SelectAdmin = ({ label, options = [], register, errors, id, validate, full
       label={label}
       defaultValue={defaultValue}
       // helperText="Vui lòng chọn 1 giá trị"
-      className={clsx(fullWidth && "w-full")}
+      className={clsx(fullWidth && "w-full", styled)}
       {...register(id, validate)}
     >
       {options.map((el) => (

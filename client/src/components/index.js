@@ -32,3 +32,4 @@ export { default as HeaderAdmin } from "./Sidebar/HeaderAdmin";
 export { default as SelectAdmin } from "./Select/SelectAdmin";
 export { default as InputForm } from "./Inputs/InputForm";
 export { default as InputTextarea } from "./Inputs/InputTextarea";
+export { default as CustomizeVarriant } from "./Products/CustomizeVarriant";

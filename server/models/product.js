@@ -30,6 +30,10 @@ var productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    size: {
+      type: String,
+      required: true,
+    },
     quantity: {
       type: Number,
       default: 0,
@@ -61,6 +65,17 @@ var productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    varriants: [
+      {
+        title: String,
+        color: String,
+        price: Number,
+        thumb: String,
+        size: String,
+        images: Array,
+        SKD: String,
+      },
+    ],
   },
   { timestamps: true }
 );
