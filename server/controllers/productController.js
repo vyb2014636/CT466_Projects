@@ -9,8 +9,7 @@ const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color, size } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  if (!(title && price && description && brand && category && color && size))
-    throw new Error("Vui lòng nhập đủ thông tin");
+  if (!(title && price && description && brand && category && color && size)) throw new Error("Vui lòng nhập đủ thông tin");
   req.body.slug = slugify(title);
   if (thumb) req.body.thumb = thumb;
   if (images) req.body.images = images;
@@ -251,7 +250,7 @@ const addVarriant = asyncHandler(async (req, res) => {
   );
   return res.status(200).json({
     success: response ? true : false,
-    mes: response ? response : "Không thể upload ảnh sản phẩm",
+    mes: response ? "Thành công" : "Không thể upload ảnh sản phẩm",
   });
 });
 

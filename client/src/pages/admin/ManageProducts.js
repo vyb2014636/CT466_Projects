@@ -40,6 +40,7 @@ const ManageProducts = () => {
           category: product.category,
           color: product.color,
           createdAt: moment(product.createdAt).format("DD/MM/YYYY"),
+          varriants: product?.varriants?.length || 0,
           update: "",
         }))
       );
@@ -72,10 +73,7 @@ const ManageProducts = () => {
       renderCell: (params) => (
         <div className="h-full flex justify-center items-center">
           <img
-            src={
-              params.row.thumb ||
-              "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"
-            }
+            src={params.row.thumb || "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"}
             alt="thumb"
             className="object-cover h-full "
           />
@@ -125,6 +123,11 @@ const ManageProducts = () => {
       width: 70,
     },
     {
+      field: "varriants",
+      headerName: "Số lượng biến thể",
+      width: 100,
+    },
+    {
       field: "createdAt",
       headerName: "Ngày tạo",
       width: 110,
@@ -156,13 +159,7 @@ const ManageProducts = () => {
   return (
     <Box sx={{ height: 650, width: 1 }}>
       {edit && <FormEditProduct editProduct={edit} render={render} setEdit={setEdit} />}
-      {customizeVarriant && (
-        <CustomizeVarriant
-          customizeVarriant={customizeVarriant}
-          render={render}
-          setCustomizeVarriant={setCustomizeVarriant}
-        />
-      )}
+      {customizeVarriant && <CustomizeVarriant customizeVarriant={customizeVarriant} render={render} setCustomizeVarriant={setCustomizeVarriant} />}
       <DataGrid
         style={{ border: "none" }} // Đặt lineHeight
         rowHeight={83}

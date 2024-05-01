@@ -33,3 +33,4 @@ export { default as SelectAdmin } from "./Select/SelectAdmin";
 export { default as InputForm } from "./Inputs/InputForm";
 export { default as InputTextarea } from "./Inputs/InputTextarea";
 export { default as CustomizeVarriant } from "./Products/CustomizeVarriant";
+export { default as Cart } from "./Header/Cart";

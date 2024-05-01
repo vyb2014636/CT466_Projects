@@ -10,7 +10,6 @@ import Swal from "sweetalert2";
 import path from "ultils/path";
 
 const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
-  console.log(ratings);
   const [activeTab, setActiveTab] = useState(1);
   const { isLoggedIn } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -64,21 +63,12 @@ const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
     <div>
       <div className="flex gap-2 items-center">
         {tabsInfoProduct?.map((el) => (
-          <span
-            key={el.id}
-            className={`py-2 px-4  cursor-pointer ${
-              activeTab === el.id ? "bg-white border border-b-0 " : "bg-gray-200 "
-            }`}
-            onClick={() => setActiveTab(el.id)}
-          >
+          <span key={el.id} className={`py-2 px-4  cursor-pointer ${activeTab === el.id ? "bg-white border border-b-0 " : "bg-gray-200 "}`} onClick={() => setActiveTab(el.id)}>
             {el.name}
           </span>
         ))}
       </div>
-      <div className="w-full border p-4">
-        {tabsInfoProduct.some((el) => el.id === activeTab) &&
-          tabsInfoProduct.find((el) => el.id === activeTab)?.content}
-      </div>
+      <div className="w-full border p-4">{tabsInfoProduct.some((el) => el.id === activeTab) && tabsInfoProduct.find((el) => el.id === activeTab)?.content}</div>
       <div className="review mt-4">
         <div className="flex mb-4">
           <div className="flex-4 border flex flex-col gap-2 items-center justify-center">
@@ -94,12 +84,7 @@ const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
             {Array.from(Array(5).keys())
               .reverse()
               .map((el) => (
-                <VoteBar
-                  key={el}
-                  number={el + 1}
-                  ratingTotal={ratings?.length || 0}
-                  ratingCount={ratings?.filter((review) => review.star === el + 1)?.length}
-                />
+                <VoteBar key={el} number={el + 1} ratingTotal={ratings?.length || 0} ratingCount={ratings?.filter((review) => review.star === el + 1)?.length} />
               ))}
           </div>
         </div>
@@ -109,14 +94,7 @@ const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
         </div>
         <div className="flex flex-col">
           {ratings?.map((el, index) => (
-            <Comment
-              key={index}
-              comment={el.comment}
-              idUser={el._id}
-              star={el.star}
-              updatedAt={el.updatedAt}
-              name={`${el?.postedBy?.lastname} ${el?.postedBy?.firstname}`}
-            />
+            <Comment key={index} comment={el.comment} idUser={el._id} star={el.star} updatedAt={el.updatedAt} name={`${el?.postedBy?.lastname} ${el?.postedBy?.firstname}`} />
           ))}
         </div>
       </div>

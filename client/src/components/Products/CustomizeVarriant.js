@@ -79,6 +79,24 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
       const response = await apiVarriant(formData, customizeVarriant._id);
       dispatch(showModal({ isShowModal: false, modalChildren: null }));
+      if (response?.success) {
+        Swal.fire({
+          icon: "success",
+          title: "Thành công",
+          text: response.mes,
+        });
+        reset();
+        setPreview({
+          thumb: null,
+          images: [],
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Thất bại",
+          text: response.mes,
+        });
+      }
     }
   };
 
@@ -181,7 +199,7 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
                   )}
                 </div>
               </div>
-              <ButtonComponent type="submit" name="Tạo sản phẩm" fw />
+              <ButtonComponent type="submit" name="Tạo biến thể mới" fw />
             </form>
           </div>
         </div>

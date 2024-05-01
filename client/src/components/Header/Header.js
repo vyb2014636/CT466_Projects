@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from "react";
-import { Navigation } from "components";
+import { Cart, Loading, Navigation } from "components";
 import logo from "assets/logo.png";
 import icons from "ultils/icons";
 import path from "ultils/path";
@@ -11,8 +11,10 @@ import { deepOrange } from "@mui/material/colors";
 import Avatar from "@mui/material/Avatar";
 import Swal from "sweetalert2";
 
+import { showModal } from "store/app/appSlice";
+
 const Header = () => {
-  const { IoMdSearch, IoCartOutline, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
+  const { IoMdSearch, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoggedIn, currentUser, mes } = useSelector((state) => state.user);
@@ -56,11 +58,7 @@ const Header = () => {
             {isLoggedIn && currentUser ? (
               <Fragment>
                 <Link
-                  to={
-                    +currentUser?.role === 1945
-                      ? `/${path.ADMIN}/${path.DASHBOARD}`
-                      : `/${path.MEMBER}/${path.PERSONAL}`
-                  }
+                  to={+currentUser?.role === 1945 ? `/${path.ADMIN}/${path.DASHBOARD}` : `/${path.MEMBER}/${path.PERSONAL}`}
                   className="border-r px-4 flex justify-center items-center gap-2"
                 >
                   <Avatar
@@ -76,15 +74,14 @@ const Header = () => {
                   </Avatar>
                 </Link>
                 <Link className="border-r px-4 flex justify-center items-center">
-                  {/* <img src="img/icon/heart.png" alt="" /> */}
                   <MdFavoriteBorder size={24} />
                 </Link>
                 <Link className="border-r px-4 relative">
-                  {/* <img src="img/icon/cart.png" alt="" /> */}
-                  <IoCartOutline size={24} />
+                  {/* <IoCartOutline size={24} />
                   <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
                     0
-                  </span>
+                  </span> */}
+                  <Cart />
                 </Link>
               </Fragment>
             ) : (
@@ -94,9 +91,17 @@ const Header = () => {
             )}
             {isLoggedIn && (
               <span
-                to={`/${path.LOGOUT}`}
                 className=" px-4 flex justify-center items-center cursor-pointer"
-                onClick={() => dispatch(logout())}
+                onClick={() => {
+                  dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+                  const setTimeoutId = setTimeout(() => {
+                    dispatch(showModal({ isShowModal: false, modalChildren: null }));
+                    dispatch(logout());
+                  }, 200);
+                  return () => {
+                    clearTimeout(setTimeoutId);
+                  };
+                }}
               >
                 <IoMdLogOut size={24} />
               </span>
