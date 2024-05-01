@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { showModal } from "store/app/appSlice";
-import { apiCreateProduct } from "apis";
+import { apiUpdateProduct } from "apis";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -67,41 +67,39 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
         return;
       }
       const base64 = await getBase64(file);
-      imagesPreview.push({ name: file.name, path: base64 });
+      imagesPreview.push(base64);
     }
     setPreview((prev) => ({ ...prev, images: imagesPreview }));
   };
 
   useEffect(() => {
-    if (watch("thumb")) handlePreviewThumb(watch("thumb")[0]);
+    if (watch("thumb") instanceof FileList && watch("thumb").length > 0) {
+      handlePreviewThumb(watch("thumb")[0]);
+    }
   }, [watch("thumb")]);
 
   useEffect(() => {
-    if (watch("images")) handlePreviewImages(watch("images"));
+    if (watch("images") instanceof FileList && watch("images").length > 0) handlePreviewImages(watch("images"));
   }, [watch("images")]);
 
-  const handleCreateProduct = async (data) => {
-    if (data.category) data.category = categories?.find((el) => el._id === data.category)?.title;
+  const handleUpdateProduct = async (data) => {
+    if (data.category) data.category = categories?.find((el) => el.title === data.category)?.title;
+    data.thumb = data?.thumb?.length === 0 ? preview.thumb : data.thumb[0];
     const formData = new FormData();
     for (let i of Object.entries(data)) formData.append(i[0], i[1]);
-    if (data.thumb) formData.append("thumb", data.thumb[0]);
-    if (data.images) {
-      for (let image of data.images) formData.append("images", image);
-    }
+    data.images = data.images?.length === 0 ? preview.images : data.images;
+    for (let image of data.images) formData.append("images", image);
     dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-    const response = await apiCreateProduct(formData);
+    const response = await apiUpdateProduct(formData, editProduct._id);
     dispatch(showModal({ isShowModal: false, modalChildren: null }));
     if (response?.success) {
       Swal.fire({
         icon: "success",
-        title: "Chúc mừng",
-        text: "Tạo sản phẩm thành công!",
+        title: "Thành công",
+        text: response.mes,
       });
-      reset();
-      setPreview({
-        thumb: null,
-        images: [],
-      });
+      render();
+      setEdit(null);
     } else {
       Swal.fire({
         icon: "error",
@@ -113,7 +111,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
   return (
     <div className="absolute inset-0 bg-overlay z-50 flex items-center justify-center">
       <Box
-        className="bg-white h-[98%] w-[50%] relative"
+        className="bg-white h-[95%] w-[50%] relative"
         sx={{
           boxShadow: 3,
 
@@ -127,8 +125,11 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
             <span>Chỉnh sửa sản phẩm</span>
           </h1>
           <div className="p-4 ">
-            <form onSubmit={handleSubmit(handleCreateProduct)}>
-              <ArrowBackIcon onClick={() => setEdit(null)} className="absolute top-4 left-4 cursor-pointer" />
+            <form onSubmit={handleSubmit(handleUpdateProduct)}>
+              <ArrowBackIcon
+                onClick={() => setEdit(null)}
+                className="absolute top-4 left-4 cursor-pointer hover:text-orange-600"
+              />
               <InputForm
                 register={register}
                 errors={errors}
@@ -227,7 +228,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                       sx={{ width: "150px" }}
                     >
                       Ảnh gốc
-                      <VisuallyHiddenInput type="file" {...register("thumb", { required: "cần chọn" })} id="thumb" />
+                      <VisuallyHiddenInput type="file" {...register("thumb")} id="thumb" />
                     </Button>
                     {errors["thumb"] && <small className="text-xs text-red-600">{errors["thumb"]?.message}</small>}
                   </div>
@@ -252,12 +253,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                       sx={{ width: "200px" }}
                     >
                       Ảnh dự phòng
-                      <VisuallyHiddenInput
-                        type="file"
-                        {...register("images", { required: "cần chọn" })}
-                        id="images"
-                        multiple
-                      />
+                      <VisuallyHiddenInput type="file" {...register("images")} id="images" multiple />
                     </Button>
                     {errors["images"] && <small className="text-xs text-red-600">{errors["images"].message}</small>}
                   </div>

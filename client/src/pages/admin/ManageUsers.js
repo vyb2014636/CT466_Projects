@@ -198,7 +198,7 @@ const ManageUsers = () => {
       width: 130,
       renderCell: (params) => {
         return edit && edit._id === params.row._idTemp ? (
-          <div className="h-full flex items-center justify-center">
+          <div className="h-full flex items-center justify-start p-0">
             <SelectAdmin
               register={register}
               errors={errors}
@@ -208,6 +208,7 @@ const ManageUsers = () => {
                 required: true,
               }}
               options={roles}
+              fullWidth
             />
           </div>
         ) : (

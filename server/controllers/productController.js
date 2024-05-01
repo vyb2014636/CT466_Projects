@@ -156,23 +156,24 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (files?.images) req.body.images = files?.images?.map((el) => el.path);
+
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
-  const updateProduct = await Product.findByIdAndUpdate({ _id: pid }, req.body, { new: true });
+  const updateProduct = await Product.findByIdAndUpdate(pid, req.body, { new: true });
   return res.status(200).json({
     success: updateProduct ? true : false,
-    detailProduct: updateProduct ? updateProduct : "Khong tim thay san pham can update",
+    mes: updateProduct ? "Cập nhật thành công" : "Không thành công",
   });
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const findProduct = await Product.findById({ _id: pid });
-  const findDeleteProduct = await Product.findByIdAndDelete({ _id: pid });
+  const findDeleteProduct = await Product.findByIdAndDelete(pid);
   return res.status(200).json({
     success: findDeleteProduct ? true : false,
-    detailProduct: findDeleteProduct
-      ? `Xóa thành công sản phẩm '${upperCase(findProduct.title)}'`
-      : "Sản phẩm cần xóa không tìm thấy",
+    mes: findDeleteProduct ? `Xóa thành công sản phẩm` : "Sản phẩm cần xóa không tìm thấy",
   });
 });
 

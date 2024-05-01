@@ -19,7 +19,15 @@ router.put("/ratings", verifyToken, product.ratings);
 router.get("/getAllProducts", product.getAllProducts);
 router.get("/getProductsFromCategory", product.getProductsFromCategory);
 
-router.put("/updateProduct/:pid", [verifyToken, isAdmin], product.updateProduct);
+router.put(
+  "/updateProduct/:pid",
+  [verifyToken, isAdmin],
+  uploadCloud.fields([
+    { name: "images", maxCount: 10 },
+    { name: "thumb", maxCount: 1 },
+  ]),
+  product.updateProduct
+);
 router.delete("/deleteProduct/:pid", [verifyToken, isAdmin], product.deleteProduct);
 router.put("/uploadImage/:pid", [verifyToken, isAdmin], uploadCloud.array("images", 10), product.uploadImageProduct);
 

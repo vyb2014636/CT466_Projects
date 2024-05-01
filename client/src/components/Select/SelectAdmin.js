@@ -10,7 +10,7 @@ const SelectAdmin = ({ label, options = [], register, errors, id, validate, full
       select
       label={label}
       defaultValue={defaultValue}
-      helperText="Vui lòng chọn 1 giá trị"
+      // helperText="Vui lòng chọn 1 giá trị"
       className={clsx(fullWidth && "w-full")}
       {...register(id, validate)}
     >

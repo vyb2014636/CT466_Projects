@@ -4,11 +4,11 @@ import { apiAllProducts } from "apis/product";
 import { Box, IconButton, TextField } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import moment from "moment";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import FormEditProduct from "./FormEditProduct";
+import { apiDeleteProduct } from "apis";
 
 const ManageProducts = () => {
   const [update, setUpdate] = useState(false);
@@ -41,6 +41,24 @@ const ManageProducts = () => {
         }))
       );
     }
+  };
+
+  const handleDeleteProduct = (pid, name) => {
+    Swal.fire({
+      title: `Bạn chắc chắn xóa sản phẩm ${name}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "Không",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Có!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await apiDeleteProduct(pid);
+        if (response.success) toast.success(response.mes);
+        else toast.success(response.mes);
+        render();
+      }
+    });
   };
 
   const columns = [
@@ -118,8 +136,7 @@ const ManageProducts = () => {
             <EditIcon />
           </IconButton>
           /
-          <IconButton>
-            {/* onClick={() => handleDelete(params.row._idTemp)} */}
+          <IconButton onClick={() => handleDeleteProduct(params.row.idProduct, params.row.title)}>
             <DeleteIcon />
           </IconButton>
         </Box>
@@ -128,7 +145,7 @@ const ManageProducts = () => {
   ];
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [update]);
   const handleSubmitEdit = async () => {};
   return (
     <Box sx={{ height: 650, width: 1 }}>

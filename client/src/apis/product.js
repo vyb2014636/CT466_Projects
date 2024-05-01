@@ -41,3 +41,16 @@ export const apiAllProducts = () =>
     url: "/product/getAllProducts",
     method: "get",
   });
+
+export const apiUpdateProduct = (data, pid) =>
+  axios({
+    url: "/product/updateProduct/" + pid,
+    method: "put",
+    data,
+  });
+
+export const apiDeleteProduct = (pid) =>
+  axios({
+    url: "/product/deleteProduct/" + pid,
+    method: "delete",
+  });
