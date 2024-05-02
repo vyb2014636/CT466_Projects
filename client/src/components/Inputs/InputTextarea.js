@@ -8,7 +8,7 @@ const InputTextarea = ({ disabled, register, errors, id, validate, placeholder, 
         id={id}
         label="Nhập mô tả"
         multiline
-        maxRows={8}
+        maxRows={6}
         className="w-full"
         {...register(id, validate)}
         disabled={disabled}

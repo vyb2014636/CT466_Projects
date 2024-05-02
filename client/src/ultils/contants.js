@@ -1,5 +1,4 @@
 import path from "./path";
-import icons from "./icons";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import GroupIcon from "@mui/icons-material/Group";
@@ -143,7 +142,6 @@ export const voteOptions = [
     text: "Rất tốt",
   },
 ];
-const { MdDashboard, FaProductHunt, MdGroup, FaMoneyBill } = icons;
 
 export const adminSidebar = [
   {
@@ -227,3 +225,4 @@ export const sizes = [
     value: "XL",
   },
 ];
+export const blockCategory = ["Handbag", "Wallet"];

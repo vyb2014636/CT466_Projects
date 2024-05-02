@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { apiGetProductDetail, apiGetProducts, getFromCategory } from "../../apis";
+import { apiGetProductDetail, apiGetProducts } from "../../apis";
 import { formatMoney, renderStarFromNumber } from "../../ultils/helpers";
 import { Button, Breadcrum, CustomQuantity, InfoProduct, CustomSlider, SelectAdmin } from "../../components";
 import Slider from "react-slick";
-import { sizes } from "ultils/contants";
 import { TextField } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import clsx from "clsx";
@@ -31,9 +30,10 @@ const DetailProduct = () => {
   }, [update]);
   //Khi ta cập nhật j đó thì sẽ trích suất cơ sở dữ liệu!------
 
+  const [size, setSize] = useState("");
   const [quantityNumber, setQuantityNumber] = useState(1);
   const [varriant, setVarriant] = useState(null);
-  const { pid, title, category } = useParams();
+  const { pid, category } = useParams();
   const [descriptions, setDescriptions] = useState([]);
   const [categoryCurrent, setCategoryCurrent] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -43,7 +43,7 @@ const DetailProduct = () => {
     color: "",
     images: [],
     price: "",
-    sold: "",
+    size: [],
     stock: "",
   });
 
@@ -54,7 +54,9 @@ const DetailProduct = () => {
         color: productDetail?.varriants?.find((el) => el.SKU === varriant)?.color,
         images: productDetail?.varriants?.find((el) => el.SKU === varriant)?.images,
         price: productDetail?.varriants?.find((el) => el.SKU === varriant)?.price,
+        size: productDetail?.varriants?.find((el) => el.SKU === varriant)?.size,
       });
+      setSize("");
     } else {
       setCurrentProduct({
         title: "",
@@ -63,10 +65,10 @@ const DetailProduct = () => {
         price: "",
         sold: "",
         quantity: "",
+        size: [],
       });
     }
   }, [varriant]);
-
   const handleOnChangeQuantityNumber = useCallback(
     (quantity) => {
       if (!Number(quantity) || Number(quantity) < 1) return;
@@ -75,7 +77,7 @@ const DetailProduct = () => {
     },
     [quantityNumber]
   );
-
+  console.log(currentProduct?.size);
   const handleChangeNumber = useCallback(
     (flag) => {
       if (flag === "Minus" && quantityNumber === 1) return;
@@ -123,7 +125,6 @@ const DetailProduct = () => {
           <div className="md:w-1/6 lg:w-1/6 w-full  h-full"></div>
           <div className="details-left md:w-2/6 lg:w-2/6 w-full h-full px-8 flex flex-col gap-2">
             <Slider className="details-left-top h-[77%] sm:w-[20%] md:w-full " asNavFor={nav2} ref={(slider) => (sliderRef1 = slider)}>
-              {/* <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" /> */}
               {currentProduct?.images.length === 0 && productDetail?.images?.map((image) => <img src={image} className="object-contain border" alt="" />)}
               {currentProduct?.images.length > 0 && currentProduct?.images?.map((image) => <img src={image} className="object-contain border" alt="" />)}
             </Slider>
@@ -135,8 +136,6 @@ const DetailProduct = () => {
               swipeToSlide={true}
               focusOnSelect={true}
             >
-              {/* <img src={productDetail?.thumb} className="object-contain h-full w-full" alt="" /> */}
-
               {currentProduct?.images.length === 0 && productDetail?.images?.map((image) => <img src={image} className="object-contain n h-full w-full" alt="" />)}
               {currentProduct?.images.length > 0 && currentProduct?.images?.map((image) => <img src={image} className="object-contain n h-full w-full" alt="" />)}
             </Slider>
@@ -171,45 +170,58 @@ const DetailProduct = () => {
                   );
                 })}
               </div>
-              <div class="relative min-w-[100px] my-2">
-                <TextField select label="Size" className="w-full ">
-                  {sizes?.map((el) => (
-                    <MenuItem value={el.value} key={el.id}>
-                      {el.value}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div>
-              <div className="my-2 flex items-center gap-2">
-                <span
-                  onClick={() => setVarriant(null)}
-                  className={clsx(`bg-${productDetail?.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`, !varriant && "border-black")}
-                ></span>
-                {productDetail?.varriants?.map((el) => (
-                  <span
-                    onClick={() => setVarriant(el.SKU)}
-                    className={clsx(
-                      el?.color.toLowerCase() !== "black" && el?.color.toLowerCase() !== "white" && `bg-${el.color.toLowerCase()}-500 rounded-full border w-8 h-8 cursor-pointer`,
-                      (el?.color.toLowerCase() === "black" || el?.color.toLowerCase() === "white") && `bg-${el.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`,
-                      varriant === el.SKU && "border-black"
-                    )}
-                  ></span>
-                ))}
-                <h1 className="text-orange-500 text-end flex-grow">(Số lượng {currentProduct?.quantity || productDetail?.quantity})</h1>
-              </div>
-              <div className="price-describe  font-[1000] text-[1.5rem]">
-                {`${formatMoney(currentProduct?.price || productDetail?.price)}`}
-                <span class="align-text-top text-[1rem]">₫</span>
-              </div>
-              <div className="flex gap-1 mt-4 ">
-                <Button name="THÊM VÀO GIỎ HÀNG" styles={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[80%]"}></Button>
-                <div className="flex w-[20%]">
-                  <CustomQuantity quantity={quantityNumber} handleOnchangeQuantityNumber={handleOnChangeQuantityNumber} handleChangeNumber={handleChangeNumber} />
+              <div className="mt-auto flex flex-col gap-2">
+                <div class="relative min-w-[100px] my-2">
+                  <TextField select label="Size" className="w-full ">
+                    {currentProduct?.size?.length === 0 &&
+                      productDetail?.size?.map((el) => (
+                        <MenuItem value={el.titleSize} key={el._id} onClick={() => setSize(el.titleSize)}>
+                          {el.titleSize}
+                        </MenuItem>
+                      ))}
+                    {currentProduct?.size?.length > 0 &&
+                      currentProduct?.size?.map((el, index) => (
+                        <MenuItem value={el.title} key={index} onClick={() => setSize(el.title)}>
+                          {el.title}
+                        </MenuItem>
+                      ))}
+                  </TextField>
                 </div>
-              </div>
-              <div className="border-t-2 border-black pt-8 h-[20%] mt-auto">
-                <p className="text-[#7e7e7e] text-center text-[0.8rem]">Đổi trả miễn phí trong 7 ngày</p>
-                <p className="text-[#7e7e7e] text-center text-[0.8rem]">Miễn phí giao hàng với hóa đơn trên 500K</p>
+                <div className="flex items-center gap-2">
+                  <span
+                    onClick={() => setVarriant(null)}
+                    className={clsx(`bg-${productDetail?.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`, !varriant && "border-black")}
+                  ></span>
+                  {productDetail?.varriants?.map((el) => (
+                    <span
+                      onClick={() => setVarriant(el.SKU)}
+                      className={clsx(
+                        el?.color.toLowerCase() !== "black" && el?.color.toLowerCase() !== "white" && `bg-${el.color.toLowerCase()}-500 rounded-full border w-8 h-8 cursor-pointer`,
+                        (el?.color.toLowerCase() === "black" || el?.color.toLowerCase() === "white") && `bg-${el.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`,
+                        varriant === el.SKU && "border-black"
+                      )}
+                    ></span>
+                  ))}
+                  <h1 className="text-orange-500 text-end flex-grow">
+                    Số lượng {"   "}
+                    {currentProduct?.size?.length > 0 && currentProduct?.size?.find((el) => el.title === size)?.quantity}
+                    {currentProduct?.size?.length === 0 && productDetail?.size?.find((el) => el.titleSize === size)?.quantity}
+                  </h1>
+                </div>
+                <div className="price-describe  font-[1000] text-[2rem]">
+                  {`${formatMoney(currentProduct?.price || productDetail?.price)}`}
+                  <span class="align-text-top text-[1rem]">₫</span>
+                </div>
+                <div className="flex gap-1">
+                  <Button name="THÊM VÀO GIỎ HÀNG" styles={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[80%]"}></Button>
+                  <div className="flex w-[20%]">
+                    <CustomQuantity quantity={quantityNumber} handleOnchangeQuantityNumber={handleOnChangeQuantityNumber} handleChangeNumber={handleChangeNumber} />
+                  </div>
+                </div>
+                <div className="border-t-2 border-black h-[20%] py-2">
+                  <p className="text-[#7e7e7e] text-center text-[0.8rem]">Đổi trả miễn phí trong 7 ngày</p>
+                  <p className="text-[#7e7e7e] text-center text-[0.8rem]">Miễn phí giao hàng với hóa đơn trên 500K</p>
+                </div>
               </div>
             </div>
           </div>
@@ -229,5 +241,4 @@ const DetailProduct = () => {
     </div>
   );
 };
-
 export default DetailProduct;

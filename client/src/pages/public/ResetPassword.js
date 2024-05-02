@@ -7,7 +7,7 @@ const ResetPassword = () => {
   const [passwordNew, setPasswordNew] = useState({ password: "" });
   const { token } = useParams();
   const handleResetPassword = async () => {
-    const response = await apiResetPassword({ passwordNew: passwordNew.password, token: token });
+    await apiResetPassword({ passwordNew: passwordNew.password, token: token });
   };
   return (
     <div className="top-0 left-0 bottom-0 right-0 bg-overlay z-50 flex justify-center py-8 items-center">
@@ -20,12 +20,7 @@ const ResetPassword = () => {
           <div className="grid gap-2">
             <InputFields value={passwordNew.password} nameKey="password" setValue={setPasswordNew} type="password" />
           </div>
-          <Button
-            name="Gửi"
-            styles="border py-2 rounded-lg font-semibold bg-black text-white"
-            fw
-            handleOnClick={handleResetPassword}
-          />
+          <Button name="Gửi" styles="border py-2 rounded-lg font-semibold bg-black text-white" fw handleOnClick={handleResetPassword} />
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ const SelectAdmin = ({ label, options = [], register, errors, id, validate, full
           {el.value}
         </MenuItem>
       ))}
-      {errors[id] && <small className="text-xs text-red-600">{errors[id]?.message}</small>}
+      {/* {errors[id] && <small className="text-xs text-red-600">{errors[id]?.message}</small>} */}
     </TextField>
   );
 };

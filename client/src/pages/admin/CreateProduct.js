@@ -53,15 +53,41 @@ const CreateProduct = () => {
 
   const handleCreateProduct = async (data) => {
     if (data.category) data.category = categories?.find((el) => el._id === data.category)?.title;
+
+    // Tạo một mảng chuỗi JSON đại diện cho đối tượng size từ dữ liệu size
+    const sizeArray = [];
+    for (let i = 0; i < 4; i++) {
+      sizeArray.push(
+        JSON.stringify({
+          titleSize: sizes[i].value.toString(),
+          quantity: +data[`size${sizes[i].value}`],
+          sold: 0,
+        })
+      );
+    }
+
+    // Gửi dữ liệu lên server
     const formData = new FormData();
-    for (let i of Object.entries(data)) formData.append(i[0], i[1]);
+    formData.append("title", data.title);
+    formData.append("price", data.price);
+    formData.append("description", data.description);
+    formData.append("brand", data.brand);
+    formData.append("category", data.category);
+    formData.append("color", data.color);
+    sizeArray.forEach((sizeStr, index) => {
+      formData.append("size[]", sizeStr);
+    });
     if (data.thumb) formData.append("thumb", data.thumb[0]);
     if (data.images) {
-      for (let image of data.images) formData.append("images", image);
+      for (let image of data.images) {
+        formData.append("images", image);
+      }
     }
+
     dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiCreateProduct(formData);
     dispatch(showModal({ isShowModal: false, modalChildren: null }));
+
     if (response?.success) {
       Swal.fire({
         icon: "success",
@@ -81,6 +107,7 @@ const CreateProduct = () => {
       });
     }
   };
+
   return (
     <div className="w-full flex flex-col justify-center items-center gap-4">
       <h1 className="flex justify-center items-center text-3xl font-bold p-4 border-b w-full">
@@ -111,7 +138,7 @@ const CreateProduct = () => {
               type="number"
               styled="flex-1"
             />
-            <InputForm
+            {/* <InputForm
               register={register}
               errors={errors}
               id={"quantity"}
@@ -122,7 +149,7 @@ const CreateProduct = () => {
               placeholder={"Nhập số lượng"}
               type="number"
               styled="flex-1"
-            />
+            /> */}
             <InputForm
               register={register}
               errors={errors}
@@ -137,33 +164,30 @@ const CreateProduct = () => {
           </div>
           <div className="w-full flex gap-4 my-6">
             <div className="h-full flex flex-col justify-center flex-1">
-              <SelectAdmin
-                label="Thể loại"
-                options={categories?.map((el) => ({ code: el._id, value: el.title }))}
-                register={register}
-                id={"category"}
-                errors={errors}
-              />
+              <SelectAdmin label="Thể loại" options={categories?.map((el) => ({ code: el._id, value: el.title }))} register={register} id={"category"} errors={errors} />
             </div>
             <div className="h-full flex flex-col justify-center flex-1">
               <SelectAdmin
                 label="Brand (theo thể loại)"
-                options={categories
-                  ?.find((el) => el._id === watch("category"))
-                  ?.brand?.map((el) => ({ code: el, value: el }))}
+                options={categories?.find((el) => el._id === watch("category"))?.brand?.map((el) => ({ code: el, value: el }))}
                 register={register}
                 id={"brand"}
                 errors={errors}
               />
             </div>
+          </div>
+          <div className="w-full flex gap-4 my-6">
             <div className="h-full flex flex-col justify-center flex-1">
-              <SelectAdmin
-                label="Size"
-                options={sizes.map((el) => ({ code: el.value, value: el.value }))}
-                register={register}
-                id={"size"}
-                errors={errors}
-              />
+              <InputForm placeholder="Số lượng Size S" register={register} id={"sizeS"} errors={errors} type="number" fullWidth />
+            </div>
+            <div className="h-full flex flex-col justify-center flex-1">
+              <InputForm placeholder="Số lượng Size M" register={register} id={"sizeM"} errors={errors} type="number" fullWidth />
+            </div>
+            <div className="h-full flex flex-col justify-center flex-1">
+              <InputForm placeholder="Số lượng Size L" register={register} id={"sizeL"} errors={errors} type="number" fullWidth />
+            </div>
+            <div className="h-full flex flex-col justify-center flex-1">
+              <InputForm placeholder="Số lượng Size XL" register={register} id={"sizeXL"} errors={errors} type="number" fullWidth />
             </div>
           </div>
           <div className="my-4">

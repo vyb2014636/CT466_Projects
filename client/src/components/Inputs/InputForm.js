@@ -2,20 +2,7 @@ import React, { memo } from "react";
 import clsx from "clsx";
 import { Input } from "@mui/material";
 
-const InputForm = ({
-  label,
-  disabled,
-  register,
-  errors,
-  id,
-  validate,
-  type = "text",
-  placeholder,
-  fullWidth,
-  defaultValue,
-  styled,
-  readOnly,
-}) => {
+const InputForm = ({ label, disabled, register, errors, id, validate, type = "text", placeholder, fullWidth, defaultValue, styled, readOnly }) => {
   return (
     <div className={clsx("flex flex-col gap-1 h-full", styled)}>
       <div className="h-[70%]">
@@ -29,6 +16,7 @@ const InputForm = ({
           className={clsx(fullWidth && "w-full")}
           defaultValue={defaultValue}
           readOnly={readOnly}
+          inputProps={{ min: "0" }}
         />
       </div>
       {errors[id] && <small className="text-xs text-red-600">{errors[id].message}</small>}

@@ -41,12 +41,10 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
     images: [],
   });
   useEffect(() => {
-    console.log(customizeVarriant);
     reset({
       title: customizeVarriant?.title,
       price: customizeVarriant?.price,
-      color: customizeVarriant?.color,
-      // title: customizeVarriant?.title,
+      // color: customizeVarriant?.color,
     });
   }, [customizeVarriant]);
 
@@ -69,15 +67,21 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
   };
 
   const handleAddVarriant = async (data) => {
-    if (data.color === customizeVarriant.color) Swal.fire("Thông báo!", "Màu không được trùng", "info");
+    if (data.color.toLowerCase() === customizeVarriant.color.toLowerCase()) Swal.fire("Thông báo!", "Màu không được trùng bản gốc", "info");
     else {
+      data.size = { title: data.SizeTitle.toString(), quantity: +data.quantity };
+      delete data.SizeTitle;
+      delete data.quantity;
       const formData = new FormData();
       for (let i of Object.entries(data)) formData.append(i[0], i[1]);
+      formData.append("size[title]", data.size.title);
+      formData.append("size[quantity]", data.size.quantity);
       if (data.thumb) formData.append("thumb", data.thumb[0]);
       if (data.images) for (let image of data.images) formData.append("images", image);
 
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
       const response = await apiVarriant(formData, customizeVarriant._id);
+      console.log(response);
       dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response?.success) {
         Swal.fire({
@@ -143,6 +147,7 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
                   placeholder="0"
                   type="number"
                   styled="flex-2"
+                  disabled={true}
                   fullWidth
                 />
                 <InputForm
@@ -150,19 +155,35 @@ const CustomizeVarriant = ({ customizeVarriant, setCustomizeVarriant, render }) 
                   register={register}
                   errors={errors}
                   id={"color"}
-                  validate={{ require: "Hãy điền vào" }}
+                  validate={{ required: "Hãy điền màu" }}
                   fullWidth
                   placeholder="Màu của 1 loại mới"
                   styled="flex-3"
                 />
-                <SelectAdmin
-                  label="Size"
-                  options={sizes?.map((el) => ({ code: el.value, value: el.value }))}
-                  id="size"
+              </div>
+              <div className="flex gap-4 items-center my-4">
+                <div className="flex-1">
+                  <SelectAdmin
+                    label="Size"
+                    options={sizes?.map((el) => ({ code: el.value, value: el.value }))}
+                    id="SizeTitle"
+                    register={register}
+                    errors={errors}
+                    validate={{ required: "Hãy chọn size" }}
+                    fullWidth
+                  />
+                  {errors["SizeTitle"] && <small className="text-xs text-red-600">{errors["SizeTitle"]?.message}</small>}
+                </div>
+                <InputForm
+                  label="Số lượng"
+                  type="number"
                   register={register}
                   errors={errors}
-                  styled="flex-2"
-                  defaultValue={customizeVarriant.size}
+                  id="quantity"
+                  validate={{ required: "Hãy nhập số lượng" }}
+                  fullWidth
+                  placeholder="Màu của 1 loại mới"
+                  styled="flex-1"
                 />
               </div>
               <div className="flex">

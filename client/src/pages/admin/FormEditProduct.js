@@ -1,4 +1,4 @@
-import { Box, MenuItem, TextField } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { memo, useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useForm } from "react-hook-form";
@@ -43,7 +43,10 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
       color: editProduct?.color || "",
       category: editProduct?.category || "",
       brand: editProduct?.brand || "",
-      size: editProduct?.size || "",
+      sizeS: editProduct?.size[0]?.quantity || 0,
+      sizeM: editProduct?.size[1]?.quantity || 0,
+      sizeL: editProduct?.size[2]?.quantity || 0,
+      sizeXL: editProduct?.size[3]?.quantity || 0,
     });
     setPreview({
       thumb: editProduct?.thumb || "",
@@ -85,8 +88,22 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
   }, [watch("images")]);
   const handleUpdateProduct = async (data) => {
     if (data.category) data.category = categories?.find((el) => el.title === data.category)?.title;
+
+    const sizeArray = [];
+    for (let i = 0; i < 4; i++) {
+      sizeArray.push(
+        JSON.stringify({
+          title: sizes[i].value.toString(),
+          quantity: +data[`size${sizes[i].value}`],
+          sold: 0,
+        })
+      );
+    }
     data.thumb = data?.thumb?.length === 0 ? preview.thumb : data.thumb[0];
     const formData = new FormData();
+    sizeArray.forEach((sizeStr, index) => {
+      formData.append("size[]", sizeStr);
+    });
     for (let i of Object.entries(data)) {
       // Chỉ thêm vào formData nếu giá trị không rỗng và không phải là mảng images
       if (i[1] !== "" && i[0] !== "images") {
@@ -145,10 +162,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
           </h1>
           <div className="p-4 ">
             <form onSubmit={handleSubmit(handleUpdateProduct)}>
-              <ArrowBackIcon
-                onClick={() => setEdit(null)}
-                className="absolute top-4 left-4 cursor-pointer hover:text-orange-600"
-              />
+              <ArrowBackIcon onClick={() => setEdit(null)} className="absolute top-4 left-4 cursor-pointer hover:text-orange-600" />
               <InputForm
                 register={register}
                 errors={errors}
@@ -172,18 +186,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                   type="number"
                   styled="flex-1"
                 />
-                <InputForm
-                  register={register}
-                  errors={errors}
-                  id={"quantity"}
-                  validate={{
-                    required: "Vui lòng nhập số lượng",
-                  }}
-                  fullWidth
-                  placeholder={"Nhập số lượng"}
-                  type="number"
-                  styled="flex-1"
-                />
+
                 <InputForm
                   register={register}
                   errors={errors}
@@ -210,16 +213,14 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                 <div className="h-full flex flex-col justify-center flex-1">
                   <SelectAdmin
                     label="Brand (theo thể loại)"
-                    options={categories
-                      ?.find((el) => el.title === watch("category"))
-                      ?.brand?.map((el) => ({ code: el, value: el }))}
+                    options={categories?.find((el) => el.title === watch("category"))?.brand?.map((el) => ({ code: el, value: el }))}
                     register={register}
                     id="brand"
                     errors={errors}
                     defaultValue={editProduct?.brand}
                   />
                 </div>
-                <div className="h-full flex flex-col justify-center flex-1">
+                {/* <div className="h-full flex flex-col justify-center flex-1">
                   <SelectAdmin
                     label="Size"
                     options={sizes.map((el) => ({ code: el.value, value: el.value }))}
@@ -228,9 +229,22 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                     errors={errors}
                     defaultValue={editProduct?.size}
                   />
+                </div> */}
+              </div>
+              <div className="w-full flex gap-4 my-6">
+                <div className="h-full flex flex-col justify-center flex-1">
+                  <InputForm label={"size S"} placeholder="Số lượng Size S" register={register} id={"sizeS"} errors={errors} type="number" fullWidth />
+                </div>
+                <div className="h-full flex flex-col justify-center flex-1">
+                  <InputForm label={"size M"} placeholder="Số lượng Size M" register={register} id={"sizeM"} errors={errors} type="number" fullWidth />
+                </div>
+                <div className="h-full flex flex-col justify-center flex-1">
+                  <InputForm label={"size L"} placeholder="Số lượng Size L" register={register} id={"sizeL"} errors={errors} type="number" fullWidth />
+                </div>
+                <div className="h-full flex flex-col justify-center flex-1">
+                  <InputForm label={"size XL"} placeholder="Số lượng Size XL" register={register} id={"sizeXL"} errors={errors} type="number" fullWidth />
                 </div>
               </div>
-
               <div className="my-4">
                 <InputTextarea
                   id="description"
@@ -245,14 +259,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
               <div className="flex">
                 <div className="flex-1">
                   <div className="my-4 flex flex-col gap-2">
-                    <Button
-                      component="label"
-                      role={undefined}
-                      variant="contained"
-                      tabIndex={-1}
-                      startIcon={<CloudUploadIcon />}
-                      sx={{ width: "150px" }}
-                    >
+                    <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />} sx={{ width: "150px" }}>
                       Ảnh gốc
                       <VisuallyHiddenInput type="file" {...register("thumb")} id="thumb" />
                     </Button>
@@ -266,14 +273,7 @@ const FormEditProduct = ({ editProduct, render, setEdit }) => {
                 </div>
                 <div className="flex-1">
                   <div className="my-4 flex flex-col gap-2">
-                    <Button
-                      component="label"
-                      role={undefined}
-                      variant="contained"
-                      tabIndex={-1}
-                      startIcon={<CloudUploadIcon />}
-                      sx={{ width: "200px" }}
-                    >
+                    <Button component="label" role={undefined} variant="contained" tabIndex={-1} startIcon={<CloudUploadIcon />} sx={{ width: "200px" }}>
                       Ảnh dự phòng
                       <VisuallyHiddenInput type="file" {...register("images")} id="images" multiple />
                     </Button>

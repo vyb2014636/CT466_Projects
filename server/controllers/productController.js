@@ -4,21 +4,44 @@ const asyncHandler = require("express-async-handler");
 const { Error } = require("mongoose");
 const slugify = require("slugify");
 const makeSKU = require("uniqid");
-
 const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color, size } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
   if (!(title && price && description && brand && category && color && size)) throw new Error("Vui lòng nhập đủ thông tin");
-  req.body.slug = slugify(title);
-  if (thumb) req.body.thumb = thumb;
-  if (images) req.body.images = images;
-  const newProduct = await Product.create(req.body);
+
+  // Kiểm tra xem có sản phẩm nào trùng tên hay không
+  let findProduct = await Product.find({ title: { $regex: title, $options: "i" } });
+  if (findProduct.length > 0) {
+    throw new Error("Sản phẩm bạn tạo bị trùng tên");
+  }
+
+  // Chuyển đổi chuỗi JSON đại diện cho đối tượng size thành mảng các đối tượng size
+  const sizeArray = size.map((sizeStr) => JSON.parse(sizeStr));
+
+  // Tạo slug từ title
+  const slug = slugify(title);
+
+  // Tạo mới sản phẩm
+  const newProduct = await Product.create({
+    title,
+    price,
+    description,
+    brand,
+    category,
+    color,
+    size: sizeArray, // Sử dụng mảng các đối tượng size đã được chuyển đổi
+    thumb,
+    images,
+    slug,
+  });
+
   return res.status(200).json({
     success: newProduct ? true : false,
     mes: newProduct ? "Sản phẩm đã được tạo" : "Không tạo được sản phẩm",
   });
 });
+
 const getProductId = asyncHandler(async (req, res) => {
   const { pid } = req.params;
   const response = await Product.findById(pid)
@@ -160,7 +183,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
 
   if (files?.images) req.body.images = files?.images?.map((el) => el.path);
-
+  req.body.size = req.body.size.map((sizeStr) => JSON.parse(sizeStr));
   if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
   const updateProduct = await Product.findByIdAndUpdate(pid, req.body, { new: true });
   return res.status(200).json({
@@ -235,23 +258,67 @@ const uploadImageProduct = asyncHandler(async (req, res) => {
 
 const addVarriant = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const { title, price, color, size } = req.body;
+  const { title, price, color, size } = req.body; //size là 1 đối tượng {title ,quantity} =size
+  const files = req.files;
 
-  const thumb = req?.files?.thumb[0]?.path;
-  const images = req?.files?.images?.map((el) => el.path);
+  // const thumb = req?.files?.thumb[0]?.path;
+  // const images = req?.files?.images?.map((el) => el.path);
 
-  if (!(title && price && color && size)) throw new Error("Chưa có files");
-  const response = await Product.findByIdAndUpdate(
-    pid,
-    {
-      $push: { varriants: { color, price, title, size, thumb, images, SKU: makeSKU().toUpperCase() } },
-    },
-    { new: true }
-  );
+  if (files?.thumb) thumb = req?.files?.thumb[0]?.path;
+  if (files?.images) images = req?.files?.images?.map((el) => el.path);
+
+  if (!(title && price && color && size)) throw new Error("Chưa đủ thông tin");
+
+  let findProduct = await Product.findById(pid);
+  if (!findProduct) {
+    throw new Error("Không tìm thấy sản phẩm");
+  }
+
+  let variant = findProduct.varriants.find((variant) => variant.color === color);
+  if (!variant) {
+    // Nếu không tìm thấy biến thể với màu đã cho, thêm một biến thể mới vào mảng varriants
+    variant = {
+      color,
+      size: [{ title: size.title, quantity: size.quantity }],
+      price,
+      title,
+      thumb,
+      images,
+      SKU: makeSKU().toUpperCase(),
+    };
+    findProduct.varriants.push(variant);
+  } else {
+    // Kiểm tra xem đã có kích thước đã cho chưa
+    const sizeIndex = variant.size.findIndex((sizeObj) => sizeObj.title === size.title);
+    if (sizeIndex === -1) {
+      // Nếu kích thước không tồn tại, thêm mới vào mảng size
+      variant.size.push({ title: size.title, quantity: size.quantity });
+    } else {
+      // Nếu kích thước đã tồn tại, cập nhật thông tin của nó
+      variant.size[sizeIndex].quantity = +variant.size[sizeIndex].quantity + +size.quantity;
+    }
+  }
+
+  // Lưu lại thông tin sản phẩm sau khi cập nhật
+  findProduct = await findProduct.save();
+
   return res.status(200).json({
-    success: response ? true : false,
-    mes: response ? "Thành công" : "Không thể upload ảnh sản phẩm",
+    success: true,
+    mes: "Thành công",
+    product: findProduct, // Trả về thông tin sản phẩm sau khi cập nhật
   });
+
+  // const response = await Product.findByIdAndUpdate(
+  //   pid,
+  //   {
+  //     $push: { varriants: { color, price, title, size, thumb, images, SKU: makeSKU().toUpperCase() } },
+  //   },
+  //   { new: true }
+  // );
+  // return res.status(200).json({
+  //   success: response ? true : false,
+  //   mes: response ? "Thành công" : "Không thể upload ảnh sản phẩm",
+  // });
 });
 
 module.exports = {

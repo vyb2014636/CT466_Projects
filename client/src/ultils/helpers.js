@@ -1,4 +1,3 @@
-import { AiFillInfoCircle } from "react-icons/ai";
 import icons from "./icons";
 const { FaRegStar, FaStar, FaStarHalfAlt } = icons;
 export const createSlug = (string) =>
@@ -54,18 +53,6 @@ export const validate = (payload, setInvalidFields) => {
   }
   for (let arr of formatPayload) {
     switch (arr[0]) {
-      case "firstname":
-        if (!arr[1].match(/^[ a-zA-Z\-/']+$/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Họ không hợp lệ" }]);
-        }
-        break;
-      case "lastname":
-        if (!arr[1].match(/^[ a-zA-Z\-/']+$/)) {
-          invalids++;
-          setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Tên không hợp lệ" }]);
-        }
-        break;
       case "mobile":
         if (!arr[1].match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/g)) {
           invalids++;
@@ -73,34 +60,12 @@ export const validate = (payload, setInvalidFields) => {
         }
         break;
       case "email":
-        const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
         if (!arr[1].match(regex)) {
           invalids++;
           setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Email không hợp lệ" }]);
         }
         break;
-      // case "password":
-      //   if (arr[1].length < 6) {
-      //     invalids++;
-      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải lớn hơn 6 kí tự" }]);
-      //   }
-      //   if (!arr[1].match(/[a-z]+/)) {
-      //     invalids++;
-      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có kí tự" }]);
-      //   }
-      //   if (!arr[1].match(/[A-Z]+/)) {
-      //     invalids++;
-      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải in hoa kí tự đầu" }]);
-      //   }
-      //   if (!arr[1].match(/[0-9]+/)) {
-      //     invalids++;
-      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có ít nhất 1 số" }]);
-      //   }
-      //   if (!arr[1].match(/[$@#&!]+/)) {
-      //     invalids++;
-      //     setInvalidFields((prev) => [...prev, { name: arr[0], mes: "Mật khẩu phải có 1 kí tự đặc biệt" }]);
-      //   }
-      //   break;
       case "confirmPassword":
         if (payload.password.length === 0) {
           invalids++;

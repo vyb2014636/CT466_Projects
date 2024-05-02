@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import FormEditProduct from "./FormEditProduct";
 import { apiDeleteProduct } from "apis";
 import { CustomizeVarriant } from "components";
+import { blockCategory } from "ultils/contants";
 
 const ManageProducts = () => {
   const [update, setUpdate] = useState(false);
@@ -30,7 +31,7 @@ const ManageProducts = () => {
           id: index + 1,
           title: product.title,
           price: product.price,
-          quantity: product.quantity,
+          quantity: product.size?.reduce((total, current) => +total + +current.quantity, 0),
           sold: product.sold,
           thumb: product.thumb,
           brand: product.brand,
@@ -71,7 +72,7 @@ const ManageProducts = () => {
       headerName: "Ảnh",
       width: 100,
       renderCell: (params) => (
-        <div className="h-full flex justify-center items-center">
+        <div className="h-full flex justify-center items-center ">
           <img
             src={params.row.thumb || "https://e7.pngegg.com/pngimages/799/987/png-clipart-computer-icons-avatar-icon-design-avatar-heroes-computer-wallpaper-thumbnail.png"}
             alt="thumb"
@@ -145,10 +146,14 @@ const ManageProducts = () => {
           <IconButton onClick={() => handleDeleteProduct(params.row.idProduct, params.row.title)}>
             <DeleteIcon />
           </IconButton>
-          /
-          <IconButton onClick={() => setCustomizeVarriant(params.row.product)}>
-            <MenuIcon />
-          </IconButton>
+          {!blockCategory.includes(params.row.category) && (
+            <>
+              /
+              <IconButton onClick={() => setCustomizeVarriant(params.row.product)}>
+                <MenuIcon />
+              </IconButton>
+            </>
+          )}
         </Box>
       ),
     },

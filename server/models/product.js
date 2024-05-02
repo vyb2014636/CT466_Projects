@@ -30,10 +30,19 @@ var productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    size: {
-      type: String,
-      required: true,
-    },
+    size: [
+      {
+        titleSize: String,
+        sold: {
+          type: Number,
+          default: 0,
+        },
+        quantity: {
+          type: Number,
+          default: 0,
+        },
+      },
+    ],
     quantity: {
       type: Number,
       default: 0,
@@ -70,9 +79,8 @@ var productSchema = new mongoose.Schema(
         title: String,
         color: String,
         price: Number,
-        quantiy: Number,
         thumb: String,
-        size: String,
+        size: [{ title: String, quantity: Number, sold: Number }],
         images: Array,
         SKU: String,
       },
