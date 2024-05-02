@@ -6,15 +6,13 @@ import path from "ultils/path";
 import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser } from "store/user/asyncAction"; //sẽ chạy vào userSlice để check
 import { useDispatch, useSelector } from "react-redux";
-import { logout, clearMessage } from "store/user/userSlice";
-import { deepOrange } from "@mui/material/colors";
-import Avatar from "@mui/material/Avatar";
+import { clearMessage } from "store/user/userSlice";
 import Swal from "sweetalert2";
-
-import { showModal } from "store/app/appSlice";
+import IconButton from "@mui/material/IconButton";
+import Profiles from "./Profiles";
 
 const Header = () => {
-  const { IoMdSearch, MdFavoriteBorder, HiOutlineUser, IoMdLogOut } = icons;
+  const { IoMdSearch, MdFavoriteBorder, HiOutlineUser } = icons;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoggedIn, currentUser, mes } = useSelector((state) => state.user);
@@ -51,37 +49,23 @@ const Header = () => {
         <div className="w-full md:w-1/4 lg:w-1/4 pl-4 flex flex-col items-end justify-center">
           <div className="header__nav__option flex justify-center items-center">
             <Link className="border-r px-3 search-switch flex justify-center items-center">
-              <IoMdSearch size={24} />
-              {/* <img src="img/icon/search.png" alt="" /> */}
+              <IconButton>
+                <IoMdSearch size={24} />
+              </IconButton>
             </Link>
-
             {isLoggedIn && currentUser ? (
               <Fragment>
-                <Link
-                  to={+currentUser?.role === 1945 ? `/${path.ADMIN}/${path.DASHBOARD}` : `/${path.MEMBER}/${path.PERSONAL}`}
-                  className="border-r px-4 flex justify-center items-center gap-2"
-                >
-                  <Avatar
-                    sx={{
-                      bgcolor: deepOrange[500],
-                      width: 32,
-                      height: 24,
-                      fontSize: 14,
-                    }}
-                    className="text-sm"
-                  >
-                    {currentUser?.lastname[0]}
-                  </Avatar>
-                </Link>
                 <Link className="border-r px-4 flex justify-center items-center">
-                  <MdFavoriteBorder size={24} />
+                  <IconButton>
+                    {/* aria-describedby={id} variant="contained" onClick={handleClick} */}
+                    <MdFavoriteBorder size={24} />
+                  </IconButton>
                 </Link>
                 <Link className="border-r px-4 relative">
-                  {/* <IoCartOutline size={24} />
-                  <span className="absolute -top-1 right-2  h-3 w-3 bg-black rounded-full text-white text-xs flex items-center justify-center">
-                    0
-                  </span> */}
                   <Cart />
+                </Link>
+                <Link className="border-r px-4 flex justify-center items-center gap-2 ">
+                  <Profiles role={currentUser?.role} currentLogin={currentUser} />
                 </Link>
               </Fragment>
             ) : (
@@ -89,29 +73,9 @@ const Header = () => {
                 <HiOutlineUser size={24} />
               </Link>
             )}
-            {isLoggedIn && (
-              <span
-                className=" px-4 flex justify-center items-center cursor-pointer"
-                onClick={() => {
-                  dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-                  const setTimeoutId = setTimeout(() => {
-                    dispatch(showModal({ isShowModal: false, modalChildren: null }));
-                    dispatch(logout());
-                  }, 200);
-                  return () => {
-                    clearTimeout(setTimeoutId);
-                  };
-                }}
-              >
-                <IoMdLogOut size={24} />
-              </span>
-            )}
           </div>
         </div>
       </div>
-      {/* <div className="canvas__open">
-        <i className="fa fa-bars"></i>
-      </div> */}
     </div>
   );
 };

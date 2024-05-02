@@ -54,6 +54,16 @@ module.exports = {
             transform: "translateY(0);",
           },
         },
+        "slide-top": {
+          "0%": {
+            " -webkit-transform": " translateY(20px);",
+            transform: "translateY(20px);",
+          },
+          "100%": {
+            "-webkit-transform": "translateY(0);",
+            transform: "translateY(0);",
+          },
+        },
         "slide-bottom-reverse": {
           "0%": {
             " -webkit-transform": " translateY(-40px);",
@@ -102,7 +112,8 @@ module.exports = {
         "slide-top-focus": "slide-top-focus 0.4s ease both;",
         "slide-left": "slide-left 0.5s both;",
         "slide-left-reverse": "slide-left-reverse 0.2s reverse both",
-        "slide-bottom": "slide-bottom 0.5s both;",
+        "slide-bottom": "slide-bottom 0.3s both;",
+        "slide-top": "slide-top 0.5s both;",
         "slide-bottom-reverse": "slide-bottom 0.2s reverse both;",
         "scale-up-center": " scale-up-center 0.15s cubic-bezier(0.390, 0.575, 0.565, 1.000) both",
       },

@@ -10,27 +10,13 @@ const TopHeader = () => {
             <p className="text-white">Free shipping, 30-day return or refund guarantee.</p>
           </div>
           <div className="lg:w-1/2 md:w-[44%] text-right flex gap-2 justify-end">
-            <Link
-              to={`/${path.LOGIN}`}
-              className="text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500"
-            >
+            <Link to={`/${path.LOGIN}`} className="text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500">
               SIGN IN
             </Link>
-            <Link
-              to={`/${path.FAQS}`}
-              className="text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500"
-            >
+            <Link to={`/${path.FAQS}`} className="text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500">
               FAQS
             </Link>
-            <span className=" text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500">
-              USD
-              {/* <i className="arrow_carrot-down"></i> */}
-            </span>
-            {/* <span className="text-white">
-                  <span>USD</span>
-                  <span>EUR</span>
-                  <span>USD</span>
-                </span> */}
+            <span className=" text-white font-normal  text-[1rem] tracking-[2px] hover:text-orange-500">USD</span>
           </div>
         </div>
       </div>

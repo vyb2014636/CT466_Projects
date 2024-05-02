@@ -4,10 +4,19 @@ import { formatMoney, renderStarFromNumber } from "ultils/helpers";
 import { SelectOption } from "components";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
 import icons from "ultils/icons";
+import withBase from "hocs/withBase";
+import { Favorite } from "@mui/icons-material";
 const { AiOutlineMenu, IoCart, FaEye } = icons;
 
-const Product = ({ productData, isNew, normal }) => {
+const Product = ({ productData, isNew, normal, navigate }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
+  const handleClickOptions = (e, flag) => {
+    e.stopPropagation();
+    if (flag === "DETAIL") navigate(`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`);
+    if (flag === "CART") console.log("CART");
+    if (flag === "WISHLIST") console.log("WISSHLIST");
+  };
+
   return (
     <motion.div // Thay thế div bằng motion.div
       className="md:w-1/4 lg:w-1/5 sm:w-1/2 px-3 py-4 h-[343px]"
@@ -31,9 +40,8 @@ const Product = ({ productData, isNew, normal }) => {
       >
         <div className="outline-8 relative overflow-hidden flex-none h-[65%]">
           <img
-            src={
-              productData?.thumb || "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "
-            }
+            loading="lazy"
+            src={productData?.thumb || "https://curie.pnnl.gov/sites/default/files/default_images/default-image_0.jpeg "}
             className="object-contain h-full w-full"
             alt=""
           />
@@ -54,22 +62,19 @@ const Product = ({ productData, isNew, normal }) => {
             transition={{ duration: 0.5 }}
             whileHover={{ x: 0 }}
           >
-            <SelectOption icon={<FaEye />} />
-            <SelectOption icon={<IoCart />} />
-            <SelectOption icon={<AiOutlineMenu />} />
+            <span onClick={(e) => handleClickOptions(e, "DETAIL")}>
+              <SelectOption icon={<FaEye />} />
+            </span>
+            <span onClick={(e) => handleClickOptions(e, "CART")}>
+              <SelectOption icon={<IoCart />} />
+            </span>
+            <span onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+              <SelectOption icon={<Favorite />} />
+            </span>
           </motion.div>
         </div>
         <div className="flex flex-col items-start  py-4 px-4 gap-2 flex-grow">
-          {isShowOptions ? (
-            <motion.div // Thay thế div bằng motion.div
-              className="add-cart text-red-800 animate-slide-bottom cursor-pointer text-[15px]"
-              animate={{ opacity: 1 }} // Thêm animation cho việc hiển thị option khi isShowOptions là true
-            >
-              + Add To Cart
-            </motion.div>
-          ) : (
-            <h6 className="line-clamp-1  font-semibold text-left text-[15px] ">{productData?.title}</h6>
-          )}
+          <h6 className="line-clamp-1  font-semibold text-left text-[15px] ">{productData?.title}</h6>
           <h5 className="font-bold">{`${formatMoney(productData?.price)} VNĐ`}</h5>
           <span className="flex h-4">
             {renderStarFromNumber(productData?.totalsRatings)?.map((el, index) => (
@@ -83,4 +88,4 @@ const Product = ({ productData, isNew, normal }) => {
   );
 };
 
-export default memo(Product);
+export default withBase(memo(Product));

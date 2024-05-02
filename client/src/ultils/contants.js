@@ -5,6 +5,11 @@ import GroupIcon from "@mui/icons-material/Group";
 import DescriptionIcon from "@mui/icons-material/Description";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import Person2Icon from "@mui/icons-material/Person2";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ShoppingBasketRoundedIcon from "@mui/icons-material/ShoppingBasketRounded";
+import HistoryIcon from "@mui/icons-material/History";
+
 export const navigation = [
   {
     id: 1,
@@ -182,6 +187,37 @@ export const adminSidebar = [
     text: "Quản lý đơn hàng",
     path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
     icon: <DescriptionIcon />,
+  },
+];
+
+export const memberSidebar = [
+  {
+    id: 1,
+    type: "single",
+    text: "Hồ sơ",
+    path: `/${path.MEMBER}/${path.PERSONAL}`,
+    icon: <Person2Icon />,
+  },
+  {
+    id: 2,
+    type: "single",
+    text: "Giỏ hàng",
+    path: `/${path.MEMBER}/${path.MYCART}`,
+    icon: <ShoppingBasketRoundedIcon />,
+  },
+  {
+    id: 3,
+    type: "single",
+    text: "Danh sách yêu thích",
+    path: `/${path.MEMBER}/${path.WISHLIST}`,
+    icon: <FavoriteBorderIcon />,
+  },
+  {
+    id: 4,
+    type: "single",
+    text: "Lịch sử mua hàng",
+    path: `/${path.MEMBER}/${path.HISTORY_PURCHASE}`,
+    icon: <HistoryIcon />,
   },
 ];
 

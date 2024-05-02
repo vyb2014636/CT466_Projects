@@ -6,6 +6,7 @@ import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
+import { useState } from "react";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -17,7 +18,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const Cart = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,8 +33,8 @@ const Cart = () => {
 
   return (
     <>
-      <IconButton aria-label="cart" aria-describedby={id} variant="contained" onClick={handleClick}>
-        <StyledBadge badgeContent={4} color="secondary">
+      <IconButton aria-describedby={id} variant="contained" onClick={handleClick}>
+        <StyledBadge badgeContent={0} color="secondary">
           <ShoppingCartIcon />
         </StyledBadge>
       </IconButton>

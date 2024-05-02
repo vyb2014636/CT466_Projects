@@ -1,19 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import {
-  Login,
-  Home,
-  Public,
-  FAQs,
-  Blogs,
-  DetailProduct,
-  Products,
-  Services,
-  Contacts,
-  FinalRegister,
-  ResetPassword,
-  Profile,
-} from "pages/public";
+import { Login, Home, Public, FAQs, Blogs, DetailProduct, Products, Services, Contacts, FinalRegister, ResetPassword, Profile } from "pages/public";
 import { AdminLayout, CreateProduct, Dashboard, ManageOrder, ManageProducts, ManageUsers } from "pages/admin";
 
 import path from "ultils/path";
@@ -22,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "components";
-import { MemberLayout, Personal } from "pages/member";
+import { MemberLayout, Personal, Wishlist, HistoryPurchase, MyCart } from "pages/member";
 
 function App() {
   const dispath = useDispatch();
@@ -31,7 +18,7 @@ function App() {
     dispath(getCategories());
   }, []);
   return (
-    <div className="min-h-screen font-serif relative">
+    <div className="h-screen font-serif overflow-y-auto">
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
@@ -44,10 +31,13 @@ function App() {
           <Route path={path.CONTACTS} element={<Contacts />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
           <Route path={path.PROFILES} element={<Profile />} />
+          <Route path={path.MEMBER} element={<MemberLayout />}>
+            <Route path={path.PERSONAL} element={<Personal />} />
+            <Route path={path.WISHLIST} element={<Wishlist />} />
+            <Route path={path.MYCART} element={<MyCart id="123456" />} />
+            <Route path={path.HISTORY_PURCHASE} element={<HistoryPurchase />} />
+          </Route>
           <Route path={path.ALL} element={<Home />} />
-        </Route>
-        <Route path={path.MEMBER} element={<MemberLayout />}>
-          <Route path={path.PERSONAL} element={<Personal />} />
         </Route>
 
         <Route path={path.ADMIN} element={<AdminLayout />}>
