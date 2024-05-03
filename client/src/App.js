@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Login, Home, Public, FAQs, Blogs, DetailProduct, Products, Services, Contacts, FinalRegister, ResetPassword, Profile } from "pages/public";
+import { Login, Home, Public, FAQs, Blogs, DetailProduct, Products, Services, Contacts, FinalRegister, ResetPassword, Profile, DetailsCart } from "pages/public";
 import { AdminLayout, CreateProduct, Dashboard, ManageOrder, ManageProducts, ManageUsers } from "pages/admin";
 
 import path from "ultils/path";
@@ -18,7 +18,7 @@ function App() {
     dispath(getCategories());
   }, []);
   return (
-    <div className="h-screen font-serif overflow-y-auto">
+    <div className="min-h-screen font-serif overflow-y-auto ">
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
@@ -34,9 +34,10 @@ function App() {
           <Route path={path.MEMBER} element={<MemberLayout />}>
             <Route path={path.PERSONAL} element={<Personal />} />
             <Route path={path.WISHLIST} element={<Wishlist />} />
-            <Route path={path.MYCART} element={<MyCart id="123456" />} />
+            <Route path={path.MYCART} element={<MyCart />} />
             <Route path={path.HISTORY_PURCHASE} element={<HistoryPurchase />} />
           </Route>
+          <Route path={path.DETAILS_CART} element={<DetailsCart />} />
           <Route path={path.ALL} element={<Home />} />
         </Route>
 
@@ -51,8 +52,8 @@ function App() {
         <Route path={path.LOGIN} element={<Login />}></Route>
       </Routes>
       <ToastContainer
-        position="top-right"
-        autoClose={5000}
+        position="bottom-right"
+        autoClose={2500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -62,7 +63,6 @@ function App() {
         pauseOnHover
         theme="colored"
       />
-      {/* Same as */}
       <ToastContainer />
     </div>
   );

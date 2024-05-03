@@ -64,3 +64,14 @@ export const apiUpdateCurrent = (data) =>
     method: "put",
     data,
   });
+export const apiUpdateCart = (data) =>
+  axios({
+    url: "/user/addToCart",
+    method: "put",
+    data,
+  });
+export const apiRemoveProductCart = (pid) =>
+  axios({
+    url: "/user/removeProductCart/" + pid,
+    method: "delete",
+  });

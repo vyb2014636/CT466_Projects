@@ -34,11 +34,14 @@ var userSchema = new mongoose.Schema(
       enum: [1945, 1979],
       default: 1979,
     },
-    cart: {
-      product: { type: mongoose.Types.ObjectId, ref: "Product" },
-      quantity: Number,
-      color: String,
-    },
+    cart: [
+      {
+        product: { type: mongoose.Types.ObjectId, ref: "Product" },
+        quantity: Number,
+        color: String,
+        size: String,
+      },
+    ],
 
     address: {
       type: Array,

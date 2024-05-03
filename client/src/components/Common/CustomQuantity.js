@@ -10,20 +10,13 @@ const CustomQuantity = ({ quantity, handleOnchangeQuantityNumber, handleChangeNu
         onChange={(el) => handleOnchangeQuantityNumber(el.target.value)}
         size="4"
         min="1"
-        max=""
         step="1"
       />
       <div className="w-[40%]">
-        <div
-          className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white"
-          onClick={() => handleChangeNumber("Plus")}
-        >
+        <div className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white" onClick={() => handleChangeNumber("Plus")}>
           +
         </div>
-        <div
-          className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white"
-          onClick={() => handleChangeNumber("Minus")}
-        >
+        <div className="text-center bg-slate-200 border cursor-pointer hover:bg-orange-600 hover:text-white" onClick={() => handleChangeNumber("Minus")}>
           -
         </div>
       </div>

@@ -7,6 +7,9 @@ button.slick-next,
 button.slick-prev {
   z-index: 1;
 }
+.hide-scroll-bar::-webkit-scrollbar {
+  width: 0px; /* Ẩn thanh cuộn */
+}
 button.slick-next {
   right: 10px;
 }

@@ -61,11 +61,11 @@ const Header = () => {
                     <MdFavoriteBorder size={24} />
                   </IconButton>
                 </Link>
-                <Link className="border-r px-4 relative">
-                  <Cart />
-                </Link>
                 <Link className="border-r px-4 flex justify-center items-center gap-2 ">
                   <Profiles role={currentUser?.role} currentLogin={currentUser} />
+                </Link>
+                <Link className="border-r px-4 relative">
+                  <Cart />
                 </Link>
               </Fragment>
             ) : (

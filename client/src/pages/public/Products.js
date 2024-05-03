@@ -95,12 +95,7 @@ const Products = () => {
             <div className="w-7/10 flex gap-3 items-center">
               <span className="text-sm font-bold w-1/9">Bộ lọc</span>
               <div className="flex gap-4 items-center flex-grow">
-                <SearchItems
-                  name="giá"
-                  activeClick={activeClick}
-                  changeActiveFilter={changeActiveFilter}
-                  type="input"
-                />
+                <SearchItems name="giá" activeClick={activeClick} changeActiveFilter={changeActiveFilter} type="input" />
                 <SearchItems name="màu" activeClick={activeClick} changeActiveFilter={changeActiveFilter} />
                 {/* <SearchItems name="lượt bán" activeClick={activeClick} changeActiveFilter={changeActiveFilter} /> */}
               </div>
@@ -114,11 +109,7 @@ const Products = () => {
           </div>
         </div>
         <div className="products-body-middle my-8">
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className="my-masonry-grid"
-            columnClassName="my-masonry-grid_column"
-          >
+          <Masonry breakpointCols={breakpointColumnsObj} className="my-masonry-grid" columnClassName="my-masonry-grid_column">
             {products?.map((el) => (
               <ProductFS key={el._id} productData={el} normal={true} />
             ))}

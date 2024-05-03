@@ -77,7 +77,7 @@ const DetailProduct = () => {
     },
     [quantityNumber]
   );
-  console.log(currentProduct?.size);
+
   const handleChangeNumber = useCallback(
     (flag) => {
       if (flag === "Minus" && quantityNumber === 1) return;

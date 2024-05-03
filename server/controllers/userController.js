@@ -88,7 +88,15 @@ const login = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const findUser = await User.findById({ _id: _id }).select("-refreshToken -password");
+  const findUser = await User.findById({ _id: _id })
+    .select("-refreshToken -password")
+    .populate({
+      path: "cart",
+      populate: {
+        path: "product",
+        select: "title thumb price quantity varriants",
+      },
+    });
   return res.status(200).json({
     success: findUser ? true : false,
     rs: findUser ? findUser : "Không tìm thấy người dùng",
@@ -308,59 +316,75 @@ const updateAddressUser = asyncHandler(async (req, res) => {
 
 const addToCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { pid, quantity, color } = req.body;
+  const { pid, quantity = 1, color, size = "M" } = req.body;
 
-  if (!pid || !quantity || !color) throw new Error("Missing input");
+  if (!pid || !color) throw new Error("Missing input");
 
-  const cartUser = await User.findById(_id);
-  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid && el.color.toString() === color);
+  let cartUser = await User.findById(_id).select("cart");
+  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid);
+
   if (alreadyProductCart) {
-    // if (alreadyProductCart.color === color) {
-    const respone = await User.updateOne({ cart: { $elemMatch: alreadyProductCart } }, { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity } }, { new: true });
-
+    const response = await User.updateOne(
+      { cart: { $elemMatch: alreadyProductCart } },
+      { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity, "cart.$.color": color, "cart.$.size": size } },
+      { new: true }
+    );
     return res.status(200).json({
-      success: respone ? true : false,
-      addressIs: respone ? respone : "failed",
+      success: response ? true : false,
+      mes: response ? "Thêm thành công" : "failed",
     });
-    // } else {
-    //   const respone = await User.findByIdAndUpdate(
-    //     _id,
-    //     {
-    //       $push: {
-    //         cart: {
-    //           product: pid,
-    //           quantity: quantity,
-    //           color: color,
-    //         },
-    //       },
-    //     },
-    //     { new: true }
-    //   );
-    //   return res.status(200).json({
-    //     success: respone ? true : false,
-    //     addressIs: respone ? respone : "failed",
-    //   });
-    // }
   } else {
-    const respone = await User.findByIdAndUpdate(
+    const response = await User.findByIdAndUpdate(
       _id,
       {
         $push: {
           cart: {
             product: pid,
-            quantity: quantity,
+            quantity: +quantity,
             color: color,
+            size: size,
           },
         },
       },
       { new: true }
     );
     return res.status(200).json({
-      success: respone ? true : false,
-      addressIs: respone ? respone : "failed",
+      success: response ? true : false,
+      mes: response ? "Thêm thành công" : "failed",
     });
   }
 });
+const removeProductCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { pid } = req.params;
+
+  if (!pid) throw new Error("Missing input");
+
+  const cartUser = await User.findById(_id).select("cart");
+  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid);
+  if (!alreadyProductCart) {
+    return res.status(200).json({
+      success: true,
+      mes: "Xóa thành công",
+    });
+  }
+  const response = await User.findByIdAndUpdate(
+    _id,
+    {
+      $pull: {
+        cart: {
+          product: pid,
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    addressIs: response ? "Xóa thành công" : "failed",
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -376,4 +400,5 @@ module.exports = {
   updateAddressUser,
   addToCart,
   finalRegister,
+  removeProductCart,
 };

@@ -3,7 +3,7 @@ import { Header, TopHeader, Footer } from "components";
 import { Outlet } from "react-router-dom";
 const Public = () => {
   return (
-    <div className="max-h-screen overflow-y-auto flex flex-col items-center">
+    <div className="max-h-screen overflow-y-auto flex flex-col items-center hide-scroll-bar">
       <TopHeader />
       <Header />
       <div className="w-full">

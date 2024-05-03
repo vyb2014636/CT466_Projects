@@ -1,14 +1,47 @@
 import React, { memo, useState } from "react";
-// import { Navigate, useNavigate } from "react-router-dom";
 import { formatMoney, renderStarFromNumber } from "ultils/helpers";
 import { SelectOption } from "components";
 import { motion } from "framer-motion";
 import icons from "ultils/icons";
 import { Link } from "react-router-dom";
-const { AiOutlineMenu, IoCart, FaEye } = icons;
+import withBase from "hocs/withBase";
+import { Favorite } from "@mui/icons-material";
+import Swal from "sweetalert2";
+import path from "ultils/path";
+import { useSelector } from "react-redux";
+import { apiUpdateCart } from "apis";
+import { toast } from "react-toastify";
+import { getCurrentUser } from "store/user/asyncAction";
 
-const ProductFS = ({ productData, normal }) => {
+const { BsCartPlusFill, FaEye, BsFillCartCheckFill } = icons;
+
+const ProductFS = ({ productData, normal, navigate, dispatch }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const handleClickOptions = async (e, flag) => {
+    e.stopPropagation();
+    if (flag === "DETAIL") navigate(`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`);
+    if (flag === "CART") {
+      if (!currentUser)
+        return Swal.fire({
+          title: "Nhắc nhở!",
+          text: "Vui lòng đăng nhập để tiếp tục.",
+          icon: "info",
+          cancelButtonText: "Hủy",
+          showCancelButton: true,
+          confirmButtonText: "Đăng nhập",
+        }).then((res) => {
+          if (res.isConfirmed) navigate(`/${path.LOGIN}`);
+        });
+      const response = await apiUpdateCart({ pid: productData._id, color: productData.color });
+      if (response.success) {
+        toast.success(response.mes);
+        dispatch(getCurrentUser());
+      } else toast.error(response.mes);
+    }
+    if (flag === "WISHLIST") console.log("WISSHLIST");
+  };
+
   return (
     <Link to={`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`}>
       <div
@@ -31,9 +64,21 @@ const ProductFS = ({ productData, normal }) => {
             transition={{ duration: 0.4 }}
             whileHover={{ y: 0 }}
           >
-            <SelectOption icon={<FaEye />} navi={`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`} />
-            <SelectOption icon={<IoCart />} />
-            <SelectOption icon={<AiOutlineMenu />} />
+            <span title="Chi tiết sản phẩm" onClick={(e) => handleClickOptions(e, "DETAIL")}>
+              <SelectOption icon={<FaEye />} />
+            </span>
+            {currentUser?.cart?.some((el) => el.product._id === productData._id) ? (
+              <span title="Xóa khỏi giỏ">
+                <SelectOption icon={<BsFillCartCheckFill color="orange" />} />
+              </span>
+            ) : (
+              <span title="Thêm vào giỏ" onClick={(e) => handleClickOptions(e, "CART")}>
+                <SelectOption icon={<BsCartPlusFill />} />
+              </span>
+            )}
+            <span title="Thêm yêu thích" onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+              <SelectOption icon={<Favorite />} />
+            </span>
           </motion.ul>
           {!normal && (
             <span className="absolute top-3 left-0 text-center z-10 bg-orange-500 w-[50px] leading-6 text-white tracking-widest border-r border-solid border-orange-500 rounded-tr-full rounded-br-full">
@@ -55,4 +100,4 @@ const ProductFS = ({ productData, normal }) => {
   );
 };
 
-export default memo(ProductFS);
+export default withBase(memo(ProductFS));

@@ -17,6 +17,7 @@ router.delete("/:uid", [verifyToken, isAdmin], user.deleteUser);
 router.put("/updateUser", verifyToken, uploadCloud.single("avatar"), user.updateUser);
 router.put("/updateAddress", verifyToken, user.updateAddressUser);
 router.put("/addToCart", verifyToken, user.addToCart);
+router.delete("/removeProductCart/:pid", verifyToken, user.removeProductCart);
 router.put("/updateUserByAdmin/:uid", [verifyToken, isAdmin], user.updateUserByAdmin);
 
 module.exports = router;

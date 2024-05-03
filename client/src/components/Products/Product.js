@@ -6,14 +6,39 @@ import { motion } from "framer-motion"; // Import motion từ framer-motion
 import icons from "ultils/icons";
 import withBase from "hocs/withBase";
 import { Favorite } from "@mui/icons-material";
-const { AiOutlineMenu, IoCart, FaEye } = icons;
+import { apiUpdateCart } from "apis";
+import { toast } from "react-toastify";
+import { getCurrentUser } from "store/user/asyncAction";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import path from "ultils/path";
 
-const Product = ({ productData, isNew, normal, navigate }) => {
+const { FaEye, BsFillCartCheckFill, BsCartPlusFill } = icons;
+
+const Product = ({ productData, isNew, normal, navigate, dispatch }) => {
   const [isShowOptions, setisShowOptions] = useState(false);
-  const handleClickOptions = (e, flag) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const handleClickOptions = async (e, flag) => {
     e.stopPropagation();
     if (flag === "DETAIL") navigate(`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData?.title}`);
-    if (flag === "CART") console.log("CART");
+    if (flag === "CART") {
+      if (!currentUser)
+        return Swal.fire({
+          title: "Nhắc nhở!",
+          text: "Vui lòng đăng nhập để tiếp tục.",
+          icon: "info",
+          cancelButtonText: "Hủy",
+          showCancelButton: true,
+          confirmButtonText: "Đăng nhập",
+        }).then((res) => {
+          if (res.isConfirmed) navigate(`/${path.LOGIN}`);
+        });
+      const response = await apiUpdateCart({ pid: productData._id, color: productData.color });
+      if (response.success) {
+        toast.success(response.mes);
+        dispatch(getCurrentUser());
+      } else toast.error(response.mes);
+    }
     if (flag === "WISHLIST") console.log("WISSHLIST");
   };
 
@@ -62,13 +87,20 @@ const Product = ({ productData, isNew, normal, navigate }) => {
             transition={{ duration: 0.5 }}
             whileHover={{ x: 0 }}
           >
-            <span onClick={(e) => handleClickOptions(e, "DETAIL")}>
+            <span title="Chi tiết sản phẩm" onClick={(e) => handleClickOptions(e, "DETAIL")}>
               <SelectOption icon={<FaEye />} />
             </span>
-            <span onClick={(e) => handleClickOptions(e, "CART")}>
-              <SelectOption icon={<IoCart />} />
-            </span>
-            <span onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+            {currentUser?.cart?.some((el) => el.product._id === productData._id) ? (
+              <span title="Xóa khỏi giỏ">
+                <SelectOption icon={<BsFillCartCheckFill color="orange" />} />
+              </span>
+            ) : (
+              <span title="Thêm vào giỏ" onClick={(e) => handleClickOptions(e, "CART")}>
+                <SelectOption icon={<BsCartPlusFill />} />
+              </span>
+            )}
+
+            <span title="Thêm yêu thích" onClick={(e) => handleClickOptions(e, "WISHLIST")}>
               <SelectOption icon={<Favorite />} />
             </span>
           </motion.div>

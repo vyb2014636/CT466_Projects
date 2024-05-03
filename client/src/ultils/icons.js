@@ -1,5 +1,5 @@
 import { MdFavoriteBorder, MdDashboard, MdGroup } from "react-icons/md";
-import { BsCart2 } from "react-icons/bs";
+import { BsCart2, BsFillCartCheckFill, BsCartPlusFill } from "react-icons/bs";
 import { FaRegUser, FaProductHunt } from "react-icons/fa6";
 import { FaChevronDown, FaStar, FaRegStar, FaStarHalfAlt, FaMoneyBill } from "react-icons/fa";
 import { AiOutlineMenu, AiOutlineUser } from "react-icons/ai";
@@ -40,6 +40,8 @@ const icons = {
   BiLogoStripe,
   PiShoppingBagFill,
   IoLogoVue,
+  BsFillCartCheckFill,
+  BsCartPlusFill,
 };
 
 export default icons;
