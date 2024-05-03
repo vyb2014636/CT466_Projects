@@ -316,17 +316,27 @@ const updateAddressUser = asyncHandler(async (req, res) => {
 
 const addToCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { pid, quantity = 1, color, size = "M" } = req.body;
+  const { pid, quantity = 1, color, size = "M", price, thumbnail, title } = req.body;
 
   if (!pid || !color) throw new Error("Missing input");
 
   let cartUser = await User.findById(_id).select("cart");
-  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid);
 
-  if (alreadyProductCart) {
+  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid && el.color === color && el.size === size);
+
+  if (alreadyProductCart && alreadyProductCart?.color === color && alreadyProductCart?.size === size) {
     const response = await User.updateOne(
       { cart: { $elemMatch: alreadyProductCart } },
-      { $set: { "cart.$.quantity": +alreadyProductCart.quantity + +quantity, "cart.$.color": color, "cart.$.size": size } },
+      {
+        $set: {
+          "cart.$.quantity": +alreadyProductCart.quantity + +quantity,
+          "cart.$.price": price,
+          "cart.$.size": size,
+          "cart.$.thumbnail": thumbnail,
+          "cart.$.title": title,
+          "cart.$.size": size,
+        },
+      },
       { new: true }
     );
     return res.status(200).json({
@@ -340,9 +350,12 @@ const addToCart = asyncHandler(async (req, res) => {
         $push: {
           cart: {
             product: pid,
-            quantity: +quantity,
-            color: color,
-            size: size,
+            title,
+            quantity,
+            color,
+            size,
+            price,
+            thumbnail,
           },
         },
       },
@@ -356,12 +369,12 @@ const addToCart = asyncHandler(async (req, res) => {
 });
 const removeProductCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { pid } = req.params;
+  const { pid, color, size } = req.params;
 
-  if (!pid) throw new Error("Missing input");
+  if (!pid) throw new Error("Không tìm thấy");
 
   const cartUser = await User.findById(_id).select("cart");
-  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid);
+  const alreadyProductCart = cartUser?.cart?.find((el) => el.product.toString() === pid && el.color === color && el.size === size);
   if (!alreadyProductCart) {
     return res.status(200).json({
       success: true,
@@ -374,6 +387,8 @@ const removeProductCart = asyncHandler(async (req, res) => {
       $pull: {
         cart: {
           product: pid,
+          color,
+          size,
         },
       },
     },

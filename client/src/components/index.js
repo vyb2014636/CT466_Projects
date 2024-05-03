@@ -36,3 +36,4 @@ export { default as CustomizeVarriant } from "./Products/CustomizeVarriant";
 export { default as Cart } from "./Header/Cart";
 export { default as Loading2 } from "./Common/Loading2";
 export { default as InputProfile } from "./Inputs/InputProfile";
+export { default as Paypal } from "./Common/Paypal";

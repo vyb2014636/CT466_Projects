@@ -1,14 +1,38 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
-import { apiGetProductDetail, apiGetProducts } from "../../apis";
+import React, { useState, useEffect, useRef, useCallback, memo } from "react";
+import { createSearchParams, useParams } from "react-router-dom";
+import { apiGetProductDetail, apiGetProducts, apiUpdateCart } from "../../apis";
 import { formatMoney, renderStarFromNumber } from "../../ultils/helpers";
-import { Button, Breadcrum, CustomQuantity, InfoProduct, CustomSlider, SelectAdmin } from "../../components";
+import { Button, Breadcrum, CustomQuantity, InfoProduct, CustomSlider } from "../../components";
 import Slider from "react-slick";
 import { TextField } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import clsx from "clsx";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import path from "ultils/path";
+import withBase from "hocs/withBase";
+import { toast } from "react-toastify";
+import { getCurrentUser } from "store/user/asyncAction";
 
-const DetailProduct = () => {
+const DetailProduct = ({ navigate, location, dispatch }) => {
+  const { currentUser } = useSelector((state) => state.user);
+  const { pid, category } = useParams();
+  const [size, setSize] = useState("");
+  const [quantityNumber, setQuantityNumber] = useState(1);
+  const [varriant, setVarriant] = useState(null);
+  const [descriptions, setDescriptions] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [productDetail, setProductDetail] = useState(null);
+  const [currentProduct, setCurrentProduct] = useState({
+    title: "",
+    color: "",
+    images: [],
+    price: "",
+    thumb: "",
+    size: [],
+    stock: "",
+  });
+
   //Slick slider
   const [nav1, setNav1] = useState(null);
   const [nav2, setNav2] = useState(null);
@@ -19,33 +43,12 @@ const DetailProduct = () => {
     setNav2(sliderRef2);
   }, []);
   //Slick slider
-
   //Khi ta cập nhật j đó thì sẽ trích suất cơ sở dữ liệu
   const [update, setUpdate] = useState(false);
-  useEffect(() => {
-    fetchProductDetail();
-  }, [update]);
   const rerender = useCallback(() => {
     setUpdate(!update);
   }, [update]);
   //Khi ta cập nhật j đó thì sẽ trích suất cơ sở dữ liệu!------
-
-  const [size, setSize] = useState("");
-  const [quantityNumber, setQuantityNumber] = useState(1);
-  const [varriant, setVarriant] = useState(null);
-  const { pid, category } = useParams();
-  const [descriptions, setDescriptions] = useState([]);
-  const [categoryCurrent, setCategoryCurrent] = useState("");
-  const [relatedProducts, setRelatedProducts] = useState([]);
-  const [productDetail, setProductDetail] = useState(null);
-  const [currentProduct, setCurrentProduct] = useState({
-    title: "",
-    color: "",
-    images: [],
-    price: "",
-    size: [],
-    stock: "",
-  });
 
   useEffect(() => {
     if (varriant) {
@@ -55,20 +58,31 @@ const DetailProduct = () => {
         images: productDetail?.varriants?.find((el) => el.SKU === varriant)?.images,
         price: productDetail?.varriants?.find((el) => el.SKU === varriant)?.price,
         size: productDetail?.varriants?.find((el) => el.SKU === varriant)?.size,
+        thumb: productDetail?.varriants?.find((el) => el.SKU === varriant)?.thumb,
       });
-      setSize("");
     } else {
       setCurrentProduct({
-        title: "",
-        color: "",
-        images: [],
-        price: "",
-        sold: "",
-        quantity: "",
-        size: [],
+        title: productDetail?.title,
+        color: productDetail?.color,
+        images: productDetail?.images || [],
+        price: productDetail?.price,
+        thumb: productDetail?.thumb,
+        size: productDetail?.size,
       });
     }
-  }, [varriant]);
+  }, [varriant, productDetail]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [varriant, productDetail]);
+
+  useEffect(() => {
+    if (pid) {
+      fetchProductDetail();
+    }
+    window.scrollTo(0, 0);
+  }, [pid, update]);
+
   const handleOnChangeQuantityNumber = useCallback(
     (quantity) => {
       if (!Number(quantity) || Number(quantity) < 1) return;
@@ -93,25 +107,47 @@ const DetailProduct = () => {
     if (response?.success) {
       setProductDetail(response.product);
       setDescriptions(response.product?.description?.split("\n")?.filter((line) => line.trim() !== ""));
-      setCategoryCurrent(response.product?.category);
     }
   };
 
   const fetchProducts = async () => {
-    const response = await apiGetProducts({ category: categoryCurrent });
+    const response = await apiGetProducts({ category: category });
     if (response?.success) {
       setRelatedProducts(response?.products);
     }
   };
 
-  useEffect(() => {
-    if (pid) fetchProductDetail();
-    window.scrollTo(0, 0);
-  }, [pid]);
+  const handleAddtoCart = async () => {
+    if (!currentUser)
+      return Swal.fire({
+        title: "Nhắc nhở!",
+        text: "Vui lòng đăng nhập để tiếp tục.",
+        icon: "info",
+        cancelButtonText: "Hủy",
+        showCancelButton: true,
+        confirmButtonText: "Đăng nhập",
+      }).then((res) => {
+        if (res.isConfirmed)
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({ redirect: location.pathname }).toString(),
+          });
+      });
 
-  useEffect(() => {
-    fetchProducts();
-  }, [categoryCurrent]);
+    const response = await apiUpdateCart({
+      pid,
+      color: currentProduct?.color || productDetail?.color,
+      quantity: quantityNumber,
+      size,
+      price: currentProduct?.price || productDetail?.price,
+      thumbnail: currentProduct?.thumb || productDetail?.thumb,
+      title: currentProduct?.title || productDetail?.title,
+    });
+    if (response.success) {
+      toast.success(response.mes);
+      dispatch(getCurrentUser());
+    } else toast.error(response.mes);
+  };
 
   return (
     <div className="w-full  md:min-h-[800px] sm:h-full flex flex-col items-center py-4">
@@ -125,8 +161,9 @@ const DetailProduct = () => {
           <div className="md:w-1/6 lg:w-1/6 w-full  h-full"></div>
           <div className="details-left md:w-2/6 lg:w-2/6 w-full h-full px-8 flex flex-col gap-2">
             <Slider className="details-left-top h-[77%] sm:w-[20%] md:w-full " asNavFor={nav2} ref={(slider) => (sliderRef1 = slider)}>
-              {currentProduct?.images.length === 0 && productDetail?.images?.map((image) => <img src={image} className="object-contain border" alt="" />)}
-              {currentProduct?.images.length > 0 && currentProduct?.images?.map((image) => <img src={image} className="object-contain border" alt="" />)}
+              {currentProduct?.images?.map((image) => (
+                <img src={image} className="object-contain border" alt="" />
+              ))}
             </Slider>
             <Slider
               className="details-left-bottom flex-grow sm:w-full"
@@ -136,8 +173,9 @@ const DetailProduct = () => {
               swipeToSlide={true}
               focusOnSelect={true}
             >
-              {currentProduct?.images.length === 0 && productDetail?.images?.map((image) => <img src={image} className="object-contain n h-full w-full" alt="" />)}
-              {currentProduct?.images.length > 0 && currentProduct?.images?.map((image) => <img src={image} className="object-contain n h-full w-full" alt="" />)}
+              {currentProduct?.images?.map((image) => (
+                <img src={image} className="object-contain n h-full w-full" alt="" />
+              ))}
             </Slider>
           </div>
           <div className="details-right md:w-2/6 lg:w-2/6 border ">
@@ -173,39 +211,33 @@ const DetailProduct = () => {
               <div className="mt-auto flex flex-col gap-2">
                 <div class="relative min-w-[100px] my-2">
                   <TextField select label="Size" className="w-full ">
-                    {currentProduct?.size?.length === 0 &&
-                      productDetail?.size?.map((el) => (
-                        <MenuItem value={el.titleSize} key={el._id} onClick={() => setSize(el.titleSize)}>
-                          {el.titleSize}
-                        </MenuItem>
-                      ))}
-                    {currentProduct?.size?.length > 0 &&
-                      currentProduct?.size?.map((el, index) => (
-                        <MenuItem value={el.title} key={index} onClick={() => setSize(el.title)}>
-                          {el.title}
-                        </MenuItem>
-                      ))}
+                    {currentProduct?.size?.map((el, index) => (
+                      <MenuItem value={el.title} key={index} onClick={() => setSize(el.title)}>
+                        {el.title}
+                      </MenuItem>
+                    ))}
                   </TextField>
                 </div>
                 <div className="flex items-center gap-2">
                   <span
                     onClick={() => setVarriant(null)}
-                    className={clsx(`bg-${productDetail?.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`, !varriant && "border-black")}
-                  ></span>
+                    className={clsx(`border cursor-pointer p-3 rounded-md flex items-center gap-2`, !varriant && "border-orange-500 text-orange-500")}
+                  >
+                    <img src={productDetail?.thumb} alt="thumb" className="w-10 h-10" />
+                    <span>{productDetail?.color}</span>
+                  </span>
                   {productDetail?.varriants?.map((el) => (
                     <span
                       onClick={() => setVarriant(el.SKU)}
-                      className={clsx(
-                        el?.color.toLowerCase() !== "black" && el?.color.toLowerCase() !== "white" && `bg-${el.color.toLowerCase()}-500 rounded-full border w-8 h-8 cursor-pointer`,
-                        (el?.color.toLowerCase() === "black" || el?.color.toLowerCase() === "white") && `bg-${el.color.toLowerCase()} rounded-full border w-8 h-8 cursor-pointer`,
-                        varriant === el.SKU && "border-black"
-                      )}
-                    ></span>
+                      className={clsx("border cursor-pointer p-3 rounded-md flex items-center gap-2", varriant === el.SKU && "border-orange-500 text-orange-500")}
+                    >
+                      <img src={el?.thumb} alt="thumb" className="w-10 h-10" />
+                      <span>{el?.color}</span>
+                    </span>
                   ))}
                   <h1 className="text-orange-500 text-end flex-grow">
                     Số lượng {"   "}
-                    {currentProduct?.size?.length > 0 && currentProduct?.size?.find((el) => el.title === size)?.quantity}
-                    {currentProduct?.size?.length === 0 && productDetail?.size?.find((el) => el.titleSize === size)?.quantity}
+                    {currentProduct?.size?.find((el) => el.title === size)?.quantity}
                   </h1>
                 </div>
                 <div className="price-describe  font-[1000] text-[2rem]">
@@ -213,7 +245,11 @@ const DetailProduct = () => {
                   <span class="align-text-top text-[1rem]">₫</span>
                 </div>
                 <div className="flex gap-1">
-                  <Button name="THÊM VÀO GIỎ HÀNG" styles={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[80%]"}></Button>
+                  <Button
+                    name="THÊM VÀO GIỎ HÀNG"
+                    styled={"bg-orange-600 bg-opacity-60 py-2 text-white rounded-lg font-semibold  w-full w-[80%]"}
+                    handleOnClick={handleAddtoCart}
+                  ></Button>
                   <div className="flex w-[20%]">
                     <CustomQuantity quantity={quantityNumber} handleOnchangeQuantityNumber={handleOnChangeQuantityNumber} handleChangeNumber={handleChangeNumber} />
                   </div>
@@ -241,4 +277,4 @@ const DetailProduct = () => {
     </div>
   );
 };
-export default DetailProduct;
+export default withBase(DetailProduct);

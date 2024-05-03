@@ -32,7 +32,7 @@ var productSchema = new mongoose.Schema(
     },
     size: [
       {
-        titleSize: String,
+        title: String,
         sold: {
           type: Number,
           default: 0,

@@ -5,29 +5,14 @@ const asyncHandler = require("express-async-handler");
 
 const createOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { coupon } = req.body;
-  const userCart = await User.findById(_id).select("cart").populate("cart.product", "title price");
+  const { products, total } = req.body;
 
-  const products = userCart?.cart?.map((el) => ({
-    product: el.product._id,
-    count: el.quantity,
-    color: el.color,
-  }));
   // console.log(products);
 
-  let total = userCart?.cart?.reduce((sum, el) => +el.product.price * el.quantity + +sum, 0); //dùng let để có thể gán lại giá trị
-  const createData = { products, total, orderBy: _id };
-  if (coupon) {
-    const selectCoupon = await Coupon.findById(coupon);
-    total = Math.round((total * (1 - selectCoupon.discount / 100)) / 1000) * 1000 || total;
-    createData.total = total;
-    createData.coupon = coupon;
-  }
-
-  const respone = await Order.create(createData);
+  const respone = await Order.create({ products, total, postedBy: _id });
   return res.status(200).json({
     success: respone ? true : false,
-    createdOrder: respone ? respone : "Có lỗi",
+    rs: respone ? respone : "Có lỗi",
   });
 });
 

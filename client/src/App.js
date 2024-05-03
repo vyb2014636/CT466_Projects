@@ -9,16 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "components";
-import { MemberLayout, Personal, Wishlist, HistoryPurchase, MyCart } from "pages/member";
+import { MemberLayout, Personal, Wishlist, HistoryPurchase, MyCart, Checkout } from "pages/member";
 
 function App() {
   const dispath = useDispatch();
   const { isShowModal, modalChildren } = useSelector((state) => state.app);
+
   useEffect(() => {
     dispath(getCategories());
   }, []);
   return (
-    <div className="min-h-screen font-serif overflow-y-auto ">
+    <div className={`h-screen font-serif ${isShowModal && "overflow-auto"}`}>
       {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
@@ -38,6 +39,7 @@ function App() {
             <Route path={path.HISTORY_PURCHASE} element={<HistoryPurchase />} />
           </Route>
           <Route path={path.DETAILS_CART} element={<DetailsCart />} />
+          <Route path={path.CHECKOUT} element={<Checkout />} />
           <Route path={path.ALL} element={<Home />} />
         </Route>
 
@@ -53,7 +55,7 @@ function App() {
       </Routes>
       <ToastContainer
         position="bottom-right"
-        autoClose={2500}
+        autoClose={500}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
@@ -63,7 +65,7 @@ function App() {
         pauseOnHover
         theme="colored"
       />
-      <ToastContainer />
+      <ToastContainer position="bottom-right" autoClose={500} />
     </div>
   );
 }

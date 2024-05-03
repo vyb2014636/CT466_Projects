@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { InputFields, Button, Loading } from "components";
 import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "apis";
@@ -10,9 +10,8 @@ import { validate } from "ultils/helpers";
 import { login } from "store/user/userSlice";
 import { toast } from "react-toastify";
 import { showModal } from "store/app/appSlice";
-import icons from "ultils/icons";
 let idInterval;
-const { FaGoogle } = icons;
+
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,6 +32,7 @@ const Login = () => {
   const [focus, setFocus] = useState(false);
   const [valueCode, setValueCode] = useState("");
   const [isVerifyEmail, setIsVerifyEmail] = useState(false);
+  const [searchParams] = useSearchParams();
 
   const resetPayload = () => {
     setPayload({
@@ -74,7 +74,7 @@ const Login = () => {
           dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
           const setTimeoutId = setTimeout(() => {
             dispatch(showModal({ isShowModal: false, modalChildren: null }));
-            navigate(`/${path.HOME}`);
+            searchParams.get("redirect") ? navigate(searchParams.get("redirect")) : navigate(`/${path.HOME}`);
           }, 1000);
           return () => {
             clearTimeout(setTimeoutId);
@@ -132,8 +132,7 @@ const Login = () => {
             <div className="grid gap-2 text-center w-[50%] mb-4">
               <h1 className="text-3xl font-bold">Xác minh đăng ký</h1>
               <p className="text-muted-foreground">
-                Chúng tôi đã gửi OTP qua email của bạn,vui lòng kiểm tra email trong{" "}
-                <span className="font-bold border px-1">{secondOTP}s</span>
+                Chúng tôi đã gửi OTP qua email của bạn,vui lòng kiểm tra email trong <span className="font-bold border px-1">{secondOTP}s</span>
                 {/* {<CountDown number={secondOTP} unit={"s"} />} */}
               </p>
             </div>
@@ -142,10 +141,7 @@ const Login = () => {
                 <div className="w-full flex flex-col relative">
                   <div className="relative">
                     {valueCode?.trim() !== "" || focus ? (
-                      <label
-                        className="text-[0.7rem] absolute top-[-8px] left-2  block bg-white px-1 animate-slide-top-focus "
-                        htmlFor={"OTP"}
-                      >
+                      <label className="text-[0.7rem] absolute top-[-8px] left-2  block bg-white px-1 animate-slide-top-focus " htmlFor={"OTP"}>
                         {"OTP"?.slice(0, 1)?.toUpperCase() + "OTP"?.slice(1)}
                       </label>
                     ) : (
@@ -174,12 +170,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <Button
-                name="Gửi"
-                styles="border py-2 rounded-lg font-semibold bg-black text-white"
-                fw
-                handleOnClick={handleSubmitOTP}
-              />
+              <Button name="Gửi" styles="border py-2 rounded-lg font-semibold bg-black text-white" fw handleOnClick={handleSubmitOTP} />
             </div>
             <div className="mt-4 text-center text-sm flex ">
               <span
@@ -207,27 +198,12 @@ const Login = () => {
             </div>
             <div className="grid gap-4 w-[50%]">
               <div className="grid gap-2">
-                <InputFields
-                  value={email.email}
-                  nameKey="email"
-                  nameKeyVN="email"
-                  setValue={setEmail}
-                  invalidFields={invalidFields}
-                  setInvalidFields={setInvalidFields}
-                />
+                <InputFields value={email.email} nameKey="email" nameKeyVN="email" setValue={setEmail} invalidFields={invalidFields} setInvalidFields={setInvalidFields} />
               </div>
-              <Button
-                name="Gửi"
-                styles="border py-2 rounded-lg font-semibold bg-black text-white"
-                fw
-                handleOnClick={handleForgotPassword}
-              />
+              <Button name="Gửi" styles="border py-2 rounded-lg font-semibold bg-black text-white" fw handleOnClick={handleForgotPassword} />
             </div>
             <div className="mt-4 text-center text-sm flex ">
-              <span
-                className="ml-auto text-orange-500 cursor-pointer hover:underline"
-                onClick={() => setIsForgotPassword(false)}
-              >
+              <span className="ml-auto text-orange-500 cursor-pointer hover:underline" onClick={() => setIsForgotPassword(false)}>
                 Login?
               </span>
             </div>
@@ -257,9 +233,7 @@ const Login = () => {
           <div className="mx-auto grid w-[350px] gap-6">
             <div className="grid gap-2 text-center">
               <h1 className="text-3xl font-bold">{isRegister ? "Đăng ký" : "Đăng nhập"}</h1>
-              <p className="text-balance text-muted-foreground">
-                Nhập email của bạn dưới đây để đăng nhập vào tài khoản của bạn
-              </p>
+              <p className="text-balance text-muted-foreground">Nhập email của bạn dưới đây để đăng nhập vào tài khoản của bạn</p>
             </div>
             <div className="grid gap-4">
               {isRegister && (
@@ -287,14 +261,7 @@ const Login = () => {
                 </div>
               )}
               <div className="grid gap-2">
-                <InputFields
-                  value={payload.email}
-                  nameKey="email"
-                  nameKeyVN="email"
-                  setValue={setPayload}
-                  invalidFields={invalidFields}
-                  setInvalidFields={setInvalidFields}
-                />
+                <InputFields value={payload.email} nameKey="email" nameKeyVN="email" setValue={setPayload} invalidFields={invalidFields} setInvalidFields={setInvalidFields} />
               </div>
               {isRegister && (
                 <div className="grid gap-2">
@@ -333,12 +300,6 @@ const Login = () => {
                 </div>
               )}
               <Button name={isRegister ? "Đăng ký" : "Đăng nhập"} handleOnClick={handleSubmit} fw />
-              <Button
-                name="Đăng nhập bằng google"
-                iconsBefore={<FaGoogle />}
-                styles="border p-2 rounded-lg font-semibold flex items-center justify-center gap-1"
-                fw
-              />
             </div>
             <div className="mt-4 text-center text-sm flex">
               {!isRegister ? (
@@ -363,10 +324,7 @@ const Login = () => {
                   Đi đến đăng nhập?
                 </span>
               )}
-              <span
-                className="ml-auto text-orange-500 cursor-pointer hover:underline"
-                onClick={() => setIsForgotPassword(true)}
-              >
+              <span className="ml-auto text-orange-500 cursor-pointer hover:underline" onClick={() => setIsForgotPassword(true)}>
                 Quên mật khẩu?
               </span>
             </div>

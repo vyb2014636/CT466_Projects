@@ -29,10 +29,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Cart = ({ dispatch, navigate }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const { currentUser } = useSelector((state) => state.user);
-
-  const removeProductInCart = async (pid) => {
-    const response = await apiRemoveProductCart(pid);
+  const { currentUser, currentCart } = useSelector((state) => state.user);
+  const removeProductInCart = async (pid, color, size) => {
+    const response = await apiRemoveProductCart(pid, color, size);
     if (response.success) {
       dispatch(getCurrentUser());
     } else toast.error(response.mes);
@@ -47,7 +46,6 @@ const Cart = ({ dispatch, navigate }) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-
   const handlePassPage = (e) => {
     e.stopPropagation();
     navigate(`/${path.DETAILS_CART}`);
@@ -80,18 +78,18 @@ const Cart = ({ dispatch, navigate }) => {
               <span>Giỏ hàng</span>
             </header>
             <div className="max-h-[40vh] overflow-hidden overflow-y-scroll hide-scroll-bar">
-              {currentUser.cart?.length === 0 && (
+              {currentCart?.length === 0 && (
                 <div>
                   <img src={emptycart} alt="empty" className="h-[30vh] w-full " />
                 </div>
               )}
-              {currentUser.cart &&
-                currentUser?.cart?.map((el) => (
+              {currentCart &&
+                currentCart?.map((el) => (
                   <div key={el.product?._id} className="flex justify-between py-2 border-b-2">
                     <div className="flex gap-2 w-[90%]">
-                      <img src={el.product.thumb} alt="thumb-cart" className="w-16 h-full object-cover" />
+                      <img src={el.thumbnail} alt="thumb-cart" className="w-16 h-full object-cover" />
                       <div className="flex flex-col gap-1 w-full">
-                        <span className="line-clamp-1">{el.product?.title}</span>
+                        <span className="line-clamp-1">{el?.title}</span>
                         <span>
                           {el.color} - {el.size}
                         </span>
@@ -100,19 +98,17 @@ const Cart = ({ dispatch, navigate }) => {
                         </span>
                       </div>
                     </div>
-                    <div className="w-[10%] cursor-pointer" onClick={() => removeProductInCart(el.product._id)}>
+                    <div className="w-[10%] cursor-pointer" onClick={() => removeProductInCart(el?.product?._id, el?.color, el?.size)}>
                       <HighlightOffIcon sx={{ color: "gray" }} />
                     </div>
                   </div>
                 ))}
             </div>
-            {currentUser?.cart?.length > 0 ? (
+            {currentCart?.length > 0 ? (
               <div className="mt-auto">
                 <div className="flex justify-between py-4 border-b-2">
                   <span className="uppercase text-gray-400 tracking-wider font-bold ">Tổng số phụ:</span>
-                  <span className=" tracking-wider font-bold">
-                    {formatMoney(currentUser?.cart?.reduce((sum, el) => sum + Number(el.product?.price * el.quantity), 0)) + " vnđ"}
-                  </span>
+                  <span className=" tracking-wider font-bold">{formatMoney(currentCart?.reduce((sum, el) => sum + Number(el.price * el.quantity), 0)) + " vnđ"}</span>
                 </div>
                 <div className="flex flex-col gap-1 py-4 ">
                   <button

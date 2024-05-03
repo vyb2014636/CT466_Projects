@@ -33,7 +33,13 @@ const ProductFS = ({ productData, normal, navigate, dispatch }) => {
         }).then((res) => {
           if (res.isConfirmed) navigate(`/${path.LOGIN}`);
         });
-      const response = await apiUpdateCart({ pid: productData._id, color: productData.color });
+      const response = await apiUpdateCart({
+        pid: productData._id,
+        color: productData.color,
+        price: productData?.price,
+        thumbnail: productData?.thumb,
+        title: productData?.title,
+      });
       if (response.success) {
         toast.success(response.mes);
         dispatch(getCurrentUser());
