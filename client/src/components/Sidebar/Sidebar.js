@@ -1,51 +1,59 @@
-import React, { useState } from "react";
-import Collapse from "react-collapse";
+import React from "react";
 import { createSlug } from "ultils/helpers";
 import { NavLink } from "react-router-dom";
-import icons from "ultils/icons";
 import { useSelector } from "react-redux";
+import Box from "@mui/material/Box";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import { useState } from "react";
 
 const Sidebar = () => {
   let { categories } = useSelector((state) => state.app);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
+  // const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [border, setBorder] = useState(false);
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+    setBorder(!border);
   };
 
-  const { FaChevronDown } = icons;
+  const DrawerList = (
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+      <List>
+        {categories?.map((el) => (
+          <NavLink to={createSlug(el.title)}>
+            <ListItem key={createSlug(el.title)} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  <ArrowForwardIosIcon />{" "}
+                </ListItemIcon>
+                <ListItemText primary={el.title} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        ))}
+      </List>
+    </Box>
+  );
 
   return (
-    <div className="card">
-      <div
-        onClick={handleToggle}
-        className={`card_heading  flex justify-between collapsed text-black ${isOpen ? "active" : ""}`}
-        aria-expanded={isOpen ? "true" : "false"}
-      >
-        <NavLink key={"category"}>Categories</NavLink>
-        <FaChevronDown />
-      </div>
-      <Collapse isOpened={isOpen}>
-        <div className="card-body">
-          <div className="shop__sidebar__categories text-left">
-            <ul className="overflow-y-hidden outline-none tabindex-1">
-              {categories.map((el) => (
-                <li key={createSlug(el.title)}>
-                  <NavLink
-                    key={createSlug(el.title)}
-                    to={createSlug(el.title)}
-                    className={({ isActive }) => (isActive ? "" : " text-gray-400 hover:text-black")}
-                  >
-                    {el.title}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Collapse>
+    <div className="text-[18px] font-semibold ">
+      <span onClick={toggleDrawer(true)} className={border ? "cursor-pointer " : "cursor-pointer"}>
+        Thể loại
+      </span>
+      <Drawer open={open} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
     </div>
   );
 };
 // style="overflow-y: hidden; outline: none;" trong class nice-scroll
 export default Sidebar;
+
+// ? "border-b-2 text-[18px] border-red-500 font-semibold"
+// : "hover:after:content-[''] hover:border-b-2 hover:border-red-500 transition-all transform text-[18px] font-semibold"

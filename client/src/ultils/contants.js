@@ -16,25 +16,11 @@ export const navigation = [
     value: "Trang chủ",
     path: `/${path.HOME}`,
   },
+
   {
     id: 2,
     value: "Sản phẩm",
-    path: `/Sản phẩm`,
-  },
-  {
-    id: 3,
-    value: "FAQs",
-    path: `/${path.FAQS}`,
-  },
-  {
-    id: 4,
-    value: "Tin tức",
-    path: `/${path.BLOGS}`,
-  },
-  {
-    id: 5,
-    value: "Liên hệ",
-    path: `/${path.CONTACTS}`,
+    path: `/${path.PRODUCTS}`,
   },
 ];
 
@@ -181,13 +167,13 @@ export const adminSidebar = [
       },
     ],
   },
-  {
-    id: 4,
-    type: "single",
-    text: "Quản lý đơn hàng",
-    path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
-    icon: <DescriptionIcon />,
-  },
+  // {
+  //   id: 4,
+  //   type: "single",
+  //   text: "Quản lý đơn hàng",
+  //   path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
+  //   icon: <DescriptionIcon />,
+  // },
 ];
 
 export const memberSidebar = [
@@ -198,22 +184,22 @@ export const memberSidebar = [
     path: `/${path.MEMBER}/${path.PERSONAL}`,
     icon: <Person2Icon />,
   },
+  // {
+  //   id: 2,
+  //   type: "single",
+  //   text: "Giỏ hàng",
+  //   path: `/${path.MEMBER}/${path.MYCART}`,
+  //   icon: <ShoppingBasketRoundedIcon />,
+  // },
+  // {
+  //   id: 3,
+  //   type: "single",
+  //   text: "Danh sách yêu thích",
+  //   path: `/${path.MEMBER}/${path.WISHLIST}`,
+  //   icon: <FavoriteBorderIcon />,
+  // },
   {
     id: 2,
-    type: "single",
-    text: "Giỏ hàng",
-    path: `/${path.MEMBER}/${path.MYCART}`,
-    icon: <ShoppingBasketRoundedIcon />,
-  },
-  {
-    id: 3,
-    type: "single",
-    text: "Danh sách yêu thích",
-    path: `/${path.MEMBER}/${path.WISHLIST}`,
-    icon: <FavoriteBorderIcon />,
-  },
-  {
-    id: 4,
     type: "single",
     text: "Lịch sử mua hàng",
     path: `/${path.MEMBER}/${path.HISTORY_PURCHASE}`,
@@ -262,3 +248,14 @@ export const sizes = [
   },
 ];
 export const blockCategory = ["Handbag", "Wallet"];
+
+export const statusOrders = [
+  {
+    label: "Cancelled",
+    value: "Cancelled",
+  },
+  {
+    label: "Succeed",
+    value: "Succeed",
+  },
+];

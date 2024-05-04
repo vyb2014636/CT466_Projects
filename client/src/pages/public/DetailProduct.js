@@ -70,7 +70,7 @@ const DetailProduct = ({ navigate, location, dispatch }) => {
         size: productDetail?.size,
       });
     }
-  }, [varriant, productDetail]);
+  }, [varriant]);
 
   useEffect(() => {
     fetchProducts();
@@ -81,7 +81,7 @@ const DetailProduct = ({ navigate, location, dispatch }) => {
       fetchProductDetail();
     }
     window.scrollTo(0, 0);
-  }, [pid, update]);
+  }, [pid]);
 
   const handleOnChangeQuantityNumber = useCallback(
     (quantity) => {
@@ -106,6 +106,14 @@ const DetailProduct = ({ navigate, location, dispatch }) => {
     const response = await apiGetProductDetail(pid);
     if (response?.success) {
       setProductDetail(response.product);
+      setCurrentProduct({
+        title: response.product?.title,
+        color: response.product?.color,
+        images: response.product?.images || [],
+        price: response.product?.price,
+        thumb: response.product?.thumb,
+        size: response.product?.size,
+      });
       setDescriptions(response.product?.description?.split("\n")?.filter((line) => line.trim() !== ""));
     }
   };

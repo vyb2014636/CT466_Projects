@@ -123,25 +123,7 @@ const getProduct = asyncHandler(async (req, res) => {
     .exec()
     .then(async (response) => {
       const counts = await Product.find(query).countDocuments();
-      // if (category) {
-      //   let Refind;
-      //   if (req.query.sort) {
-      //     const sortBy = req.query.sort.split(",").join(" ");
-      //     Refind = await Product.find(q).populate("category", "title").sort(sortBy);
-      //   } else if (req.query.sort) {
-      //     const fields = req.query.fields.split(",").join(" ");
-      //     Refind = await Product.find(q).populate("category", "title").select(fields);
-      //   } else {
-      //     Refind = await Product.find(q).populate("category", "title");
-      //   }
 
-      //   const capitalizedCategory = category
-      //     .replace(/\b\w/g, (char) => char.toUpperCase())
-      //     .split("-")
-      //     .join(" ");
-      //   response = Refind.filter((product) => String(product.category.title) === String(capitalizedCategory));
-      //   counts = response.length;
-      // }
       return res.status(200).json({
         success: response ? true : false,
         counts,

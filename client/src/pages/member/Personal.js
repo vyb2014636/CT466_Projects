@@ -11,12 +11,15 @@ import avatar from "assets/avatar_default.png";
 import { apiUpdateCurrent } from "apis";
 import { getCurrentUser } from "store/user/asyncAction";
 import { toast } from "react-toastify";
+import { useSearchParams } from "react-router-dom";
+import withBase from "hocs/withBase";
 
-const Personal = () => {
+const Personal = ({ navigate }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [isShowUpImage, setIsShowUpImage] = useState(false);
   const [editProfile, setEditProfile] = useState(false);
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const {
     register,
     formState: { errors, isDirty },
@@ -31,6 +34,7 @@ const Personal = () => {
       mobile: currentUser?.mobile,
       email: currentUser?.email,
       avatar: currentUser?.avatar,
+      address: currentUser?.address,
     });
   }, []);
 
@@ -59,6 +63,7 @@ const Personal = () => {
       dispatch(getCurrentUser());
       setEditProfile(false);
       toast.success(response.mes);
+      if (searchParams.get("redirect")) navigate(searchParams.get("redirect"));
     } else toast.error(response.mes);
   };
 
@@ -136,6 +141,22 @@ const Personal = () => {
               },
             }}
           />
+          <InputProfile
+            register={register}
+            errors={errors}
+            id="address"
+            label="Địa chỉ"
+            styled="flex-1"
+            fullWidth
+            disabled={!editProfile}
+            validate={{
+              required: "Vui lòng điền đầy đủ",
+              // pattern: {
+              //   value: /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4}$/gm,
+              //   message: "Nhập đúng định dạng",
+              // },
+            }}
+          />
 
           {isDirty && editProfile && (
             <div className="w-full flex justify-center">
@@ -148,4 +169,4 @@ const Personal = () => {
   );
 };
 
-export default Personal;
+export default withBase(Personal);

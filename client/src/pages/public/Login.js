@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { InputFields, Button, Loading } from "components";
+import { InputFields, Button, Loading, TopHeader } from "components";
 import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "apis";
 import Swal from "sweetalert2";
 import logo from "assets/logo.png";
@@ -47,9 +47,12 @@ const Login = () => {
 
   //CLICK SUBMIT FORGOT PASSWORD
   const handleForgotPassword = async () => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiForgotPassword({ email: email.email });
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
     if (response.success) {
-      toast.success(response.mes);
+      setIsForgotPassword(false);
+      Swal.fire("Thành công", response.mes, "success");
     } else toast.info(response.mes);
   };
   //SUBMIT REGISTER ONCLICK
@@ -70,15 +73,19 @@ const Login = () => {
       } else {
         const rs = await apiLogin(data);
         if (rs.success) {
-          dispatch(login({ isLoggedIn: true, token: rs.AccessToken, userData: rs.userData }));
-          dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-          const setTimeoutId = setTimeout(() => {
-            dispatch(showModal({ isShowModal: false, modalChildren: null }));
-            searchParams.get("redirect") ? navigate(searchParams.get("redirect")) : navigate(`/${path.HOME}`);
-          }, 1000);
-          return () => {
-            clearTimeout(setTimeoutId);
-          };
+          if (!rs.userData.isBlocked) {
+            dispatch(login({ isLoggedIn: true, token: rs.AccessToken, userData: rs.userData }));
+            dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+            const setTimeoutId = setTimeout(() => {
+              dispatch(showModal({ isShowModal: false, modalChildren: null }));
+              searchParams.get("redirect") ? navigate(searchParams.get("redirect")) : navigate(`/${path.HOME}`);
+            }, 1000);
+            return () => {
+              clearTimeout(setTimeoutId);
+            };
+          } else {
+            Swal.fire("Thông báo", "Tài khoản của bạn đã bị khóa", "error");
+          }
         } else {
           Swal.fire("Đăng nhập thất bại", rs.mes, "error");
         }
@@ -190,7 +197,7 @@ const Login = () => {
       )}
 
       {isForgotPassword && (
-        <div className="absolute top-0 left-0 bottom-0 right-0 bg-overlay z-50 flex justify-center py-8 items-center">
+        <div className="absolute top-0 left-0 bottom-0 right-0 bg-overlay z-40 flex justify-center py-8 items-center">
           <div className="bg-white w-[50%] h-[350px] flex flex-col items-center justify-center relative">
             <div className="grid gap-2 text-center w-[50%] mb-4">
               <h1 className="text-3xl font-bold">Quên mật khẩu</h1>
@@ -210,8 +217,8 @@ const Login = () => {
           </div>
         </div>
       )}
-      <div className="login-header w-full flex justify-center items-center bg-white ">
-        <div className="w-main flex h-[90px] py-[35px] justify-between">
+      <div className="login-header w-full flex justify-center items-center bg-white mb-auto ">
+        <div className="w-main flex h-[90px] py-[35px] justify-between mb-auto">
           <div className="w-full md:w-1/2 lg:w-1/2 pr-4 flex flex-col items-start justify-center">
             <Link to={`/${path.HOME}`}>
               <img src={logo} alt="" />

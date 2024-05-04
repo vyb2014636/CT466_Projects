@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import { navigation } from "ultils/contants";
 import { NavLink } from "react-router-dom";
+import Sidebar from "components/Sidebar/Sidebar";
 
 const Navigation = () => {
   return (
@@ -21,6 +22,9 @@ const Navigation = () => {
               </NavLink>
             </li>
           ))}
+          <li>
+            <Sidebar />
+          </li>
         </ul>
       </nav>
     </div>

@@ -31,6 +31,7 @@ const Products = () => {
   //XỬ LÝ KHI TA CLICK VÀO BỘ LỌC FILTER
   //XỬ LÝ KHI LỌC FILTER
   const fetchSearchs = async (queries) => {
+    if (category && category !== "products") queries.category = category;
     const response = await apiGetProducts(queries);
     if (response.success) {
       setProducts(response.products);
@@ -51,7 +52,6 @@ const Products = () => {
       if (queries.from) queries.price = { gte: queries.from };
       if (queries.to) queries.price = { lte: queries.to };
     }
-    if (category !== "Sản phẩm") queries.category = category;
     delete queries.to;
     delete queries.from;
     //Lọc theo giá
@@ -83,13 +83,13 @@ const Products = () => {
     <div className="w-full  md:min-h-[800px] sm:h-full flex flex-col items-center py-4">
       <div className="products-header w-full h-[8%] bg-gray-200 py-3 mb-3">
         <div className="w-main h-full m-auto text-black flex gap-2 ">
-          <Breadcrum category={category} />
+          <Breadcrum category={category === "products" ? "Sản phẩm" : category} />
         </div>
       </div>
       <div className="products-body w-main ">
         <div className="products-body-top border">
           <div className="products-title">
-            <h1 className="font-bold text-center text-[2rem] capitalize">{category.split("-").join(" ")}</h1>
+            <h1 className="font-bold text-center text-[2rem] capitalize">{category === "products" ? "Sản phẩm" : category.split("-").join(" ")}</h1>
           </div>
           <div className="products-filter flex justify-between p-4">
             <div className="w-7/10 flex gap-3 items-center">

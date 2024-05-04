@@ -61,3 +61,24 @@ export const apiVarriant = (data, pid) =>
     method: "put",
     data,
   });
+
+export const apiCreateOrder = (data) =>
+  axios({
+    url: "/order/createOrder",
+    method: "post",
+    data,
+  });
+
+export const apiGetOrders = (params) =>
+  axios({
+    url: "/order/getOrderByAdmin",
+    method: "get",
+    params,
+  });
+
+export const apiGetUserOrders = (params) =>
+  axios({
+    url: "/order/getUserOrder",
+    method: "get",
+    params,
+  });

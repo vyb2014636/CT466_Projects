@@ -6,7 +6,8 @@ import withBase from "hocs/withBase";
 import React from "react";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, createSearchParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import { formatMoney } from "ultils/helpers";
 import path from "ultils/path";
 
@@ -18,6 +19,29 @@ const DetailsCart = ({ navigate, dispatch, location }) => {
     if (!currentUser) navigate(`/${path.HOME}`);
   }, [currentUser]);
 
+  const handleSubmit = () => {
+    if (!currentUser?.address)
+      return Swal.fire({
+        icon: "info",
+        title: "Chưa đủ thông tin",
+        text: "Vui lòng cập nhật địa chỉ giao hàng",
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Đến hồ sơ để cập nhật!",
+        cancelButtonText: "Thoát",
+      }).then((res) => {
+        if (res.isConfirmed) {
+          navigate({
+            pathname: `/${path.MEMBER}/${path.PERSONAL}`,
+            search: createSearchParams({ redirect: location.pathname }).toString(),
+          });
+        }
+      });
+    else {
+      navigate(`/${path.CHECKOUT}`);
+      // window.open(`/${path.CHECKOUT}`, "_blank");
+    }
+  };
   // const onchangeOnes = (e) => {
   //   if (e.target.checked) {
   //   } else {
@@ -82,9 +106,10 @@ const DetailsCart = ({ navigate, dispatch, location }) => {
             </div>
 
             <div className="flex border-b py-4 justify-between">
-              <Link to={`/${path.CHECKOUT}`} className="bg-[#474747] py-2 text-white flex items-center justify-center rounded-lg font-semibold w-full">
+              <Button name="Thanh toán" handleOnClick={handleSubmit} />
+              {/* <Link target="_blank" to={`/${path.CHECKOUT}`} className="bg-[#474747] py-2 text-white flex items-center justify-center rounded-lg font-semibold w-full">
                 Thanh toán
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

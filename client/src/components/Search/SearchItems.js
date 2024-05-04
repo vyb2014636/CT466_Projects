@@ -14,7 +14,7 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   const [params] = useSearchParams();
   const [price, setPrice] = useState({
     from: 0,
-    to: 500000,
+    to: 1000000,
   });
 
   const navigate = useNavigate();
@@ -81,17 +81,11 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
   //XỬ LÝ KHI TA NHẬP PRICE VÀO INPUT
 
   return (
-    <div
-      className="relative text-xs p-3 cursor-pointer border border-gray-800 text-gray-500 flex items-center justify-between gap-5"
-      onClick={() => changeActiveFilter(name)}
-    >
+    <div className="relative text-xs p-3 cursor-pointer border border-gray-800 text-gray-500 flex items-center justify-between gap-5" onClick={() => changeActiveFilter(name)}>
       <span className="capitalize">{name}</span>
       <FaChevronDown size={10} />
       {activeClick === name && (
-        <div
-          className="absolute top-[calc(100%+1px)] left-0 w-fit p-4 border z-10 bg-white min-w-[150px]"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="absolute top-[calc(100%+1px)] left-0 w-fit p-4 border z-10 bg-white min-w-[150px]" onClick={(e) => e.stopPropagation()}>
           {type === "checkbox" && (
             <div className="">
               <div className="flex justify-between items-center gap-8 p-4 border-b ">
@@ -109,13 +103,7 @@ const SearchItems = ({ name, activeClick, changeActiveFilter, type = "checkbox" 
               <div className="flex flex-col gap-3 mt-4" onClick={(e) => e.stopPropagation()}>
                 {colors?.map((el, index) => (
                   <div key={index} className="flex items-center gap-4">
-                    <input
-                      type="checkbox"
-                      name={el?.vn}
-                      onClick={handleSelect}
-                      value={el?.en}
-                      checked={selected.some((selectedItem) => selectedItem === el.en)}
-                    />
+                    <input type="checkbox" name={el?.vn} onClick={handleSelect} value={el?.en} checked={selected.some((selectedItem) => selectedItem === el.en)} />
                     <label className="text-gray-700 capitalize" htmlFor={el?.vn}>
                       {el?.vn}
                     </label>
