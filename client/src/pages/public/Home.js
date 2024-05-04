@@ -14,12 +14,6 @@ const Home = () => {
       <div className="w-main mb-8 text-center">
         <FlashSales />
       </div>
-      <div className="w-main mb-8 text-center">
-        <Collection />
-      </div>
-      <div className="w-main mb-8 text-center ">
-        <h3 className="text-[1.3rem] font-semibold py-[1rem] border-b-2 border-b-orange-500">Blogs</h3>
-      </div>
     </div>
   );
 };
