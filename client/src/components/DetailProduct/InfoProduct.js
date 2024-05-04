@@ -51,13 +51,18 @@ const InfoProduct = ({ totalRatings, ratings, nameProduct, pid, rerender }) => {
       return;
     }
     const response = await apiRatings({ star: score, comment, pid, updatedAt: Date.now() });
-    rerender();
-    dispatch(
-      showModal({
-        isShowModal: false,
-        modalChildren: null,
-      })
-    );
+    if (response.success) {
+      Swal.fire("Thành công", "Đánh giá thành công", "success");
+      rerender();
+      dispatch(
+        showModal({
+          isShowModal: false,
+          modalChildren: null,
+        })
+      );
+    } else {
+      Swal.fire("Thất bại", "Đánh giá thất bại", "error");
+    }
   };
   return (
     <div>
